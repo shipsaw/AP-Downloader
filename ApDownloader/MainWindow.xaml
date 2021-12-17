@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="250" Width="300">
+        Title="MainWindow" Height="300" Width="300">
     <Border Padding="10">
         <StackPanel>
             <Grid>
@@ -17,9 +17,9 @@
                     <TextBlock Text="Username" />
                     <TextBox Name="loginBox" Padding="2" />
                     <TextBlock Text="Password" />
-                    <TextBox Padding="2" />
-                    <TextBlock Text="Cookie" />
-                    <TextBox IsReadOnly="True" Background="LightGray" Padding="2" Margin="0 0 0 60 " />
+                    <PasswordBox Name="passwordBox" Padding="2" />
+                    <TextBox Name="loginStatus" IsReadOnly="True" Background="LightGray" Padding="2"
+                             Margin="0 25 0 35 " />
                 </StackPanel>
             </Grid>
             <Grid>
@@ -30,7 +30,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Margin="0 0 10 0" Content="Login" Click="loginButton_Click" />
-                <Button Grid.Column="1" Content="Logout" />
+                <Button Grid.Column="1" Content="Logout" Click="logoutButton_Click" />
                 <Button Grid.Column="2" Margin="10 0 0 0 " Content="Check Status" />
             </Grid>
         </StackPanel>
