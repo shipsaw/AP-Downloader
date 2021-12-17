@@ -18,8 +18,9 @@
                     <TextBox Name="loginBox" Padding="2" />
                     <TextBlock Text="Password" />
                     <PasswordBox Name="passwordBox" Padding="2" />
-                    <TextBox Name="loginStatus" IsReadOnly="True" Background="LightGray" Padding="2"
-                             Margin="0 25 0 35 " />
+                    <TextBox Name="loginStatus" IsReadOnly="True" Background="LightGray" BorderBrush="Red"
+                             BorderThickness="4" Padding="2"
+                             Margin="0 25 0 35 " Text="NOT LOGGED IN" />
                 </StackPanel>
             </Grid>
             <Grid>
@@ -30,7 +31,8 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Margin="0 0 10 0" Content="Login" Click="loginButton_Click" />
-                <Button Grid.Column="1" Content="Logout" Click="logoutButton_Click" />
+                <Button Grid.Column="1" Name="logoutButton" Content="Logout" IsEnabled="False"
+                        Click="logoutButton_Click" />
                 <Button Grid.Column="2" Margin="10 0 0 0 " Content="Check Status" />
             </Grid>
         </StackPanel>
