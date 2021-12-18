@@ -13,8 +13,9 @@
                                Foreground="White"
                                FontSize="28"
                                Margin="20, 10, 10, 40" />
-                    <StackPanel>
-                        <TextBox Style="{StaticResource LoginTextBox}" />
+                    <StackPanel FocusManager.FocusedElement="{Binding ElementName=FocusedBox}">
+                        <TextBox Style="{StaticResource LoginTextBox}"
+                                 Name="FocusedBox" />
                         <TextBlock Text="Email Address"
                                    HorizontalAlignment="Center"
                                    Foreground="White"
@@ -26,6 +27,21 @@
                                    Foreground="White"
                                    FontSize="16" />
                     </StackPanel>
+                    <Grid Margin="0,20,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0"
+                                Content="Log In"
+                                Margin="0,0,10,0"
+                                Style="{DynamicResource LoginButton}" />
+                        <Button Grid.Column="1"
+                                Content="Log Out"
+                                Margin="10,0,0,0"
+                                IsEnabled="False"
+                                Style="{DynamicResource LoginButton}" />
+                    </Grid>
                 </StackPanel>
             </Grid>
         </StackPanel>

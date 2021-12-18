@@ -44,12 +44,15 @@
                              Height="50"
                              Foreground="White"
                              FontSize="14"
-                             Style="{StaticResource MenuButtonTheme}" />
+                             IsChecked="True"
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding LoginViewCommand}" />
                 <RadioButton Content="Download"
                              Height="50"
                              Foreground="White"
                              FontSize="14"
-                             Style="{StaticResource MenuButtonTheme}" />
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding DownloadViewCommand}" />
                 <RadioButton Content="Options"
                              Height="50"
                              Foreground="White"

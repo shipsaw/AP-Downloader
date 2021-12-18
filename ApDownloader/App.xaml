@@ -10,9 +10,13 @@
                 <ResourceDictionary Source="Themes/MenuButtonTheme.xaml" />
                 <ResourceDictionary Source="Themes/TextBoxTheme.xaml" />
                 <ResourceDictionary Source="Themes/PasswordBoxTheme.xaml" />
+                <ResourceDictionary Source="Themes/LoginButtonTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <DataTemplate DataType="{x:Type viewModel:LoginViewModel}">
                 <view:LoginView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:DownloadViewModel}">
+                <view:DownloadView />
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>

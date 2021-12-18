@@ -9,10 +9,18 @@ public class MainViewModel : ObservableObject
     public MainViewModel()
     {
         LoginVm = new LoginViewModel();
+        DownloadVM = new DownloadViewModel();
+
+        LoginViewCommand = new RelayCommand(clickEvent => CurrentView = LoginVm);
+        DownloadViewCommand = new RelayCommand(clickEvent => CurrentView = DownloadVM);
         CurrentView = LoginVm;
     }
 
+    public RelayCommand LoginViewCommand { get; set; }
+    public RelayCommand DownloadViewCommand { get; set; }
+
     public LoginViewModel LoginVm { get; set; }
+    public DownloadViewModel DownloadVM { get; set; }
 
     public object CurrentView
     {
