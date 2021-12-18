@@ -1,9 +1,7 @@
-﻿using System.Net;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Windows;
-using System.Windows.Media;
 
-namespace ApDownloader;
+namespace ApDownloader.MVVM.Views;
 
 /// <summary>
 ///     Interaction logic for MainWindow.xaml
@@ -21,26 +19,10 @@ public partial class MainWindow : Window
 
     private async void loginButton_Click(object sender, RoutedEventArgs e)
     {
-        var loginSuccessful = false;
-        loginStatus.Text = "ATTEMPTING LOGIN...";
-        loginStatus.BorderBrush = new SolidColorBrush(Colors.Goldenrod);
-        var content = new MultipartFormDataContent();
-        content.Add(new StringContent(loginBox.Text), "email");
-        content.Add(new StringContent(passwordBox.Password), "password");
-        var response = await _client.PostAsync(LoginUrl, content);
-        loginSuccessful = response.StatusCode == HttpStatusCode.Redirect;
-        loginStatus.Text = loginSuccessful ? "LOGIN SUCCESSFUL" : "LOGIN FAILED";
-        logoutButton.IsEnabled = loginSuccessful;
-        loginStatus.BorderBrush = new SolidColorBrush(loginSuccessful ? Colors.Green : Colors.Red);
-        getDownloadInfo();
     }
 
     private void logoutButton_Click(object sender, RoutedEventArgs e)
     {
-        _client.GetAsync("https://www.armstrongpowerhouse.com/index.php?route=account/logout");
-        loginStatus.BorderBrush = new SolidColorBrush(Colors.Red);
-        loginStatus.Text = "NOT LOGGED IN";
-        logoutButton.IsEnabled = false;
     }
 
     private void getDownloadInfo()

@@ -1,9 +1,19 @@
 ﻿<Application x:Class="ApDownloader.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ApDownloader"
-             StartupUri="MainWindow.xaml">
+             xmlns:viewModel="clr-namespace:ApDownloader.MVVM.ViewModels"
+             xmlns:view="clr-namespace:ApDownloader.MVVM.Views"
+             StartupUri="MVVM/Views/MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/MenuButtonTheme.xaml" />
+                <ResourceDictionary Source="Themes/TextBoxTheme.xaml" />
+                <ResourceDictionary Source="Themes/PasswordBoxTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <DataTemplate DataType="{x:Type viewModel:LoginViewModel}">
+                <view:LoginView />
+            </DataTemplate>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

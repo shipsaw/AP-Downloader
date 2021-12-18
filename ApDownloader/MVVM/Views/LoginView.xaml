@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="ApDownloader.MVVM.Views.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             Height="500" Width="720">
+    <StackPanel HorizontalAlignment="Center">
+        <StackPanel Orientation="Horizontal">
+            <Grid>
+                <StackPanel>
+                    <TextBlock Text="Enter your login Information"
+                               Foreground="White"
+                               FontSize="28"
+                               Margin="20, 10, 10, 40" />
+                    <StackPanel>
+                        <TextBox Style="{StaticResource LoginTextBox}" />
+                        <TextBlock Text="Email Address"
+                                   HorizontalAlignment="Center"
+                                   Foreground="White"
+                                   FontSize="16" />
+                        <PasswordBox Style="{StaticResource PasswordBoxText}"
+                                     Margin="0,25,0,0" />
+                        <TextBlock Text="Password"
+                                   HorizontalAlignment="Center"
+                                   Foreground="White"
+                                   FontSize="16" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
