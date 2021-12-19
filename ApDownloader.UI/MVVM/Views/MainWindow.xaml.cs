@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Windows;
 
-namespace ApDownloader.MVVM.Views;
+namespace ApDownloader.UI.MVVM.Views;
 
 /// <summary>
 ///     Interaction logic for MainWindow.xaml

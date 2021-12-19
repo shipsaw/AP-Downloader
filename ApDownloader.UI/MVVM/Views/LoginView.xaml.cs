@@ -2,8 +2,9 @@
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
+using ApDownloader.UI.MVVM.ViewModels;
 
-namespace ApDownloader.MVVM.Views;
+namespace ApDownloader.UI.MVVM.Views;
 
 public partial class LoginView : UserControl
 {
@@ -14,9 +15,10 @@ public partial class LoginView : UserControl
     public LoginView()
     {
         InitializeComponent();
+        DataContext = new DownloadViewModel();
     }
 
-    public HttpClient Client { get; } = new(_handler);
+    public HttpClient? Client { get; } = new(_handler);
 
     private async void Login(object sender, RoutedEventArgs e)
     {
@@ -26,12 +28,14 @@ public partial class LoginView : UserControl
         var response = await Client.PostAsync(LoginUrl, content);
         if (response.StatusCode == HttpStatusCode.Redirect)
         {
+            ((DownloadViewModel)DataContext).Client = Client;
             LoginResult.Text = "Login Successful";
             LoginButton.IsEnabled = false;
             LogoutButton.IsEnabled = true;
         }
         else
         {
+            ((DownloadViewModel)DataContext).Client = null;
             LoginResult.Text = "Login Failed";
         }
     }

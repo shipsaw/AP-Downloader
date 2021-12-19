@@ -1,6 +1,6 @@
-﻿using ApDownloader.Core;
+﻿using ApDownloader.UI.Core;
 
-namespace ApDownloader.MVVM.ViewModels;
+namespace ApDownloader.UI.MVVM.ViewModels;
 
 public class MainViewModel : ObservableObject
 {

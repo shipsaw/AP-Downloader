@@ -11,4 +11,8 @@
       <PackageReference Include="Extended.Wpf.Toolkit" Version="4.2.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="MVVM\ViewModels\Commands" />
+    </ItemGroup>
+
 </Project>

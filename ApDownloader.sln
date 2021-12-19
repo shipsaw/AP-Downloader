@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApDownloader", "ApDownloader\ApDownloader.csproj", "{B83C9B7F-C3AF-4931-8555-72CB9BE31E0D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApDownloader.UI", "ApDownloader.UI\ApDownloader.UI.csproj", "{B83C9B7F-C3AF-4931-8555-72CB9BE31E0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

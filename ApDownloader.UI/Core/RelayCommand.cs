@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace ApDownloader.Core;
+namespace ApDownloader.UI.Core;
 
 public class RelayCommand : ICommand
 {

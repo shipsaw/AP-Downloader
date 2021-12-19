@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace ApDownloader.Core;
+namespace ApDownloader.UI.Core;
 
 public class ObservableObject : INotifyPropertyChanged
 {

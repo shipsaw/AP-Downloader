@@ -1,8 +1,8 @@
-﻿<Application x:Class="ApDownloader.App"
+﻿<Application x:Class="ApDownloader.UI.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:viewModel="clr-namespace:ApDownloader.MVVM.ViewModels"
-             xmlns:view="clr-namespace:ApDownloader.MVVM.Views"
+             xmlns:viewModel="clr-namespace:ApDownloader.UI.MVVM.ViewModels"
+             xmlns:view="clr-namespace:ApDownloader.UI.MVVM.Views"
              StartupUri="MVVM/Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>

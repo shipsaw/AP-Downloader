@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ApDownloader.MVVM.Views;
+namespace ApDownloader.UI.MVVM.Views;
 
 public partial class DownloadView : UserControl
 {
