@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApDownloader.UI", "ApDownloader.UI\ApDownloader.UI.csproj", "{B83C9B7F-C3AF-4931-8555-72CB9BE31E0D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApDownloader.DataAccess", "ApDownloader.DataAccess\ApDownloader.DataAccess.csproj", "{575A8EE3-BDBF-450B-9B4F-929F67E181D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApDownloader.Model", "ApDownloader.Model\ApDownloader.Model.csproj", "{38C04257-81E5-4DDE-8701-48B930E16F01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{B83C9B7F-C3AF-4931-8555-72CB9BE31E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B83C9B7F-C3AF-4931-8555-72CB9BE31E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B83C9B7F-C3AF-4931-8555-72CB9BE31E0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{575A8EE3-BDBF-450B-9B4F-929F67E181D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{575A8EE3-BDBF-450B-9B4F-929F67E181D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{575A8EE3-BDBF-450B-9B4F-929F67E181D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{575A8EE3-BDBF-450B-9B4F-929F67E181D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38C04257-81E5-4DDE-8701-48B930E16F01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38C04257-81E5-4DDE-8701-48B930E16F01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38C04257-81E5-4DDE-8701-48B930E16F01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38C04257-81E5-4DDE-8701-48B930E16F01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

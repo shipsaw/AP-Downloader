@@ -13,13 +13,18 @@
                    FontSize="30"
                    HorizontalAlignment="Center" />
         <Grid>
-            <TreeView x:Name="AddonList"
-                      Background="#353340" />
-            <Button Click="ButtonBase_OnClick"
-                    Height="20"
-                    Width="20">
-                Populate
-            </Button>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <ListView ItemsSource="{Binding Products}"
+                      SelectedItem="{Binding SelectedProduct,Mode=TwoWay}"
+                      DisplayMemberPath="Name"
+                      x:Name="AddonsFoundList"
+                      Background="#353340"
+                      Foreground="White"
+                      Height="200" />
         </Grid>
     </StackPanel>
 </UserControl>

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:viewModel="clr-namespace:ApDownloader.UI.MVVM.ViewModels"
              xmlns:view="clr-namespace:ApDownloader.UI.MVVM.Views"
-             StartupUri="MVVM/Views/MainWindow.xaml">
+             Startup="Application_Startup">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
