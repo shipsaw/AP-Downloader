@@ -9,7 +9,17 @@
     <StackPanel>
         <TextBlock Text="Download Section"
                    Foreground="White"
+                   Background="Transparent"
                    FontSize="30"
                    HorizontalAlignment="Center" />
+        <Grid>
+            <TreeView x:Name="AddonList"
+                      Background="#353340" />
+            <Button Click="ButtonBase_OnClick"
+                    Height="20"
+                    Width="20">
+                Populate
+            </Button>
+        </Grid>
     </StackPanel>
 </UserControl>

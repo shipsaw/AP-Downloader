@@ -24,43 +24,30 @@
                 <ColumnDefinition Width="200" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="75" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
             <Border BorderThickness="0,0,1,0"
                     BorderBrush="Gray"
                     Grid.RowSpan="4"
                     Background="#172527"
                     CornerRadius="10,0,0,10" />
-            <TextBlock Text="AP Downloader"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Left"
-                       Foreground="White"
-                       FontSize="22"
-                       Margin="20,0,0,0" />
-            <StackPanel Grid.Row="1" Grid.Column="0">
+            <StackPanel Grid.Row="0" Grid.Column="0">
+                <TextBlock Text="AP Downloader"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           Foreground="White"
+                           FontSize="22"
+                           Margin="20,20,0,20" />
                 <RadioButton Content="Login"
-                             Height="50"
-                             Foreground="White"
-                             FontSize="14"
                              IsChecked="True"
                              Style="{StaticResource MenuButtonTheme}"
                              Command="{Binding LoginViewCommand}" />
                 <RadioButton Content="Download"
-                             Height="50"
-                             Foreground="White"
-                             FontSize="14"
                              Style="{StaticResource MenuButtonTheme}"
                              Command="{Binding DownloadViewCommand}" />
                 <RadioButton Content="Options"
-                             Height="50"
-                             Foreground="White"
-                             FontSize="14"
                              Style="{StaticResource MenuButtonTheme}" />
             </StackPanel>
             <ContentControl
-                Grid.Row="1"
+                Grid.Row="0"
                 Grid.Column="1"
                 Margin="20"
                 Content="{Binding CurrentView}" />

@@ -2,28 +2,21 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Style TargetType="{x:Type TextBox}"
            x:Key="LoginTextBox">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type TextBox}">
-                    <Border CornerRadius="10"
-                            Background="#353340"
-                            Width="300"
-                            Height="40">
-                        <Grid>
-                            <Rectangle StrokeThickness="1" />
-                            <TextBox Margin="1"
-                                     Text="{TemplateBinding Property=Text}"
-                                     BorderThickness="0"
-                                     Background="Transparent"
-                                     VerticalContentAlignment="Center"
-                                     Padding="5"
-                                     Foreground="#CFCFCF"
-                                     FontSize="20"
-                                     CaretBrush="White" />
-                        </Grid>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Style.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Background" Value="#353340" />
+                <Setter Property="Width" Value="300" />
+                <Setter Property="Height" Value="40" />
+            </Style>
+        </Style.Resources>
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="#353340" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="5" />
+        <Setter Property="Foreground" Value="#CFCFCF" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="CaretBrush" Value="White" />
     </Style>
 </ResourceDictionary>
