@@ -34,14 +34,17 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Button Grid.Column="0"
+                                Name="LoginButton"
                                 Content="Log In"
                                 Margin="0,0,10,0"
                                 Click="Login"
                                 Style="{DynamicResource LoginButton}" />
                         <Button Grid.Column="1"
                                 Content="Log Out"
+                                Name="LogoutButton"
                                 Margin="10,0,0,0"
                                 IsEnabled="False"
+                                Click="Logout"
                                 Style="{DynamicResource LoginButton}" />
                     </Grid>
                     <TextBlock Name="LoginResult"
