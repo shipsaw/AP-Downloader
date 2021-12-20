@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "575a8ee3-bdbf-450b-9b4f-929f67e181d8": {
+      "ProjectGuid": "575a8ee3-bdbf-450b-9b4f-929f67e181d8",
+      "DisplayName": "ApDownloader.DataAccess",
+      "ColorIndex": 0
+    },
+    "b83c9b7f-c3af-4931-8555-72cb9be31e0d": {
+      "ProjectGuid": "b83c9b7f-c3af-4931-8555-72cb9be31e0d",
+      "DisplayName": "ApDownloader.UI",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}
