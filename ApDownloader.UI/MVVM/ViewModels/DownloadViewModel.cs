@@ -1,20 +1,20 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http;
+using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
-using ApDownloader.UI.MVVM.Data;
 
 namespace ApDownloader.UI.MVVM.ViewModels;
 
 public class DownloadViewModel : ObservableObject
 {
-    private readonly IDataService _dataService;
+    private readonly SQLiteDataAccess _dataService;
 
     public Product _selectedProduct;
 
     public DownloadViewModel()
     {
-        _dataService = new DataService();
+        _dataService = new SQLiteDataAccess();
         Products = new ObservableCollection<Product>();
     }
 
@@ -33,8 +33,7 @@ public class DownloadViewModel : ObservableObject
 
     public void Load()
     {
-        var products = _dataService.GetAll();
-        Products.Clear();
-        foreach (var product in products) Products.Add(product);
+        var products = SQLiteDataAccess.GetProductsOnly();
+        foreach (var product in products.Result) Products.Add(product);
     }
 }
