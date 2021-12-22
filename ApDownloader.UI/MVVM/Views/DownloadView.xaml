@@ -24,7 +24,17 @@
                       x:Name="AddonsFoundList"
                       Background="#353340"
                       Foreground="White"
-                      Height="200" />
+                      Height="500"
+                      FontSize="20"
+                      ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                      SelectionMode="Multiple">
+                <ListView.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="3" />
+                    </Style>
+                </ListView.Resources>
+            </ListView>
         </Grid>
     </StackPanel>
 </UserControl>

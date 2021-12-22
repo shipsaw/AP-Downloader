@@ -19,6 +19,5 @@ public partial class DownloadView : UserControl
     private void DownloadWindow_Loaded(object sender, RoutedEventArgs e)
     {
         _viewModel.Load();
-        var test = Parent;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Windows;
+using System.Windows.Input;
 
 namespace ApDownloader.UI.MVVM.Views;
 
@@ -30,6 +31,12 @@ public partial class MainWindow : Window
         var response = _client.SendAsync(new HttpRequestMessage(HttpMethod.Head,
             "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=107"));
         var result = response.Result.Content.Headers.ContentDisposition;
+    }
+
+    private void MainWindow_OnMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton == MouseButton.Left)
+            DragMove();
     }
 }
 
