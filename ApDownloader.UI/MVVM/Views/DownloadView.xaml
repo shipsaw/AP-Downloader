@@ -3,38 +3,59 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ApDownloader.UI.MVVM.ViewModels"
              mc:Ignorable="d"
              Background="Transparent"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.DataContext>
+        <local:DownloadViewModel />
+    </UserControl.DataContext>
     <StackPanel>
-        <TextBlock Text="Download Section"
-                   Foreground="White"
-                   Background="Transparent"
-                   FontSize="30"
-                   HorizontalAlignment="Center" />
+        <ListView
+            ItemsSource="{Binding Products }"
+            x:Name="AddonsFoundList"
+            Background="#353340"
+            Foreground="White"
+            Height="500"
+            FontSize="15"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            SelectionMode="Multiple"
+            HorizontalContentAlignment="Center">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="5" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="3" />
+                </Style>
+                <Style TargetType="ScrollBar">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value=" Black" />
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                </Style>
+            </ListView.Resources>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical"
+                                Height="220">
+                        <Image Source="{Binding ImageUrl}" Height="133" Width="109" HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding Name}" Width="99" TextWrapping="Wrap"
+                                   TextTrimming="WordEllipsis"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
                 <ColumnDefinition />
-                <ColumnDefinition Width="3*" />
+                <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <ListView ItemsSource="{Binding Products}"
-                      SelectedItem="{Binding SelectedProduct,Mode=TwoWay}"
-                      DisplayMemberPath="Name"
-                      x:Name="AddonsFoundList"
-                      Background="#353340"
-                      Foreground="White"
-                      Height="500"
-                      FontSize="20"
-                      ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                      SelectionMode="Multiple">
-                <ListView.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="3" />
-                    </Style>
-                </ListView.Resources>
-            </ListView>
+            <Button Margin="10 20" />
         </Grid>
     </StackPanel>
 </UserControl>

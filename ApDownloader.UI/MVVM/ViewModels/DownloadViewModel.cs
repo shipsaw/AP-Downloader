@@ -15,7 +15,7 @@ public class DownloadViewModel : ObservableObject
     public DownloadViewModel()
     {
         _dataService = new SQLiteDataAccess();
-        Products = new ObservableCollection<Product>();
+        Products = new ObservableCollection<Cell>();
     }
 
     public Product SelectedProduct
@@ -28,12 +28,16 @@ public class DownloadViewModel : ObservableObject
         }
     }
 
-    public ObservableCollection<Product> Products { get; set; }
+    public ObservableCollection<Cell> Products { get; set; }
     public HttpClient? Client { get; set; }
 
     public void Load()
     {
         var products = SQLiteDataAccess.GetProductsOnly();
-        foreach (var product in products.Result) Products.Add(product);
+        foreach (var product in products.Result)
+        {
+            var cell = new Cell {ImageUrl = "../../Images/" + product.ImageName, Name = product.Name};
+            Products.Add(cell);
+        }
     }
 }

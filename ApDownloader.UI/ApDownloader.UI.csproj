@@ -21,4 +21,279 @@
       <ProjectReference Include="..\ApDownloader.Model\ApDownloader.Model.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Images\APBAA-BZA_Cover-238x294.png" />
+      <Resource Include="Images\APBAA-BZA_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC101SPP_Cover-238x294.png" />
+      <Resource Include="Images\APC101SPP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC142_Cover-238x294.png" />
+      <Resource Include="Images\APC142_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC150-1EP_Cover-238x294.png" />
+      <Resource Include="Images\APC150-1EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC150-2_Cover-238x294.png" />
+      <Resource Include="Images\APC150-2_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC156_Cover-238x294.png" />
+      <Resource Include="Images\APC156_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC158CEP_Cover-238x294.png" />
+      <Resource Include="Images\APC158CEP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC158PEP_Cover-238x294.png" />
+      <Resource Include="Images\APC158PEP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC170EP_Cover-238x294.png" />
+      <Resource Include="Images\APC170EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC175EPV2_Cover-238x294.png" />
+      <Resource Include="Images\APC175EPV2_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC205_Cover-238x294.png" />
+      <Resource Include="Images\APC205_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC20SPP_Cover-238x294.png" />
+      <Resource Include="Images\APC20SPP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC220-221SPP_Cover-238x294.png" />
+      <Resource Include="Images\APC220-221SPP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC313_Cover-238x294.png" />
+      <Resource Include="Images\APC313_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC314-315_Cover-238x294.png" />
+      <Resource Include="Images\APC314-315_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC317V1_Cover-238x294.png" />
+      <Resource Include="Images\APC317V1_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC319V1_Cover-238x294.png" />
+      <Resource Include="Images\APC319V1_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC319V2_Cover-238x294.png" />
+      <Resource Include="Images\APC319V2_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC31EP_Cover-238x294.png" />
+      <Resource Include="Images\APC31EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC321_Cover-238x294.png" />
+      <Resource Include="Images\APC321_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC350EP_Cover-238x294.png" />
+      <Resource Include="Images\APC350EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC365EP_Cover-238x294.png" />
+      <Resource Include="Images\APC365EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC375EP_Cover-238x294.png" />
+      <Resource Include="Images\APC375EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC37V1_Cover-238x294.png" />
+      <Resource Include="Images\APC37V1_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC37V2_Cover-238x294.png" />
+      <Resource Include="Images\APC37V2_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC390SP_Cover-238x294.png" />
+      <Resource Include="Images\APC390SP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC421-423SP_Cover-238x294.png" />
+      <Resource Include="Images\APC421-423SP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC43MTUEP_Cover-238x294.png" />
+      <Resource Include="Images\APC43MTUEP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC43VALEP_Cover-238x294.png" />
+      <Resource Include="Images\APC43VALEP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC43VPEP_Cover-238x294.png" />
+      <Resource Include="Images\APC43VPEP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC442SPP_Cover-238x294.png" />
+      <Resource Include="Images\APC442SPP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC444-450EP_Cover-238x294.png" />
+      <Resource Include="Images\APC444-450EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC455SP_Cover-238x294.png" />
+      <Resource Include="Images\APC455SP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC456_Cover-238x294.png" />
+      <Resource Include="Images\APC456_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC465EPV1_Cover-238x294.png" />
+      <Resource Include="Images\APC465EPV1_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC47SPP_Cover-238x294.png" />
+      <Resource Include="Images\APC47SPP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC50_Cover-238x294.png" />
+      <Resource Include="Images\APC50_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC55SPP_Cover-238x294.png" />
+      <Resource Include="Images\APC55SPP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC56EP_Cover-238x294.png" />
+      <Resource Include="Images\APC56EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC57SPP_Cover-238x294.png" />
+      <Resource Include="Images\APC57SPP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC66EP_Cover-238x294.png" />
+      <Resource Include="Images\APC66EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC67EP_Cover-238x294.png" />
+      <Resource Include="Images\APC67EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC68EP_Cover-238x294.png" />
+      <Resource Include="Images\APC68EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC86EP_Cover-238x294.png" />
+      <Resource Include="Images\APC86EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC90DVT_Cover-238x294.png" />
+      <Resource Include="Images\APC90DVT_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC90FL_Cover-238x294.png" />
+      <Resource Include="Images\APC90FL_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC91EP_Cover-238x294.png" />
+      <Resource Include="Images\APC91EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC92SP_Cover-238x294.png" />
+      <Resource Include="Images\APC92SP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APFSA_Cover-238x294.png" />
+      <Resource Include="Images\APFSA_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APHHA_Cover-238x294.png" />
+      <Resource Include="Images\APHHA_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APHIA_Cover-238x294.png" />
+      <Resource Include="Images\APHIA_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APHKA-JMA_Cover-238x294.png" />
+      <Resource Include="Images\APHKA-JMA_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APJHA_Cover-238x294.png" />
+      <Resource Include="Images\APJHA_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APJNAC_Cover-238x294.png" />
+      <Resource Include="Images\APJNAC_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APJPA_Cover-238x294.png" />
+      <Resource Include="Images\APJPA_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APJXA-POA_Cover-238x294.png" />
+      <Resource Include="Images\APJXA-POA_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APMGR_Cover-238x294.png" />
+      <Resource Include="Images\APMGR_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APMK1V1_Cover-238x294.png" />
+      <Resource Include="Images\APMK1V1_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APMK2A-C_Cover-238x294.png" />
+      <Resource Include="Images\APMK2A-C_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APMK2D-F_Cover-238x294.png" />
+      <Resource Include="Images\APMK2D-F_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APMK2FDBSO_Cover-238x294.png" />
+      <Resource Include="Images\APMK2FDBSO_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APMK3SP_Cover-238x294.png" />
+      <Resource Include="Images\APMK3SP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APSWEP_Cover-238x294.png" />
+      <Resource Include="Images\APSWEP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APTDAD_Cover-238x294.png" />
+      <Resource Include="Images\APTDAD_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APTEP_Cover-238x294.png" />
+      <Resource Include="Images\APTEP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APWAG4SP_Cover-238x294.png" />
+      <Resource Include="Images\APWAG4SP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APWAGFSP_Cover-238x294.png" />
+      <Resource Include="Images\APWAGFSP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APWL_Cover-238x294.png" />
+      <Resource Include="Images\APWL_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+    </ItemGroup>
+
 </Project>
