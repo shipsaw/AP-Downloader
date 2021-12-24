@@ -9,7 +9,7 @@ namespace ApDownloader.DataAccess;
 
 public class SQLiteDataAccess
 {
-    public static async Task<IEnumerable<Product>> GetProductsOnly()
+    public async Task<IEnumerable<Product>> GetProductsOnly()
     {
         using (IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db"))
         {

@@ -3,40 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:ApDownloader.UI.MVVM.ViewModels"
              mc:Ignorable="d"
              Background="Transparent"
              d:DesignHeight="300" d:DesignWidth="300">
-    <UserControl.DataContext>
-        <local:DownloadViewModel />
-    </UserControl.DataContext>
     <StackPanel>
         <ListView
             ItemsSource="{Binding Products }"
+            ItemContainerStyle="{StaticResource ListBoxStyle}"
             x:Name="AddonsFoundList"
-            Background="#353340"
-            Foreground="White"
+            Background="#f2f2f2"
+            Foreground="Black"
             Height="500"
             FontSize="15"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             SelectionMode="Multiple"
             HorizontalContentAlignment="Center">
-            <ListView.ItemsPanel>
+            <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="5" />
                 </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="3" />
-                </Style>
-                <Style TargetType="ScrollBar">
-                    <Setter Property="Background" Value="Transparent" />
-                    <Setter Property="Foreground" Value=" Black" />
-                    <Setter Property="BorderBrush" Value="Transparent" />
-                </Style>
-            </ListView.Resources>
-            <ListView.ItemTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical"
                                 Height="220">
@@ -47,7 +34,7 @@
                                    HorizontalAlignment="Center" />
                     </StackPanel>
                 </DataTemplate>
-            </ListView.ItemTemplate>
+            </ListBox.ItemTemplate>
         </ListView>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -55,7 +42,8 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button Margin="10 20" />
+            <Button Content="Select All" Style="{StaticResource LoginButton}"
+                    Margin="0 20" Click="ToggleSelected" />
         </Grid>
     </StackPanel>
 </UserControl>

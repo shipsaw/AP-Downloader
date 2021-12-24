@@ -47,7 +47,7 @@
             <ContentControl
                 Grid.Row="0"
                 Grid.Column="1"
-                Margin="20"
+                Margin="20 20 20 0 "
                 Content="{Binding CurrentView}" />
         </Grid>
     </Border>

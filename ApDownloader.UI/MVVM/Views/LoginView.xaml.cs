@@ -28,14 +28,14 @@ public partial class LoginView : UserControl
         var response = await Client.PostAsync(LoginUrl, content);
         if (response.StatusCode == HttpStatusCode.Redirect)
         {
-            ((DownloadViewModel) DataContext).Client = Client;
+            ((DownloadView) DataContext).Client = Client;
             LoginResult.Text = "Login Successful";
             LoginButton.IsEnabled = false;
             LogoutButton.IsEnabled = true;
         }
         else
         {
-            ((DownloadViewModel) DataContext).Client = null;
+            ((DownloadView) DataContext).Client = null;
             LoginResult.Text = "Login Failed";
         }
     }
