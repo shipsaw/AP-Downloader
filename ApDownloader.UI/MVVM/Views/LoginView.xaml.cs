@@ -16,6 +16,8 @@ public partial class LoginView : UserControl
         InitializeComponent();
     }
 
+    public static bool IsLoggedIn { get; private set; }
+
     public static HttpClient? Client { get; } = new(_handler);
 
     private async void Login(object sender, RoutedEventArgs e)
@@ -30,11 +32,13 @@ public partial class LoginView : UserControl
             LoginResult.Text = "Login Successful";
             LoginButton.IsEnabled = false;
             LogoutButton.IsEnabled = true;
+            IsLoggedIn = true;
         }
         else
         {
-            //((DownloadView) DataContext).Client = null;
+            //((DownlojjadView) DataContext).Client = null;
             LoginResult.Text = "Login Failed";
+            IsLoggedIn = false;
         }
     }
 
@@ -44,5 +48,6 @@ public partial class LoginView : UserControl
         LoginButton.IsEnabled = true;
         LogoutButton.IsEnabled = false;
         LoginResult.Text = "Logged out";
+        IsLoggedIn = false;
     }
 }
