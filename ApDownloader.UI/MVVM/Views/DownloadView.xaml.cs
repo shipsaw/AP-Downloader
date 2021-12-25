@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,24 +21,24 @@ public partial class DownloadView : UserControl
         InitializeComponent();
         DataContext = this;
         _dataService = new SQLiteDataAccess();
-        Products = new ObservableCollection<Cell>();
+        ProductCells = new ObservableCollection<Cell>();
         Loaded += DownloadWindow_Loaded;
     }
 
     public HttpClient? Client { get; set; }
 
-    public ObservableCollection<Cell> Products { get; set; }
+    public ObservableCollection<Cell> ProductCells { get; set; }
 
-    public event DependencyPropertyChangedEventHandler PropertyChanged;
+    public IEnumerable<Product> Products { get; set; }
 
-    private void DownloadWindow_Loaded(object sender, RoutedEventArgs e)
+    private async void DownloadWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        var products = _dataService.GetProductsOnly();
-        foreach (var product in products.Result)
+        Products = await _dataService.GetProductsOnly();
+        foreach (var product in Products)
         {
             var cell = new Cell
                 {ImageUrl = "../../Images/" + product.ImageName, Name = product.Name};
-            Products.Add(cell);
+            ProductCells.Add(cell);
         }
     }
 
@@ -49,5 +50,11 @@ public partial class DownloadView : UserControl
             AddonsFoundList.UnselectAll();
 
         selectedToggle = !selectedToggle;
+    }
+
+    private void Download(object sender, RoutedEventArgs e)
+    {
+        var access = new HttpDataAccess(Client);
+        foreach (var product in ProductCells) access.GetDownloadInfo(Products);
     }
 }
