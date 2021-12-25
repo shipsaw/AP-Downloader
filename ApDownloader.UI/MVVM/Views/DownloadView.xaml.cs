@@ -33,8 +33,10 @@ public partial class DownloadView : UserControl
 
     private async void DownloadWindow_Loaded(object sender, RoutedEventArgs e)
     {
+        var access = new HttpDataAccess(LoginView.Client);
         Products = await _dataService.GetProductsOnly();
-        foreach (var product in Products)
+        var products = await access.GetPurchasedProducts(Products);
+        foreach (var product in products)
         {
             var cell = new Cell
                 {ImageUrl = "../../Images/" + product.ImageName, Name = product.Name};
@@ -54,7 +56,5 @@ public partial class DownloadView : UserControl
 
     private async void Download(object sender, RoutedEventArgs e)
     {
-        var access = new HttpDataAccess(LoginView.Client);
-        var products = await access.GetPurchasedProducts(Products);
     }
 }

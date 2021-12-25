@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ApDownloader.Model;
@@ -24,6 +26,7 @@ public class HttpDataAccess
 
     public async Task<IEnumerable<Product>> GetPurchasedProducts(IEnumerable<Product> products)
     {
+        var productsList = new List<Product>(products);
         var retProducts = new List<Product>();
         var tasks = new List<Task<HttpResponseMessage>>();
         foreach (var product in products)
@@ -31,12 +34,17 @@ public class HttpDataAccess
                 "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=" +
                 product.ProductID)));
 
-        IEnumerable<HttpResponseMessage> result = await Task.WhenAll(tasks);
-        //response.Content.Headers.ContentDisposition;
-        //if (result != null)
-        //   retProducts.Add(product);
-        //}
+        var result = (await Task.WhenAll(tasks)).ToList();
+        if (result.Count() != products.Count()) throw new Exception("Error Checking purchases");
+
+        for (var i = 0; i < products.Count(); i++)
+            if (result[i].Content.Headers.ContentDisposition != null)
+                retProducts.Add(productsList[i]);
 
         return retProducts;
+    }
+
+    public async void Download()
+    {
     }
 }
