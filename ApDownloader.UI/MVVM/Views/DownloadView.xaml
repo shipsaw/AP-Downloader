@@ -7,17 +7,18 @@
              Background="Transparent"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid x:Name="LayoutRoot">
-        <Grid x:Name="Overlay" Panel.ZIndex="1000">
-            <Grid.Background>
+        <Border x:Name="Overlay" Panel.ZIndex="1000" CornerRadius="0 7 7 0 ">
+            <Border.Background>
                 <SolidColorBrush Color="Black" Opacity=".5" />
-            </Grid.Background>
-            <TextBlock FontSize="40" Text="Loading..." HorizontalAlignment="Center" VerticalAlignment="Center" />
-        </Grid>
+            </Border.Background>
+            <TextBlock FontSize="40" Text="Loading..." HorizontalAlignment="Center" Margin="0 200 0 0 " />
+        </Border>
         <StackPanel>
             <ListView
                 ItemsSource="{Binding ProductCells }"
                 ItemContainerStyle="{StaticResource ListBoxStyle}"
                 x:Name="AddonsFoundList"
+                Margin="20 20 20 0"
                 Background="#f2f2f2"
                 Foreground="Black"
                 Height="500"
@@ -56,10 +57,10 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Button Name="SelectAllButton" Content="Select All" Style="{StaticResource LoginButton}"
-                        Margin="0 20" Click="ToggleSelected" />
+                        Margin="20" Click="ToggleSelected" />
                 <Button Name="DownloadButton" Grid.Column="2" Content="Download"
                         Style="{StaticResource LoginButton}"
-                        Margin="0 20" Click="Download" />
+                        Margin="20" Click="Download" />
             </Grid>
         </StackPanel>
     </Grid>

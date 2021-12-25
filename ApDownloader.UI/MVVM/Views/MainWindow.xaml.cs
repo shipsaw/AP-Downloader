@@ -24,6 +24,11 @@ public partial class MainWindow : Window
         if (e.ChangedButton == MouseButton.Left)
             DragMove();
     }
+
+    private void Exit(object sender, RoutedEventArgs e)
+    {
+        Application.Current.Shutdown();
+    }
 }
 
 public class LoginInfo

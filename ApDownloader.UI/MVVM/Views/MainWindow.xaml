@@ -43,11 +43,13 @@
                              Command="{Binding DownloadViewCommand}" />
                 <RadioButton Content="Options"
                              Style="{StaticResource MenuButtonTheme}" />
+                <RadioButton Content="Exit"
+                             Style="{StaticResource MenuButtonTheme}"
+                             Click="Exit" />
             </StackPanel>
             <ContentControl
                 Grid.Row="0"
                 Grid.Column="1"
-                Margin="20 20 20 0 "
                 Content="{Binding CurrentView}" />
         </Grid>
     </Border>
