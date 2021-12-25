@@ -42,14 +42,6 @@
                                 <Thumb x:Name="Thumb" Background="{TemplateBinding Foreground}"
                                        Style="{DynamicResource ScrollThumbs}" />
                             </Track.Thumb>
-                            <Track.IncreaseRepeatButton>
-                                <RepeatButton x:Name="PageUp" Command="ScrollBar.PageDownCommand" Opacity="0"
-                                              Focusable="false" />
-                            </Track.IncreaseRepeatButton>
-                            <Track.DecreaseRepeatButton>
-                                <RepeatButton x:Name="PageDown" Command="ScrollBar.PageUpCommand" Opacity="0"
-                                              Focusable="false" />
-                            </Track.DecreaseRepeatButton>
                         </Track>
                     </Grid>
 
@@ -79,8 +71,6 @@
                             <Setter Property="Width" Value="Auto" />
                             <Setter Property="Height" Value="18" />
                             <Setter TargetName="Thumb" Property="Tag" Value="Horizontal" />
-                            <Setter TargetName="PageDown" Property="Command" Value="ScrollBar.PageLeftCommand" />
-                            <Setter TargetName="PageUp" Property="Command" Value="ScrollBar.PageRightCommand" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

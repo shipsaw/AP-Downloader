@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -10,7 +11,7 @@ namespace ApDownloader.DataAccess;
 public class HttpDataAccess
 {
     private readonly string _brandingPatchPrefix = "https://armstrongpowerhouse.com/free_download/Patches/";
-    private readonly HttpClient _client;
+    private readonly HttpClient? _client;
 
     private readonly string _extraStockPrefix = "https://armstrongpowerhouse.com/free_download/";
 
@@ -19,7 +20,7 @@ public class HttpDataAccess
     private readonly string _productPrefix =
         "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=";
 
-    public HttpDataAccess(HttpClient client)
+    public HttpDataAccess(HttpClient? client)
     {
         _client = client;
     }
@@ -44,7 +45,7 @@ public class HttpDataAccess
         return retProducts;
     }
 
-    public async void Download()
+    public async void Download(IList products)
     {
     }
 }
