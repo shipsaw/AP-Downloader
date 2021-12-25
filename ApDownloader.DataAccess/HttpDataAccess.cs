@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading.Tasks;
 using ApDownloader.Model;
 
 namespace ApDownloader.DataAccess;
@@ -21,15 +22,21 @@ public class HttpDataAccess
         _client = client;
     }
 
-    public async void GetDownloadInfo(IEnumerable<Product> products)
+    public async Task<IEnumerable<Product>> GetPurchasedProducts(IEnumerable<Product> products)
     {
+        var retProducts = new List<Product>();
+        var tasks = new List<Task<HttpResponseMessage>>();
         foreach (var product in products)
-        {
-            var response = await _client.SendAsync(new HttpRequestMessage(HttpMethod.Head,
+            tasks.Add(_client.SendAsync(new HttpRequestMessage(HttpMethod.Head,
                 "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=" +
-                product.ProductID + 1));
-            var result = response.Content.Headers.ContentDisposition;
-            if (result == null) break;
-        }
+                product.ProductID)));
+
+        IEnumerable<HttpResponseMessage> result = await Task.WhenAll(tasks);
+        //response.Content.Headers.ContentDisposition;
+        //if (result != null)
+        //   retProducts.Add(product);
+        //}
+
+        return retProducts;
     }
 }

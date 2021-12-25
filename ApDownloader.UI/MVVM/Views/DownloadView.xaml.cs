@@ -52,9 +52,9 @@ public partial class DownloadView : UserControl
         selectedToggle = !selectedToggle;
     }
 
-    private void Download(object sender, RoutedEventArgs e)
+    private async void Download(object sender, RoutedEventArgs e)
     {
         var access = new HttpDataAccess(LoginView.Client);
-        foreach (var product in ProductCells) access.GetDownloadInfo(Products);
+        var products = await access.GetPurchasedProducts(Products);
     }
 }
