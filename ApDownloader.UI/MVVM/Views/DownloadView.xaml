@@ -6,51 +6,61 @@
              mc:Ignorable="d"
              Background="Transparent"
              d:DesignHeight="300" d:DesignWidth="300">
-    <StackPanel>
-        <ListView
-            ItemsSource="{Binding ProductCells }"
-            ItemContainerStyle="{StaticResource ListBoxStyle}"
-            x:Name="AddonsFoundList"
-            Background="#f2f2f2"
-            Foreground="Black"
-            Height="500"
-            FontSize="15"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            SelectionMode="Multiple"
-            HorizontalContentAlignment="Center">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Columns="5" />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="7" />
-                </Style>
-            </ListBox.Resources>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Vertical"
-                                Height="230">
-                        <Image Source="{Binding ImageUrl}" Height="133" Width="109" HorizontalAlignment="Center"
-                               VerticalAlignment="Center" Margin="0 5 0 0 " />
-                        <TextBlock Text="{Binding Name}" Width="99" TextWrapping="Wrap"
-                                   TextTrimming="WordEllipsis"
-                                   HorizontalAlignment="Center" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListView>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Button Content="Select All" Style="{StaticResource LoginButton}"
-                    Margin="0 20" Click="ToggleSelected" />
-            <Button Grid.Column="2" Content="Download" Style="{StaticResource LoginButton}"
-                    Margin="0 20" Click="Download" />
+    <Grid x:Name="LayoutRoot">
+        <Grid x:Name="Overlay" Panel.ZIndex="1000">
+            <Grid.Background>
+                <SolidColorBrush Color="Black" Opacity=".5" />
+            </Grid.Background>
+            <TextBlock FontSize="40" Text="Loading..." HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Grid>
-    </StackPanel>
+        <StackPanel>
+            <ListView
+                ItemsSource="{Binding ProductCells }"
+                ItemContainerStyle="{StaticResource ListBoxStyle}"
+                x:Name="AddonsFoundList"
+                Background="#f2f2f2"
+                Foreground="Black"
+                Height="500"
+                FontSize="15"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                SelectionMode="Multiple"
+                HorizontalContentAlignment="Center">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="5" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="7" />
+                    </Style>
+                </ListBox.Resources>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Vertical"
+                                    Height="230">
+                            <Image Source="{Binding ImageUrl}" Height="133" Width="109"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" Margin="0 5 0 0 " />
+                            <TextBlock Text="{Binding Name}" Width="99" TextWrapping="Wrap"
+                                       TextTrimming="WordEllipsis"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListView>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button Name="SelectAllButton" Content="Select All" Style="{StaticResource LoginButton}"
+                        Margin="0 20" Click="ToggleSelected" />
+                <Button Name="DownloadButton" Grid.Column="2" Content="Download"
+                        Style="{StaticResource LoginButton}"
+                        Margin="0 20" Click="Download" />
+            </Grid>
+        </StackPanel>
+    </Grid>
 </UserControl>
