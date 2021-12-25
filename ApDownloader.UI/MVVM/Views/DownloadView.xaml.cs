@@ -54,7 +54,7 @@ public partial class DownloadView : UserControl
 
     private void Download(object sender, RoutedEventArgs e)
     {
-        var access = new HttpDataAccess(Client);
+        var access = new HttpDataAccess(LoginView.Client);
         foreach (var product in ProductCells) access.GetDownloadInfo(Products);
     }
 }
