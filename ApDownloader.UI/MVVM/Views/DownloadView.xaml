@@ -9,9 +9,12 @@
     <Grid x:Name="LayoutRoot">
         <Border x:Name="Overlay" Panel.ZIndex="1000" CornerRadius="0 7 7 0 ">
             <Border.Background>
-                <SolidColorBrush Color="Black" Opacity=".5" />
+                <SolidColorBrush Color="Black" Opacity=".8" />
             </Border.Background>
-            <TextBlock FontSize="40" Text="Loading..." HorizontalAlignment="Center" Margin="0 200 0 0 " />
+            <TextBlock Foreground="White" FontSize="40" Text=""
+                       HorizontalAlignment="Center"
+                       Name="BusyTextBlock"
+                       Margin="0 200 0 0 " />
         </Border>
         <StackPanel>
             <ListView

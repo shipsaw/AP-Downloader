@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using ApDownloader.Model;
 
@@ -45,7 +47,113 @@ public class HttpDataAccess
         return retProducts;
     }
 
-    public async void Download(IList products)
+    public async Task Download(IList products, bool getStock, bool getPatch, bool getLivery, IProgress<int> progress)
     {
+        var productIds = new List<int>();
+        var allTasks = new List<Task>();
+        var throttler = new SemaphoreSlim(3);
+        var lockTarget = new object();
+        foreach (Cell cell in products)
+            if (cell.ProductID != null)
+                productIds.Add(cell.ProductID.Value);
+
+        var dbAccess = new SQLiteDataAccess();
+        var extraStockUrls = await dbAccess.GetExtras("ExtraStock", productIds);
+        var brandingPatchUrls = await dbAccess.GetExtras("BrandingPatch", productIds);
+        var liveryUrls = await dbAccess.GetExtras("LiveryPack", productIds);
+        // Get Base Products
+        foreach (var id in productIds)
+        {
+            await throttler.WaitAsync();
+            allTasks.Add(
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        progress.Report(1);
+                        var response = await _client.GetAsync(_productPrefix + id);
+                        await using var stream = await response.Content.ReadAsStreamAsync();
+                        var filename = response.Content.Headers.ContentDisposition.FileName.Trim('"');
+                        var fileInfo = new FileInfo("Downloads/Products/" + filename);
+                        await using var fileStream = fileInfo.OpenWrite();
+                        await stream.CopyToAsync(fileStream);
+                    }
+                    finally
+                    {
+                        throttler.Release();
+                    }
+                }));
+        }
+
+        // Get Extra Stock
+        foreach (var filename in extraStockUrls)
+        {
+            await throttler.WaitAsync();
+            allTasks.Add(
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        progress.Report(1);
+                        var response = await _client.GetAsync(_extraStockPrefix + filename);
+                        await using var stream = await response.Content.ReadAsStreamAsync();
+                        var fileInfo = new FileInfo("Downloads/ExtraStock/" + filename);
+                        await using var fileStream = fileInfo.OpenWrite();
+                        await stream.CopyToAsync(fileStream);
+                    }
+                    finally
+                    {
+                        throttler.Release();
+                    }
+                }));
+        }
+
+        // Get Branding Patch
+        foreach (var filename in brandingPatchUrls)
+        {
+            await throttler.WaitAsync();
+            allTasks.Add(
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        progress.Report(1);
+                        var response = await _client.GetAsync(_brandingPatchPrefix + filename);
+                        await using var stream = await response.Content.ReadAsStreamAsync();
+                        var fileInfo = new FileInfo("Downloads/BrandingPatch/" + filename);
+                        await using var fileStream = fileInfo.OpenWrite();
+                        await stream.CopyToAsync(fileStream);
+                    }
+                    finally
+                    {
+                        throttler.Release();
+                    }
+                }));
+        }
+
+        // Get Liveries
+        foreach (var filename in liveryUrls)
+        {
+            await throttler.WaitAsync();
+            allTasks.Add(
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        progress.Report(1);
+                        var response = await _client.GetAsync(_productPrefix + filename);
+                        await using var stream = await response.Content.ReadAsStreamAsync();
+                        var fileInfo = new FileInfo("Downloads/LiveryPack/" + filename);
+                        await using var fileStream = fileInfo.OpenWrite();
+                        await stream.CopyToAsync(fileStream);
+                    }
+                    finally
+                    {
+                        throttler.Release();
+                    }
+                }));
+        }
+
+        await Task.WhenAll(allTasks);
     }
 }

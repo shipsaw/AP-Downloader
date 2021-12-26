@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Windows;
@@ -29,11 +30,12 @@ public partial class DownloadView : UserControl
 
     private async void DownloadWindow_Loaded(object sender, RoutedEventArgs e)
     {
+        BusyTextBlock.Text = "LOADING";
         Overlay.Visibility = Visibility.Visible;
         _access = new HttpDataAccess(LoginView.Client);
         Products = await _dataService.GetProductsOnly();
-        //TODO: var products = await _access.GetPurchasedProducts(Products);
-        foreach (var product in Products)
+        var products = await _access.GetPurchasedProducts(Products);
+        foreach (var product in products)
         {
             var cell = new Cell
             {
@@ -66,6 +68,17 @@ public partial class DownloadView : UserControl
     private async void Download(object sender, RoutedEventArgs e)
     {
         var selected = AddonsFoundList.SelectedItems;
-        _access.Download(selected);
+        var completedFileCount = 0;
+        var totalFileCount =
+            _dataService.GetTotalFileCount(new List<string> {"Product", "ExtraStock", "LiveryPack", "BrandingPatch"},
+                selected);
+        var progress =
+            new Progress<int>(report =>
+            {
+                BusyTextBlock.Text = $"Downloading file {++completedFileCount} of {totalFileCount.Result}";
+            });
+        Overlay.Visibility = Visibility.Visible;
+        await _access.Download(selected, true, true, true, progress);
+        BusyTextBlock.Text = "Download Complete";
     }
 }
