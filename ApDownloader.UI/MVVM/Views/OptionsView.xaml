@@ -52,7 +52,12 @@
                     Click="FolderSelection"
                     Style="{StaticResource LoginButton}" />
         </StackPanel>
-        <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Apply" Width="100"
-                Click="ApplySettings" Style="{StaticResource LoginButton}" />
+        <StackPanel VerticalAlignment="Bottom">
+            <Button HorizontalAlignment="Center" Content="Apply" Width="100"
+                    Click="ApplySettings" Style="{StaticResource LoginButton}" Name="ApplyButton" />
+            <TextBlock Name="ApplyResponse" Visibility="Hidden" HorizontalAlignment="Center"
+                       Text="Options Applied Successfully"
+                       Foreground="White" />
+        </StackPanel>
     </Grid>
 </UserControl>

@@ -26,5 +26,6 @@ public partial class OptionsView : UserControl
         DownloadView.DownloadOption.GetBrandingPatch = BrandingPatchCheckbox.IsChecked.Value;
         DownloadView.DownloadOption.GetLiveryPack = LiveryPackCheckbox.IsChecked.Value;
         DownloadView.DownloadOption.DownloadFilepath = RootFolder.Text;
+        ApplyResponse.Visibility = Visibility.Visible;
     }
 }
