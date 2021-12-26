@@ -14,12 +14,16 @@
                 <ResourceDictionary Source="Themes/ProductListTheme.xaml" />
                 <ResourceDictionary Source="Themes/ProductListItemTheme.xaml" />
                 <ResourceDictionary Source="Themes/ScrollBar.xaml" />
+                <ResourceDictionary Source="Themes/FilepathTextBoxTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <DataTemplate DataType="{x:Type viewModel:LoginViewModel}">
                 <view:LoginView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModel:DownloadViewModel}">
                 <view:DownloadView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:OptionsViewModel}">
+                <view:OptionsView />
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>

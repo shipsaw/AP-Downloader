@@ -42,7 +42,8 @@
                              Style="{StaticResource MenuButtonTheme}"
                              Command="{Binding DownloadViewCommand}" />
                 <RadioButton Content="Options"
-                             Style="{StaticResource MenuButtonTheme}" />
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding OptionsViewCommand}" />
                 <RadioButton Content="Exit"
                              Style="{StaticResource MenuButtonTheme}"
                              Click="Exit" />
