@@ -10,6 +10,7 @@ public partial class OptionsView : UserControl
     {
         InitializeComponent();
         RootFolder.Text = DownloadView.DownloadOption.DownloadFilepath;
+        ApplyButton.IsEnabled = false;
     }
 
     private void FolderSelection(object sender, RoutedEventArgs e)
@@ -27,5 +28,12 @@ public partial class OptionsView : UserControl
         DownloadView.DownloadOption.GetLiveryPack = LiveryPackCheckbox.IsChecked.Value;
         DownloadView.DownloadOption.DownloadFilepath = RootFolder.Text;
         ApplyResponse.Visibility = Visibility.Visible;
+        ApplyButton.IsEnabled = false;
+    }
+
+    private void ResetDirty(object sender, RoutedEventArgs routedEventArgs)
+    {
+        ApplyResponse.Visibility = Visibility.Hidden;
+        ApplyButton.IsEnabled = true;
     }
 }
