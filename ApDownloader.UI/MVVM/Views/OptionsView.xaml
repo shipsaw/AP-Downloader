@@ -34,20 +34,20 @@
                        FontSize="36" />
             <StackPanel Margin="15 0 ">
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox Margin="5" />
+                    <CheckBox Margin="5" Name="ExtraStockCheckbox" />
                     <TextBlock VerticalAlignment="Center" Text="Extra Stock" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox Margin="5" />
+                    <CheckBox Margin="5" Name="BrandingPatchCheckbox" />
                     <TextBlock VerticalAlignment="Center" Text="Branding Patch" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox Margin="5" />
+                    <CheckBox Margin="5" Name="LiveryPackCheckbox" />
                     <TextBlock VerticalAlignment="Center" Text="Livery Pack" />
                 </StackPanel>
             </StackPanel>
             <TextBlock Text="Download Location:" FontSize="36" />
-            <TextBox Name="RootFolder" Text="./" Style="{StaticResource FilepathTextBox}" />
+            <TextBox Name="RootFolder" Style="{StaticResource FilepathTextBox}" />
             <Button HorizontalAlignment="Left" Margin="0 10" Content="Set Folder Location" Width="200"
                     Click="FolderSelection"
                     Style="{StaticResource LoginButton}" />

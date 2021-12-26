@@ -47,7 +47,7 @@ public class HttpDataAccess
         return retProducts;
     }
 
-    public async Task Download(IList products, bool getStock, bool getPatch, bool getLivery, IProgress<int> progress)
+    public async Task Download(IList products, DownloadOption downloadOption, IProgress<int> progress)
     {
         var productIds = new List<int>();
         var allTasks = new List<Task>();
@@ -61,6 +61,12 @@ public class HttpDataAccess
         var extraStockUrls = await dbAccess.GetExtras("ExtraStock", productIds);
         var brandingPatchUrls = await dbAccess.GetExtras("BrandingPatch", productIds);
         var liveryUrls = await dbAccess.GetExtras("LiveryPack", productIds);
+        // Create Download Directories
+        var result = Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\");
+        Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\Products\");
+        Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\ExtraStock\");
+        Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\BrandingPatches\");
+        Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\LiveryPacks\");
         // Get Base Products
         foreach (var id in productIds)
         {
@@ -74,7 +80,8 @@ public class HttpDataAccess
                         var response = await _client.GetAsync(_productPrefix + id);
                         await using var stream = await response.Content.ReadAsStreamAsync();
                         var filename = response.Content.Headers.ContentDisposition.FileName.Trim('"');
-                        var fileInfo = new FileInfo("Downloads/Products/" + filename);
+                        var fileInfo =
+                            new FileInfo(downloadOption.DownloadFilepath + "/ApDownloads/Products/" + filename);
                         await using var fileStream = fileInfo.OpenWrite();
                         await stream.CopyToAsync(fileStream);
                     }
@@ -86,73 +93,79 @@ public class HttpDataAccess
         }
 
         // Get Extra Stock
-        foreach (var filename in extraStockUrls)
-        {
-            await throttler.WaitAsync();
-            allTasks.Add(
-                Task.Run(async () =>
-                {
-                    try
+        if (downloadOption.GetExtraStock)
+            foreach (var filename in extraStockUrls)
+            {
+                await throttler.WaitAsync();
+                allTasks.Add(
+                    Task.Run(async () =>
                     {
-                        progress.Report(1);
-                        var response = await _client.GetAsync(_extraStockPrefix + filename);
-                        await using var stream = await response.Content.ReadAsStreamAsync();
-                        var fileInfo = new FileInfo("Downloads/ExtraStock/" + filename);
-                        await using var fileStream = fileInfo.OpenWrite();
-                        await stream.CopyToAsync(fileStream);
-                    }
-                    finally
-                    {
-                        throttler.Release();
-                    }
-                }));
-        }
+                        try
+                        {
+                            progress.Report(1);
+                            var response = await _client.GetAsync(_extraStockPrefix + filename);
+                            await using var stream = await response.Content.ReadAsStreamAsync();
+                            var fileInfo = new FileInfo(downloadOption.DownloadFilepath + "/ApDownloads/ExtraStock/" +
+                                                        filename);
+                            await using var fileStream = fileInfo.OpenWrite();
+                            await stream.CopyToAsync(fileStream);
+                        }
+                        finally
+                        {
+                            throttler.Release();
+                        }
+                    }));
+            }
 
         // Get Branding Patch
-        foreach (var filename in brandingPatchUrls)
-        {
-            await throttler.WaitAsync();
-            allTasks.Add(
-                Task.Run(async () =>
-                {
-                    try
+        if (downloadOption.GetBrandingPatch)
+            foreach (var filename in brandingPatchUrls)
+            {
+                await throttler.WaitAsync();
+                allTasks.Add(
+                    Task.Run(async () =>
                     {
-                        progress.Report(1);
-                        var response = await _client.GetAsync(_brandingPatchPrefix + filename);
-                        await using var stream = await response.Content.ReadAsStreamAsync();
-                        var fileInfo = new FileInfo("Downloads/BrandingPatch/" + filename);
-                        await using var fileStream = fileInfo.OpenWrite();
-                        await stream.CopyToAsync(fileStream);
-                    }
-                    finally
-                    {
-                        throttler.Release();
-                    }
-                }));
-        }
+                        try
+                        {
+                            progress.Report(1);
+                            var response = await _client.GetAsync(_brandingPatchPrefix + filename);
+                            await using var stream = await response.Content.ReadAsStreamAsync();
+                            var fileInfo = new FileInfo(downloadOption.DownloadFilepath +
+                                                        "/ApDownloads/BrandingPatches/" + filename);
+                            await using var fileStream = fileInfo.OpenWrite();
+                            await stream.CopyToAsync(fileStream);
+                        }
+                        finally
+                        {
+                            throttler.Release();
+                        }
+                    }));
+            }
 
         // Get Liveries
-        foreach (var filename in liveryUrls)
-        {
-            await throttler.WaitAsync();
-            allTasks.Add(
-                Task.Run(async () =>
-                {
-                    try
+        if (downloadOption.GetLiveryPack)
+            foreach (var filename in liveryUrls)
+            {
+                await throttler.WaitAsync();
+                allTasks.Add(
+                    Task.Run(async () =>
                     {
-                        progress.Report(1);
-                        var response = await _client.GetAsync(_productPrefix + filename);
-                        await using var stream = await response.Content.ReadAsStreamAsync();
-                        var fileInfo = new FileInfo("Downloads/LiveryPack/" + filename);
-                        await using var fileStream = fileInfo.OpenWrite();
-                        await stream.CopyToAsync(fileStream);
-                    }
-                    finally
-                    {
-                        throttler.Release();
-                    }
-                }));
-        }
+                        try
+                        {
+                            progress.Report(1);
+                            var response = await _client.GetAsync(_productPrefix + filename);
+                            await using var stream = await response.Content.ReadAsStreamAsync();
+                            var fileInfo = new FileInfo(downloadOption.DownloadFilepath + "/ApDownloads/LiveryPacks/" +
+                                                        filename);
+                            await using var fileStream = fileInfo.OpenWrite();
+                            await stream.CopyToAsync(fileStream);
+                        }
+                        finally
+                        {
+                            throttler.Release();
+                        }
+                    }));
+            }
 
         await Task.WhenAll(allTasks);
     }

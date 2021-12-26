@@ -27,8 +27,12 @@ public class SQLiteDataAccess
         return products;
     }
 
-    public async Task<int> GetTotalFileCount(List<string> dbNames, IList productList)
+    public async Task<int> GetTotalFileCount(DownloadOption downloadOption, IList productList)
     {
+        var dbNames = new List<string>();
+        if (downloadOption.GetExtraStock) dbNames.Add("ExtraStock");
+        if (downloadOption.GetBrandingPatch) dbNames.Add("BrandingPatch");
+        if (downloadOption.GetLiveryPack) dbNames.Add("LiveryPack");
         var productIds = new List<int>();
         foreach (Cell cell in productList)
             if (cell.ProductID != null)

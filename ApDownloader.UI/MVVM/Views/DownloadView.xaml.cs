@@ -11,6 +11,7 @@ namespace ApDownloader.UI.MVVM.Views;
 
 public partial class DownloadView : UserControl
 {
+    public static DownloadOption DownloadOption = new();
     private readonly SQLiteDataAccess _dataService;
     private HttpDataAccess _access;
     private bool _selectedToggle;
@@ -70,15 +71,14 @@ public partial class DownloadView : UserControl
         var selected = AddonsFoundList.SelectedItems;
         var completedFileCount = 0;
         var totalFileCount =
-            _dataService.GetTotalFileCount(new List<string> {"Product", "ExtraStock", "LiveryPack", "BrandingPatch"},
-                selected);
+            _dataService.GetTotalFileCount(DownloadOption, selected);
         var progress =
             new Progress<int>(report =>
             {
                 BusyTextBlock.Text = $"Downloading file {++completedFileCount} of {totalFileCount.Result}";
             });
         Overlay.Visibility = Visibility.Visible;
-        await _access.Download(selected, true, true, true, progress);
+        await _access.Download(selected, DownloadOption, progress);
         BusyTextBlock.Text = "Download Complete";
     }
 }

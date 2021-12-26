@@ -9,6 +9,7 @@ public partial class OptionsView : UserControl
     public OptionsView()
     {
         InitializeComponent();
+        RootFolder.Text = DownloadView.DownloadOption.DownloadFilepath;
     }
 
     private void FolderSelection(object sender, RoutedEventArgs e)
@@ -21,5 +22,9 @@ public partial class OptionsView : UserControl
 
     private void ApplySettings(object sender, RoutedEventArgs e)
     {
+        DownloadView.DownloadOption.GetExtraStock = ExtraStockCheckbox.IsChecked.Value;
+        DownloadView.DownloadOption.GetBrandingPatch = BrandingPatchCheckbox.IsChecked.Value;
+        DownloadView.DownloadOption.GetLiveryPack = LiveryPackCheckbox.IsChecked.Value;
+        DownloadView.DownloadOption.DownloadFilepath = RootFolder.Text;
     }
 }
