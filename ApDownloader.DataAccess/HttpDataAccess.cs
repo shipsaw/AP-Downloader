@@ -33,7 +33,7 @@ public class HttpDataAccess
         var tasks = new List<Task<HttpResponseMessage>>();
         foreach (var product in products)
         {
-            await Task.Delay(15);
+            await Task.Delay(30);
             tasks.Add(_client.SendAsync(new HttpRequestMessage(HttpMethod.Head,
                 "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=" +
                 product.ProductID)));

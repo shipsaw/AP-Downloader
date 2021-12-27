@@ -11,7 +11,7 @@ using ApDownloader.Model;
 
 namespace ApDownloader.UI.MVVM.Views;
 
-public partial class DownloadView : UserControl
+public partial class InstallView : UserControl
 {
     public static DownloadOption DownloadOption = new();
     public static DownloadManifest DownloadManifest;
@@ -19,7 +19,7 @@ public partial class DownloadView : UserControl
     private HttpDataAccess _access;
     private bool _selectedToggle;
 
-    public DownloadView()
+    public InstallView()
     {
         InitializeComponent();
         DataContext = this;
@@ -36,9 +36,7 @@ public partial class DownloadView : UserControl
     {
         BusyTextBlock.Text = "LOADING ADDONS";
         Overlay.Visibility = Visibility.Visible;
-        _access = new HttpDataAccess(LoginView.Client);
-        Products = await _dataService.GetProductsOnly();
-        var products = await _access.GetPurchasedProducts(Products);
+        var products = await _dataService.GetDownloadedProductsOnly(DownloadView.DownloadManifest?.ProductIds);
         foreach (var product in products)
         {
             var cell = new Cell
@@ -69,7 +67,7 @@ public partial class DownloadView : UserControl
         _selectedToggle = !_selectedToggle;
     }
 
-    private async void Download(object sender, RoutedEventArgs e)
+    private async void Install(object sender, RoutedEventArgs e)
     {
         var selected = AddonsFoundList.SelectedItems;
         var productIds = new List<int>();
@@ -80,18 +78,16 @@ public partial class DownloadView : UserControl
 
         var completedFileCount = 0;
         var totalFileCount =
-            _dataService.GetTotalFileCount(DownloadOption, productIds);
+            _dataService.GetTotalFileCount(DownloadView.DownloadOption, productIds);
         var progress =
             new Progress<int>(report =>
             {
-                BusyTextBlock.Text = $"Downloading file {++completedFileCount} of {totalFileCount.Result}";
+                BusyTextBlock.Text = $"Installing file {++completedFileCount} of {totalFileCount.Result}";
             });
         Overlay.Visibility = Visibility.Visible;
         DownloadManifest = await GenerateDownloadManifest(DownloadOption, productIds);
-        await _access.Download(DownloadManifest, DownloadOption, progress);
         BusyTextBlock.Text = "Download Complete";
         // UGLY TEST CODE
-        /*
         Task.Delay(1000);
         BusyTextBlock.Text = "Installing Addons";
         if (DownloadManifest.ProductIds.Count() > 0)
@@ -123,7 +119,6 @@ public partial class DownloadView : UserControl
                 "LiveryPacks/");
             AddonInstaller.AddonInstaller.InstallAddons(DownloadOption, extractPath);
         }
-        */
     }
 
     public async Task<DownloadManifest> GenerateDownloadManifest(DownloadOption downloadOption,

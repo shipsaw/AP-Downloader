@@ -10,20 +10,24 @@ public class MainViewModel : ObservableObject
     {
         LoginVm = new LoginViewModel();
         DownloadVM = new DownloadViewModel();
+        InstallVM = new InstallViewModel();
         OptionsVM = new OptionsViewModel();
 
         LoginViewCommand = new RelayCommand(clickEvent => CurrentView = LoginVm);
         DownloadViewCommand = new RelayCommand(clickEvent => CurrentView = DownloadVM);
+        InstallViewCommand = new RelayCommand(clickEvent => CurrentView = InstallVM);
         OptionsViewCommand = new RelayCommand(clickEvent => CurrentView = OptionsVM);
         CurrentView = LoginVm;
     }
 
     public RelayCommand LoginViewCommand { get; set; }
     public RelayCommand DownloadViewCommand { get; set; }
+    public RelayCommand InstallViewCommand { get; set; }
     public RelayCommand OptionsViewCommand { get; set; }
 
     public LoginViewModel LoginVm { get; set; }
     public DownloadViewModel DownloadVM { get; set; }
+    public InstallViewModel InstallVM { get; set; }
     public OptionsViewModel OptionsVM { get; set; }
 
     public object CurrentView

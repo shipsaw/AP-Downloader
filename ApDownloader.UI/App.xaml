@@ -22,6 +22,9 @@
             <DataTemplate DataType="{x:Type viewModel:DownloadViewModel}">
                 <view:DownloadView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:InstallViewModel}">
+                <view:InstallView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type viewModel:OptionsViewModel}">
                 <view:OptionsView />
             </DataTemplate>

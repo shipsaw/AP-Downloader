@@ -17,6 +17,15 @@ public class SQLiteDataAccess
         return products;
     }
 
+    public async Task<IEnumerable<Product>> GetDownloadedProductsOnly(IEnumerable<string>? productIds)
+    {
+        if (productIds == null) return new List<Product>();
+        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
+        var products = await conn.QueryAsync<Product>("SELECT * FROM Product WHERE ProductID IN @productIds",
+            new {productIds});
+        return products;
+    }
+
     public async Task<IEnumerable<string>> GetExtras(string dbName, IEnumerable<int> productList)
     {
         using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");

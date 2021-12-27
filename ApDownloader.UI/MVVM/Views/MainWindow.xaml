@@ -41,6 +41,9 @@
                 <RadioButton Content="Download"
                              Style="{StaticResource MenuButtonTheme}"
                              Command="{Binding DownloadViewCommand}" />
+                <RadioButton Content="Install"
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding InstallViewCommand}" />
                 <RadioButton Content="Options"
                              Style="{StaticResource MenuButtonTheme}"
                              Command="{Binding OptionsViewCommand}" />
