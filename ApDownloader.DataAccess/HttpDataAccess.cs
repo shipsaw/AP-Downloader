@@ -33,16 +33,21 @@ public class HttpDataAccess
         var retProducts = new List<Product>();
         var tasks = new List<Task<HttpResponseMessage>>();
         foreach (var product in products)
+        {
+            await Task.Delay(15);
             tasks.Add(_client.SendAsync(new HttpRequestMessage(HttpMethod.Head,
                 "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=" +
                 product.ProductID)));
+        }
 
-        var result = (await Task.WhenAll(tasks)).ToList();
+        var result = await Task.WhenAll(tasks.ToList());
         if (result.Count() != products.Count()) throw new Exception("Error Checking purchases");
 
         for (var i = 0; i < products.Count(); i++)
             if (result[i].Content.Headers.ContentDisposition != null)
                 retProducts.Add(productsList[i]);
+            else
+                Console.WriteLine("OOPS");
 
         return retProducts;
     }
@@ -52,7 +57,6 @@ public class HttpDataAccess
         var productIds = new List<int>();
         var allTasks = new List<Task>();
         var throttler = new SemaphoreSlim(3);
-        var lockTarget = new object();
         foreach (Cell cell in products)
             if (cell.ProductID != null)
                 productIds.Add(cell.ProductID.Value);
@@ -71,6 +75,7 @@ public class HttpDataAccess
         foreach (var id in productIds)
         {
             await throttler.WaitAsync();
+            await Task.Delay(100);
             allTasks.Add(
                 Task.Run(async () =>
                 {
@@ -97,6 +102,7 @@ public class HttpDataAccess
             foreach (var filename in extraStockUrls)
             {
                 await throttler.WaitAsync();
+                await Task.Delay(100);
                 allTasks.Add(
                     Task.Run(async () =>
                     {
@@ -122,6 +128,7 @@ public class HttpDataAccess
             foreach (var filename in brandingPatchUrls)
             {
                 await throttler.WaitAsync();
+                await Task.Delay(100);
                 allTasks.Add(
                     Task.Run(async () =>
                     {
@@ -147,6 +154,7 @@ public class HttpDataAccess
             foreach (var filename in liveryUrls)
             {
                 await throttler.WaitAsync();
+                await Task.Delay(100);
                 allTasks.Add(
                     Task.Run(async () =>
                     {

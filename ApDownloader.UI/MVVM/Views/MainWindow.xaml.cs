@@ -36,7 +36,7 @@ public partial class MainWindow : Window
     {
         var identity = WindowsIdentity.GetCurrent();
         var principal = new WindowsPrincipal(identity);
-        if (principal.IsInRole(WindowsBuiltInRole.Administrator))
+        if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
         {
             AdminWarning.Visibility = Visibility.Visible;
             Application.Current.MainWindow.Height += 30;

@@ -31,7 +31,7 @@ public partial class DownloadView : UserControl
 
     private async void DownloadWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        BusyTextBlock.Text = "LOADING";
+        BusyTextBlock.Text = "LOADING ADDONS";
         Overlay.Visibility = Visibility.Visible;
         _access = new HttpDataAccess(LoginView.Client);
         Products = await _dataService.GetProductsOnly();

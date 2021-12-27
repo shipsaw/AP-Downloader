@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,11 +15,13 @@ public partial class LoginView : UserControl
     public LoginView()
     {
         InitializeComponent();
+        Client = new HttpClient(_handler);
+        Client.Timeout = TimeSpan.FromMinutes(5);
     }
 
     public static bool IsLoggedIn { get; private set; }
 
-    public static HttpClient? Client { get; } = new(_handler);
+    public static HttpClient? Client { get; private set; } = new(_handler);
 
     private async void Login(object sender, RoutedEventArgs e)
     {

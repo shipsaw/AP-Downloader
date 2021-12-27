@@ -51,7 +51,6 @@
             <Button HorizontalAlignment="Left" Margin="0 10" Content="Set Folder Location" Width="200"
                     Click="FolderSelection"
                     Style="{StaticResource LoginButton}" />
-            <Button Content="Check Admin" />
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom">
             <TextBlock Name="ApplyResponse" Visibility="Hidden" HorizontalAlignment="Center"

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ApDownloader.DataAccess\ApDownloader.DataAccess.csproj" />
+      <ProjectReference Include="..\ApDownloader.Model\ApDownloader.Model.csproj" />
+    </ItemGroup>
+
+</Project>
