@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using ApDownloader.DataAccess;
@@ -69,16 +70,29 @@ public partial class DownloadView : UserControl
     private async void Download(object sender, RoutedEventArgs e)
     {
         var selected = AddonsFoundList.SelectedItems;
+        var productIds = new List<int>();
+        foreach (Cell cell in selected)
+            if (cell.ProductID != null)
+                productIds.Add(cell.ProductID.Value);
+
+
         var completedFileCount = 0;
         var totalFileCount =
-            _dataService.GetTotalFileCount(DownloadOption, selected);
+            _dataService.GetTotalFileCount(DownloadOption, productIds);
         var progress =
             new Progress<int>(report =>
             {
                 BusyTextBlock.Text = $"Downloading file {++completedFileCount} of {totalFileCount.Result}";
             });
         Overlay.Visibility = Visibility.Visible;
-        await _access.Download(selected, DownloadOption, progress);
+        await _access.Download(productIds, DownloadOption, progress);
         BusyTextBlock.Text = "Download Complete";
+        // UGLY TEST CODE
+        var dbAccess = new SQLiteDataAccess();
+        var productFileNames = await dbAccess.GetExtras("Product", productIds);
+        Task.Delay(1000);
+        BusyTextBlock.Text = "Download Complete";
+        var extractPath = AddonInstaller.AddonInstaller.UnzipAddons(DownloadOption, productFileNames, "ExtraStock");
+        AddonInstaller.AddonInstaller.InstallAddons(DownloadOption, extractPath);
     }
 }

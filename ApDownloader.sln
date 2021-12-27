@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApDownloader.DataAccess", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApDownloader.Model", "ApDownloader.Model\ApDownloader.Model.csproj", "{38C04257-81E5-4DDE-8701-48B930E16F01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddonInstaller", "AddonInstaller\AddonInstaller.csproj", "{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApDownloader.AddonInstaller", "ApDownloader.AddonInstaller\ApDownloader.AddonInstaller.csproj", "{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

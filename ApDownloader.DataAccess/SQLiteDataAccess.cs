@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,16 +26,12 @@ public class SQLiteDataAccess
         return products;
     }
 
-    public async Task<int> GetTotalFileCount(DownloadOption downloadOption, IList productList)
+    public async Task<int> GetTotalFileCount(DownloadOption downloadOption, List<int> productIds)
     {
         var dbNames = new List<string>();
         if (downloadOption.GetExtraStock) dbNames.Add("ExtraStock");
         if (downloadOption.GetBrandingPatch) dbNames.Add("BrandingPatch");
         if (downloadOption.GetLiveryPack) dbNames.Add("LiveryPack");
-        var productIds = new List<int>();
-        foreach (Cell cell in productList)
-            if (cell.ProductID != null)
-                productIds.Add(cell.ProductID.Value);
         var total = productIds.Count();
         var tasks = new List<Task<IEnumerable<string>>>();
         foreach (var dbName in dbNames) tasks.Add(GetExtras(dbName, productIds));

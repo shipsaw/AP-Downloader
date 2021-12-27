@@ -18,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ApDownloader.AddonInstaller\ApDownloader.AddonInstaller.csproj" />
       <ProjectReference Include="..\ApDownloader.DataAccess\ApDownloader.DataAccess.csproj" />
       <ProjectReference Include="..\ApDownloader.Model\ApDownloader.Model.csproj" />
     </ItemGroup>

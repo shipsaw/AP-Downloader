@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -52,14 +51,10 @@ public class HttpDataAccess
         return retProducts;
     }
 
-    public async Task Download(IList products, DownloadOption downloadOption, IProgress<int> progress)
+    public async Task Download(List<int> productIds, DownloadOption downloadOption, IProgress<int> progress)
     {
-        var productIds = new List<int>();
         var allTasks = new List<Task>();
         var throttler = new SemaphoreSlim(3);
-        foreach (Cell cell in products)
-            if (cell.ProductID != null)
-                productIds.Add(cell.ProductID.Value);
 
         var dbAccess = new SQLiteDataAccess();
         var extraStockUrls = await dbAccess.GetExtras("ExtraStock", productIds);
