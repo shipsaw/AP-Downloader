@@ -10,9 +10,11 @@ public static class AddonInstaller
 {
     public static string UnzipAddons(DownloadOption downloadOption, IEnumerable<string> filePaths, string folder)
     {
-        var extractPath = Path.Combine(downloadOption.TempFilePath, folder);
+        var extractPath = Path.Combine(downloadOption.TempFilePath, "ApExtract", folder);
         foreach (var filepath in filePaths)
-            ZipFile.ExtractToDirectory(Path.Combine("Apdownloads/Products", filepath), extractPath, true);
+            ZipFile.ExtractToDirectory(Path.Combine(downloadOption.DownloadFilepath, "ApDownloads", folder, filepath),
+                extractPath,
+                true);
         return extractPath;
     }
 
