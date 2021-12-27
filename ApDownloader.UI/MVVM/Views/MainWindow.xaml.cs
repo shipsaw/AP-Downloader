@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Security.Principal;
 using System.Windows;
 using System.Windows.Input;
 
@@ -16,6 +17,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        CheckAdmin();
     }
 
 
@@ -29,16 +31,22 @@ public partial class MainWindow : Window
     {
         Application.Current.Shutdown();
     }
-}
 
-public class LoginInfo
-{
-    public LoginInfo(string username, string password)
+    private void CheckAdmin()
     {
-        Username = username;
-        Password = password;
+        var identity = WindowsIdentity.GetCurrent();
+        var principal = new WindowsPrincipal(identity);
+        if (principal.IsInRole(WindowsBuiltInRole.Administrator))
+        {
+            AdminWarning.Visibility = Visibility.Visible;
+            Application.Current.MainWindow.Height += 30;
+            var margin = Control.Margin;
+            margin.Bottom = 30;
+            Control.Margin = margin;
+        }
+        else
+        {
+            AdminWarning.Visibility = Visibility.Collapsed;
+        }
     }
-
-    public string Username { get; set; }
-    public string Password { get; set; }
 }

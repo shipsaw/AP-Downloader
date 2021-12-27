@@ -301,6 +301,10 @@
       <Resource Include="Images\APWL_Cover-238x294.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
+      <None Remove="Images\warning-sign.png" />
+      <Resource Include="Images\warning-sign.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
     </ItemGroup>
 
     <ItemGroup>

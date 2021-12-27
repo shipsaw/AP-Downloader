@@ -50,8 +50,19 @@
             </StackPanel>
             <ContentControl
                 Grid.Row="0"
+                Name="Control"
                 Grid.Column="1"
                 Content="{Binding CurrentView}" />
+            <StackPanel Grid.Column="1" Orientation="Horizontal"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Center">
+                <Image Source="../../Images/warning-sign.png" Height="22" Width="22" />
+                <TextBlock Foreground="Gold"
+                           Name="AdminWarning"
+                           FontSize="18"
+                           Padding="2"
+                           Text="Warning: Program is not being run as administrator" />
+            </StackPanel>
         </Grid>
     </Border>
 </Window>
