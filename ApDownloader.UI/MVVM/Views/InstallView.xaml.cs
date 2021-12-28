@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ public partial class InstallView : UserControl
     public static DownloadManifest DownloadManifest;
     private readonly SQLiteDataAccess _dataService;
     private HttpDataAccess _access;
-    private bool _selectedToggle;
+    private bool _selectedToggle = true;
 
     public InstallView()
     {
@@ -34,8 +35,6 @@ public partial class InstallView : UserControl
 
     private async void DownloadWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        BusyTextBlock.Text = "LOADING ADDONS";
-        Overlay.Visibility = Visibility.Visible;
         var products = await _dataService.GetDownloadedProductsOnly(DownloadView.DownloadManifest?.ProductIds);
         foreach (var product in products)
         {
@@ -48,7 +47,9 @@ public partial class InstallView : UserControl
             ProductCells.Add(cell);
         }
 
-        Overlay.Visibility = Visibility.Collapsed;
+        AddonsFoundList.SelectAll();
+        BusyTextBlock.Text = "Installing Addons";
+        InstallOverlay.Visibility = Visibility.Collapsed;
     }
 
     public void ToggleSelected(object sender, RoutedEventArgs e)
@@ -84,44 +85,38 @@ public partial class InstallView : UserControl
             {
                 BusyTextBlock.Text = $"Installing file {++completedFileCount} of {totalFileCount.Result}";
             });
-        Overlay.Visibility = Visibility.Visible;
+        InstallOverlay.Visibility = Visibility.Visible;
         DownloadManifest = await GenerateDownloadManifest(DownloadOption, productIds);
-        BusyTextBlock.Text = "Download Complete";
-        // UGLY TEST CODE
-        Task.Delay(1000);
-        BusyTextBlock.Text = "Installing Addons";
-        if (DownloadManifest.ProductIds.Count() > 0)
+        await Task.Run(() =>
         {
-            var extractPath =
-                AddonInstaller.AddonInstaller.UnzipAddons(DownloadOption, DownloadManifest.PrFilenames,
-                    "Products/");
-            AddonInstaller.AddonInstaller.InstallAddons(DownloadOption, extractPath);
-        }
+            var dir = new DirectoryInfo(Path.Combine(DownloadOption.TempFilePath + "ApDownloads"));
+            if (dir.Exists)
+                dir.Delete(true);
 
-        if (DownloadOption.GetExtraStock && DownloadManifest.EsFilenames.Count() > 0)
-        {
-            var extractPath =
-                AddonInstaller.AddonInstaller.UnzipAddons(DownloadOption, DownloadManifest.EsFilenames,
-                    "ExtraStock/");
-            AddonInstaller.AddonInstaller.InstallAddons(DownloadOption, extractPath);
-        }
+            if (DownloadManifest.ProductIds != null && DownloadManifest.ProductIds.Any())
+                InstallAddons(DownloadOption, DownloadManifest.PrFilenames, "Products/", progress);
 
-        if (DownloadOption.GetBrandingPatch && DownloadManifest.BpFilenames.Count() > 0)
-        {
-            var extractPath = AddonInstaller.AddonInstaller.UnzipAddons(DownloadOption, DownloadManifest.BpFilenames,
-                "BrandingPacks/");
-            AddonInstaller.AddonInstaller.InstallAddons(DownloadOption, extractPath);
-        }
+            if (DownloadOption.GetExtraStock && DownloadManifest.EsFilenames.Any())
+                InstallAddons(DownloadOption, DownloadManifest.EsFilenames, "ExtraStock/", progress);
+            if (DownloadOption.GetBrandingPatch && DownloadManifest.BpFilenames.Any())
+                InstallAddons(DownloadOption, DownloadManifest.BpFilenames, "BrandingPatches/", progress);
 
-        if (DownloadOption.GetLiveryPack && DownloadManifest.LpFilenames.Count() > 0)
-        {
-            var extractPath = AddonInstaller.AddonInstaller.UnzipAddons(DownloadOption, DownloadManifest.LpFilenames,
-                "LiveryPacks/");
-            AddonInstaller.AddonInstaller.InstallAddons(DownloadOption, extractPath);
-        }
+            if (DownloadOption.GetLiveryPack && DownloadManifest.LpFilenames.Any())
+                InstallAddons(DownloadOption, DownloadManifest.LpFilenames, "LiveryPacks/", progress);
+
+            dir.Delete(true);
+        });
+        BusyTextBlock.Text = "Installation Complete";
     }
 
-    public async Task<DownloadManifest> GenerateDownloadManifest(DownloadOption downloadOption,
+    private static void InstallAddons(DownloadOption downloadOption, IEnumerable<string> filenames, string folder,
+        IProgress<int> progress)
+    {
+        var extractPath = AddonInstaller.AddonInstaller.UnzipAddons(downloadOption, filenames, folder);
+        AddonInstaller.AddonInstaller.InstallAddons(downloadOption, extractPath, progress);
+    }
+
+    private async Task<DownloadManifest> GenerateDownloadManifest(DownloadOption downloadOption,
         IEnumerable<int> productIds)
     {
         var dbAccess = new SQLiteDataAccess();

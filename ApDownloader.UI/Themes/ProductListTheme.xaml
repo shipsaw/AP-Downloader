@@ -11,7 +11,8 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="5"
                             Padding="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="true">
+                            SnapsToDevicePixels="true"
+                            Height="230">
                         <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                           SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />

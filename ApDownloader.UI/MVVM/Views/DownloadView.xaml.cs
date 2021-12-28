@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,7 +27,6 @@ public partial class DownloadView : UserControl
         Loaded += DownloadWindow_Loaded;
     }
 
-    public HttpClient? Client { get; set; }
     public ObservableCollection<Cell> ProductCells { get; set; }
     public IEnumerable<Product> Products { get; set; }
 
@@ -90,40 +88,6 @@ public partial class DownloadView : UserControl
         DownloadManifest = await GenerateDownloadManifest(DownloadOption, productIds);
         await _access.Download(DownloadManifest, DownloadOption, progress);
         BusyTextBlock.Text = "Download Complete";
-        // UGLY TEST CODE
-        /*
-        Task.Delay(1000);
-        BusyTextBlock.Text = "Installing Addons";
-        if (DownloadManifest.ProductIds.Count() > 0)
-        {
-            var extractPath =
-                AddonInstaller.AddonInstaller.UnzipAddons(DownloadOption, DownloadManifest.PrFilenames,
-                    "Products/");
-            AddonInstaller.AddonInstaller.InstallAddons(DownloadOption, extractPath);
-        }
-
-        if (DownloadOption.GetExtraStock && DownloadManifest.EsFilenames.Count() > 0)
-        {
-            var extractPath =
-                AddonInstaller.AddonInstaller.UnzipAddons(DownloadOption, DownloadManifest.EsFilenames,
-                    "ExtraStock/");
-            AddonInstaller.AddonInstaller.InstallAddons(DownloadOption, extractPath);
-        }
-
-        if (DownloadOption.GetBrandingPatch && DownloadManifest.BpFilenames.Count() > 0)
-        {
-            var extractPath = AddonInstaller.AddonInstaller.UnzipAddons(DownloadOption, DownloadManifest.BpFilenames,
-                "BrandingPacks/");
-            AddonInstaller.AddonInstaller.InstallAddons(DownloadOption, extractPath);
-        }
-
-        if (DownloadOption.GetLiveryPack && DownloadManifest.LpFilenames.Count() > 0)
-        {
-            var extractPath = AddonInstaller.AddonInstaller.UnzipAddons(DownloadOption, DownloadManifest.LpFilenames,
-                "LiveryPacks/");
-            AddonInstaller.AddonInstaller.InstallAddons(DownloadOption, extractPath);
-        }
-        */
     }
 
     public async Task<DownloadManifest> GenerateDownloadManifest(DownloadOption downloadOption,

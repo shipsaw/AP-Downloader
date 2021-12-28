@@ -12,12 +12,12 @@ namespace ApDownloader.DataAccess;
 public class HttpDataAccess
 {
     private readonly List<Task> _allTasks;
-    private readonly string _brandingPatchPrefix = "https://armstrongpowerhouse.com/free_download/Patches/";
+    private readonly string _brandingPatchPrefix = "https://www.armstrongpowerhouse.com/free_download/Patches/";
     private readonly HttpClient? _client;
 
     private readonly string _extraStockPrefix = "https://www.armstrongpowerhouse.com/free_download/";
 
-    private readonly string _liveryPrefix = "https://armstrongpowerhouse.com/free_download/";
+    private readonly string _liveryPrefix = "https://www.armstrongpowerhouse.com/free_download/";
 
     private readonly string _productPrefix =
         "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=";

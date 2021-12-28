@@ -6,8 +6,8 @@
              mc:Ignorable="d"
              Background="Transparent"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid x:Name="LayoutRoot">
-        <Border x:Name="Overlay" Panel.ZIndex="1000" CornerRadius="0 7 7 0 ">
+    <Grid x:Name="InstallRoot">
+        <Border x:Name="InstallOverlay" Panel.ZIndex="1000" CornerRadius="0 7 7 0 ">
             <Border.Background>
                 <SolidColorBrush Color="Black" Opacity=".8" />
             </Border.Background>
@@ -31,7 +31,8 @@
                 HorizontalContentAlignment="Center">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Columns="5" />
+                        <UniformGrid Columns="5"
+                                     VerticalAlignment="Top" />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
                 <ListBox.Resources>
@@ -45,7 +46,7 @@
                                     Height="230">
                             <Image Source="{Binding ImageUrl}" Height="133" Width="109"
                                    HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" Margin="0 5 0 0 " />
+                                   Margin="0 5 0 0 " />
                             <TextBlock Text="{Binding Name}" Width="99" TextWrapping="Wrap"
                                        TextTrimming="WordEllipsis"
                                        HorizontalAlignment="Center" />
@@ -59,9 +60,9 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Button Name="SelectAllButton" Content="Select All" Style="{StaticResource LoginButton}"
+                <Button Name="SelectAllButton" Content="Deselect All" Style="{StaticResource LoginButton}"
                         Margin="20" Click="ToggleSelected" />
-                <Button Name="DownloadButton" Grid.Column="2" Content="Install"
+                <Button Name="InstallButton" Grid.Column="2" Content="Install"
                         Style="{StaticResource LoginButton}"
                         Margin="20" Click="Install" />
             </Grid>

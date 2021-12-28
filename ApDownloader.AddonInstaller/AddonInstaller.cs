@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -10,20 +11,22 @@ public static class AddonInstaller
 {
     public static string UnzipAddons(DownloadOption downloadOption, IEnumerable<string> filePaths, string folder)
     {
-        var extractPath = Path.Combine(downloadOption.TempFilePath, "ApExtract", folder);
+        var extractPath = Path.Combine(downloadOption.TempFilePath, "ApDownloads", folder);
         foreach (var filepath in filePaths)
             ZipFile.ExtractToDirectory(Path.Combine(downloadOption.DownloadFilepath, "ApDownloads", folder, filepath),
                 extractPath,
                 true);
+
         return extractPath;
     }
 
-    public static void InstallAddons(DownloadOption downloadOption, string folder)
+    public static void InstallAddons(DownloadOption downloadOption, string folder, IProgress<int> progress)
     {
         var files = Directory.GetFiles(folder);
         foreach (var filepath in files)
             if (filepath.Trim('"').EndsWith(".exe"))
             {
+                progress.Report(1);
                 var process = new Process
                 {
                     StartInfo = new ProcessStartInfo

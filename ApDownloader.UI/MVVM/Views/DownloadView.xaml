@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              Background="Transparent"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid x:Name="LayoutRoot">
+    <Grid x:Name="DownloadRoot">
         <Border x:Name="Overlay" Panel.ZIndex="1000" CornerRadius="0 7 7 0 ">
             <Border.Background>
                 <SolidColorBrush Color="Black" Opacity=".8" />
@@ -31,7 +31,8 @@
                 HorizontalContentAlignment="Center">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Columns="5" />
+                        <UniformGrid Columns="5"
+                                     VerticalAlignment="Top" />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
                 <ListBox.Resources>
