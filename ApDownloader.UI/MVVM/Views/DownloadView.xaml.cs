@@ -17,6 +17,8 @@ public partial class DownloadView : UserControl
     public static DownloadManifest DownloadManifest;
     private readonly SQLiteDataAccess _dataService;
     private HttpDataAccess _access;
+    private int _canUpdateCount;
+    private int _isNotOnDiskCount;
     private bool _selectedToggle;
     private bool _toggleItemsNotDownloaded;
     private bool _toggleItemsToUpdate;
@@ -58,9 +60,13 @@ public partial class DownloadView : UserControl
                     ? Visibility.Visible
                     : Visibility.Hidden
             };
+            if (cell.IsNotOnDisk == Visibility.Visible) _isNotOnDiskCount++;
+            if (cell.CanUpdate == Visibility.Visible) _canUpdateCount++;
             ProductCells.Add(cell);
         }
 
+        OutOfDateTextBlock.Text = $"Select out-of-date packs ({_canUpdateCount})";
+        MissingPackTextBlock.Text = $"Select missing packs ({_isNotOnDiskCount})";
         Overlay.Visibility = Visibility.Collapsed;
     }
 

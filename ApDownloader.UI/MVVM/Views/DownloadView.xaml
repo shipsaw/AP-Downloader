@@ -86,6 +86,7 @@
                                   VerticalAlignment="Center"
                                   Click="SelectUpdateCheckbox_OnClick" />
                         <TextBlock VerticalAlignment="Center" Text="Select out-of-date packs"
+                                   Name="OutOfDateTextBlock"
                                    Foreground="White" FontSize="20" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
@@ -96,6 +97,7 @@
                                   VerticalAlignment="Center"
                                   Click="SelectUnDownloadedCheckbox" />
                         <TextBlock VerticalAlignment="Center" Text="Select missing packs"
+                                   Name="MissingPackTextBlock"
                                    Foreground="White" FontSize="20" />
                     </StackPanel>
                 </StackPanel>
