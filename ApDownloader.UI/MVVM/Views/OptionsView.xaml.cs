@@ -13,12 +13,18 @@ public partial class OptionsView : UserControl
         ApplyButton.IsEnabled = false;
     }
 
-    private void FolderSelection(object sender, RoutedEventArgs e)
+    private void DownloadFolderSelection(object sender, RoutedEventArgs e)
     {
         var openFileDlg = new FolderBrowserDialog();
         var result = openFileDlg.ShowDialog();
         if (result.ToString() != string.Empty) RootFolder.Text = openFileDlg.SelectedPath;
-        //root = txtPath.Text;
+    }
+
+    private void RailwordsFolderSelection(object sender, RoutedEventArgs e)
+    {
+        var openFileDlg = new FolderBrowserDialog();
+        var result = openFileDlg.ShowDialog();
+        if (result.ToString() != string.Empty) RailworksFolder.Text = openFileDlg.SelectedPath;
     }
 
     private void ApplySettings(object sender, RoutedEventArgs e)
@@ -27,6 +33,7 @@ public partial class OptionsView : UserControl
         DownloadView.DownloadOption.GetBrandingPatch = BrandingPatchCheckbox.IsChecked.Value;
         DownloadView.DownloadOption.GetLiveryPack = LiveryPackCheckbox.IsChecked.Value;
         DownloadView.DownloadOption.DownloadFilepath = RootFolder.Text;
+        DownloadView.DownloadOption.InstallFilePath = RailworksFolder.Text;
         ApplyResponse.Visibility = Visibility.Visible;
         ApplyButton.IsEnabled = false;
     }

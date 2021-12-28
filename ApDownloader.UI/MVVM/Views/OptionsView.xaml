@@ -49,7 +49,12 @@
             <TextBlock Text="Download Location:" FontSize="36" />
             <TextBox TextChanged="ResetDirty" Name="RootFolder" Style="{StaticResource FilepathTextBox}" />
             <Button HorizontalAlignment="Left" Margin="0 10" Content="Set Folder Location" Width="200"
-                    Click="FolderSelection"
+                    Click="DownloadFolderSelection"
+                    Style="{StaticResource LoginButton}" />
+            <TextBlock Text="Railworks Location:" FontSize="36" />
+            <TextBox TextChanged="ResetDirty" Name="RailworksFolder" Style="{StaticResource FilepathTextBox}" />
+            <Button HorizontalAlignment="Left" Margin="0 10" Content="Set Folder Location" Width="200"
+                    Click="RailwordsFolderSelection"
                     Style="{StaticResource LoginButton}" />
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom">

@@ -49,9 +49,10 @@ public class HttpDataAccess
 
         for (var i = 0; i < products.Count(); i++)
             if (result[i].Content.Headers.ContentDisposition != null)
+            {
+                productsList[i].ContentLength = result[i].Content.Headers.ContentLength ?? 0;
                 retProducts.Add(productsList[i]);
-            else
-                Console.WriteLine("OOPS");
+            }
 
         return retProducts;
     }

@@ -14,11 +14,11 @@ namespace ApDownloader.UI.MVVM.Views;
 
 public partial class InstallView : UserControl
 {
-    public static DownloadOption DownloadOption = new();
-    public static DownloadManifest DownloadManifest;
+    public static DownloadOption DownloadOption;
     private readonly SQLiteDataAccess _dataService;
     private HttpDataAccess _access;
     private bool _selectedToggle = true;
+    private DownloadManifest DownloadManifest;
 
     public InstallView()
     {
@@ -26,6 +26,7 @@ public partial class InstallView : UserControl
         DataContext = this;
         _dataService = new SQLiteDataAccess();
         ProductCells = new ObservableCollection<Cell>();
+        DownloadOption = DownloadView.DownloadOption;
         Loaded += DownloadWindow_Loaded;
     }
 

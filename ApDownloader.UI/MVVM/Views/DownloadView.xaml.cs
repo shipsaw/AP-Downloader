@@ -37,6 +37,7 @@ public partial class DownloadView : UserControl
         _access = new HttpDataAccess(LoginView.Client);
         Products = await _dataService.GetProductsOnly();
         var products = await _access.GetPurchasedProducts(Products);
+        await _dataService.UpdateContentLength(products);
         foreach (var product in products)
         {
             var cell = new Cell
