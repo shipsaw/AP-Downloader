@@ -11,6 +11,7 @@ namespace ApDownloader.DataAccess;
 
 public class HttpDataAccess
 {
+    private readonly List<Task> _allTasks;
     private readonly string _brandingPatchPrefix = "https://armstrongpowerhouse.com/free_download/Patches/";
     private readonly HttpClient? _client;
 
@@ -21,9 +22,13 @@ public class HttpDataAccess
     private readonly string _productPrefix =
         "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=";
 
+    private readonly SemaphoreSlim _throttler;
+
     public HttpDataAccess(HttpClient? client)
     {
         _client = client;
+        _allTasks = new List<Task>();
+        _throttler = new SemaphoreSlim(3);
     }
 
     public async Task<IEnumerable<Product>> GetPurchasedProducts(IEnumerable<Product> products)
@@ -54,9 +59,6 @@ public class HttpDataAccess
     public async Task Download(DownloadManifest downloadManifest, DownloadOption downloadOption,
         IProgress<int> progress)
     {
-        var allTasks = new List<Task>();
-        var throttler = new SemaphoreSlim(3);
-
         // Create Download Directories
         var result = Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\");
         Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\Products\");
@@ -66,103 +68,58 @@ public class HttpDataAccess
         // Get Base Products
         foreach (var id in downloadManifest.ProductIds)
         {
-            await throttler.WaitAsync();
-            await Task.Delay(100);
-            allTasks.Add(
-                Task.Run(async () =>
-                {
-                    try
-                    {
-                        progress.Report(1);
-                        var uri = new Uri(_productPrefix + id);
-                        await SaveFile(downloadOption, uri, "ApDownloads/Products");
-                    }
-                    finally
-                    {
-                        throttler.Release();
-                    }
-                }));
+            var uri = new Uri(_productPrefix + id);
+            await DownloadFile(progress, downloadOption, uri, "Products");
         }
 
         // Get Extra Stock
         if (downloadOption.GetExtraStock)
             foreach (var filename in downloadManifest.EsFilenames)
             {
-                await throttler.WaitAsync();
-                await Task.Delay(100);
-                allTasks.Add(
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            progress.Report(1);
-                            var uri = new Uri(_extraStockPrefix + filename);
-                            await SaveFile(downloadOption, uri, "ApDownloads/ExtraStock/", filename);
-                        }
-                        finally
-                        {
-                            throttler.Release();
-                        }
-                    }));
+                var uri = new Uri(_extraStockPrefix + filename);
+                await DownloadFile(progress, downloadOption, uri, "ExtraStock", filename);
             }
 
         // Get Branding Patch
         if (downloadOption.GetBrandingPatch)
             foreach (var filename in downloadManifest.BpFilenames)
             {
-                await throttler.WaitAsync();
-                await Task.Delay(100);
-                allTasks.Add(
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            progress.Report(1);
-                            var response = await _client.GetAsync(_brandingPatchPrefix + filename);
-                            await using var stream = await response.Content.ReadAsStreamAsync();
-                            var fileInfo = new FileInfo(Path.Combine(downloadOption.DownloadFilepath,
-                                "ApDownloads/BrandingPatches/", filename));
-                            await using var fileStream = fileInfo.OpenWrite();
-                            await stream.CopyToAsync(fileStream);
-                        }
-                        finally
-                        {
-                            throttler.Release();
-                        }
-                    }));
+                var uri = new Uri(_brandingPatchPrefix + filename);
+                await DownloadFile(progress, downloadOption, uri, "BrandingPatches", filename);
             }
 
         // Get Liveries
         if (downloadOption.GetLiveryPack)
             foreach (var filename in downloadManifest.LpFilenames)
             {
-                await throttler.WaitAsync();
-                await Task.Delay(100);
-                allTasks.Add(
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            progress.Report(1);
-                            var response = await _client.GetAsync(_productPrefix + filename);
-                            await using var stream = await response.Content.ReadAsStreamAsync();
-                            var fileInfo = new FileInfo(Path.Combine(downloadOption.DownloadFilepath,
-                                "ApDownloads/LiveryPacks/",
-                                filename));
-                            await using var fileStream = fileInfo.OpenWrite();
-                            await stream.CopyToAsync(fileStream);
-                        }
-                        finally
-                        {
-                            throttler.Release();
-                        }
-                    }));
+                var uri = new Uri(_liveryPrefix + filename);
+                await DownloadFile(progress, downloadOption, uri, "LiveryPacks", filename);
             }
 
-        await Task.WhenAll(allTasks);
+        await Task.WhenAll(_allTasks);
     }
 
-    public async Task SaveFile(DownloadOption downloadOption, Uri uri, string saveLoc, string filename = "")
+    private async Task DownloadFile(IProgress<int> progress, DownloadOption downloadOption, Uri uri, string saveLoc,
+        string filename = "")
+    {
+        await _throttler.WaitAsync();
+        await Task.Delay(100);
+        _allTasks.Add(
+            Task.Run(async () =>
+            {
+                try
+                {
+                    progress.Report(1);
+                    await SaveFile(downloadOption, uri, "ApDownloads/" + saveLoc, filename);
+                }
+                finally
+                {
+                    _throttler.Release();
+                }
+            }));
+    }
+
+    private async Task SaveFile(DownloadOption downloadOption, Uri uri, string saveLoc, string filename)
     {
         var response = await _client.GetAsync(uri);
         if (filename == "") filename = response.Content.Headers.ContentDisposition.FileName.Trim('"');
