@@ -57,9 +57,9 @@ public class SQLiteDataAccess
                 if (product.ProductID != null)
                 {
                     var id = product.ProductID.Value;
-                    var contentLength = product.ContentLength;
+                    var contentLength = product.CurrentContentLength;
                     conn.Execute(
-                        "Update Product SET ContentLength = " + contentLength + " WHERE ProductID = " + id,
+                        "Update Product SET CurrentContentLength = " + contentLength + " WHERE ProductID = " + id,
                         new {id, contentLength});
                 }
         });

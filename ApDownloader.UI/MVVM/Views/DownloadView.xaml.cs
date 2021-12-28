@@ -37,19 +37,21 @@ public partial class DownloadView : UserControl
         _access = new HttpDataAccess(LoginView.Client);
         Products = await _dataService.GetProductsOnly();
         var products = await _access.GetPurchasedProducts(Products);
+        await _dataService.UpdateContentLength(products);
         foreach (var product in products)
         {
             var cell = new Cell
             {
                 ProductID = product.ProductID,
                 ImageUrl = "../../Images/" + product.ImageName,
-                Name = product.Name
+                Name = product.Name,
+                IsNotOnDisk = product.UserContentLength == 0,
+                CanUpdate = product.UserContentLength != 0 && product.UserContentLength != product.CurrentContentLength
             };
             ProductCells.Add(cell);
         }
 
         Overlay.Visibility = Visibility.Collapsed;
-        await _dataService.UpdateContentLength(products);
     }
 
     public void ToggleSelected(object sender, RoutedEventArgs e)

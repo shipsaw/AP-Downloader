@@ -7,5 +7,6 @@ public class Product
     public string FileName { get; set; }
     public string ImageName { get; set; }
     public bool IsAvailable { get; set; }
-    public long ContentLength { get; set; }
+    public long CurrentContentLength { get; set; }
+    public long UserContentLength { get; set; }
 }
