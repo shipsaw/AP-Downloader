@@ -10,6 +10,7 @@ public partial class OptionsView : UserControl
     {
         InitializeComponent();
         RootFolder.Text = DownloadView.DownloadOption.DownloadFilepath;
+        RailworksFolder.Text = DownloadView.DownloadOption.InstallFilePath;
         ApplyButton.IsEnabled = false;
     }
 

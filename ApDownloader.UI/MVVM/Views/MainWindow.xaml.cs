@@ -29,7 +29,11 @@ public partial class MainWindow : Window
 
     private void Exit(object sender, RoutedEventArgs e)
     {
-        Application.Current.Shutdown();
+        if (MessageBox.Show("Sure you want to exit?",
+                "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            Application.Current.Shutdown();
+        else
+            return;
     }
 
     private void CheckAdmin()

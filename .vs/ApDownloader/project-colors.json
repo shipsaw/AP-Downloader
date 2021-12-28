@@ -10,6 +10,11 @@
       "ProjectGuid": "b83c9b7f-c3af-4931-8555-72cb9be31e0d",
       "DisplayName": "ApDownloader.UI",
       "ColorIndex": 1
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
     }
   },
   "NextColorIndex": 2

@@ -44,7 +44,6 @@ public partial class DownloadView : UserControl
         _access = new HttpDataAccess(LoginView.Client);
         Products = await _dataService.GetProductsOnly();
         Products = await _access.GetPurchasedProducts(Products);
-        await _dataService.UpdateCurrentContentLength(Products);
         var allFiles = Directory.EnumerateFiles(DownloadOption.DownloadFilepath, "*.zip", SearchOption.AllDirectories)
             .Select(file => (new FileInfo(file).Length, new FileInfo(file).Name));
         foreach (var product in Products)
