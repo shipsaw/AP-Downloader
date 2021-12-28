@@ -66,57 +66,47 @@ public class HttpDataAccess
         Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\BrandingPatches\");
         Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\LiveryPacks\");
         // Get Base Products
-        foreach (var id in downloadManifest.ProductIds)
-        {
-            var uri = new Uri(_productPrefix + id);
-            await DownloadFile(progress, downloadOption, uri, "Products");
-        }
+        await DownloadFile(downloadManifest.ProductIds, _productPrefix, progress, downloadOption, "Products");
 
         // Get Extra Stock
         if (downloadOption.GetExtraStock)
-            foreach (var filename in downloadManifest.EsFilenames)
-            {
-                var uri = new Uri(_extraStockPrefix + filename);
-                await DownloadFile(progress, downloadOption, uri, "ExtraStock", filename);
-            }
+            await DownloadFile(downloadManifest.EsFilenames, _extraStockPrefix, progress, downloadOption, "ExtraStock");
 
         // Get Branding Patch
         if (downloadOption.GetBrandingPatch)
-            foreach (var filename in downloadManifest.BpFilenames)
-            {
-                var uri = new Uri(_brandingPatchPrefix + filename);
-                await DownloadFile(progress, downloadOption, uri, "BrandingPatches", filename);
-            }
+            await DownloadFile(downloadManifest.BpFilenames, _brandingPatchPrefix, progress, downloadOption,
+                "BrandingPatches");
 
         // Get Liveries
         if (downloadOption.GetLiveryPack)
-            foreach (var filename in downloadManifest.LpFilenames)
-            {
-                var uri = new Uri(_liveryPrefix + filename);
-                await DownloadFile(progress, downloadOption, uri, "LiveryPacks", filename);
-            }
+            await DownloadFile(downloadManifest.LpFilenames, _liveryPrefix, progress, downloadOption, "LiveryPacks");
 
         await Task.WhenAll(_allTasks);
     }
 
-    private async Task DownloadFile(IProgress<int> progress, DownloadOption downloadOption, Uri uri, string saveLoc,
-        string filename = "")
+    private async Task DownloadFile(IEnumerable<string> products, string prefix, IProgress<int> progress,
+        DownloadOption downloadOption, string saveLoc)
     {
-        await _throttler.WaitAsync();
-        await Task.Delay(100);
-        _allTasks.Add(
-            Task.Run(async () =>
-            {
-                try
+        foreach (var filename in products)
+        {
+            var uri = new Uri(prefix + filename);
+            await _throttler.WaitAsync();
+            await Task.Delay(100);
+            _allTasks.Add(
+                Task.Run(async () =>
                 {
-                    progress.Report(1);
-                    await SaveFile(downloadOption, uri, "ApDownloads/" + saveLoc, filename);
-                }
-                finally
-                {
-                    _throttler.Release();
-                }
-            }));
+                    try
+                    {
+                        progress.Report(1);
+                        await SaveFile(downloadOption, uri, "ApDownloads/" + saveLoc,
+                            prefix == _productPrefix ? "" : filename);
+                    }
+                    finally
+                    {
+                        _throttler.Release();
+                    }
+                }));
+        }
     }
 
     private async Task SaveFile(DownloadOption downloadOption, Uri uri, string saveLoc, string filename)
