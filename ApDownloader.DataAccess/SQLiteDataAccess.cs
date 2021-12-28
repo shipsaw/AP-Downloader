@@ -50,15 +50,15 @@ public class SQLiteDataAccess
 
     public async Task UpdateContentLength(IEnumerable<Product> products)
     {
-        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
-        await Task.Run(() =>
+        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDB.db");
+        Task.Run(() =>
         {
             foreach (var product in products)
                 if (product.ProductID != null)
                 {
                     var id = product.ProductID.Value;
                     var contentLength = product.ContentLength;
-                    conn.Query<string>(
+                    conn.Execute(
                         "Update Product SET ContentLength = " + contentLength + " WHERE ProductID = " + id,
                         new {id, contentLength});
                 }
