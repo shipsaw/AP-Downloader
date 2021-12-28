@@ -27,8 +27,7 @@
                 Height="500"
                 FontSize="15"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                SelectionMode="Multiple"
-                HorizontalContentAlignment="Center">
+                SelectionMode="Multiple">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <UniformGrid Columns="5"
@@ -42,27 +41,58 @@
                 </ListBox.Resources>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Vertical"
-                                    Height="230">
-                            <Image Source="{Binding ImageUrl}" Height="133" Width="109"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" Margin="0 5 0 0 " />
-                            <TextBlock Text="{Binding Name}" Width="99" TextWrapping="Wrap"
-                                       TextTrimming="WordEllipsis"
-                                       HorizontalAlignment="Center" />
-                        </StackPanel>
+                        <Canvas
+                            Height="230">
+                            <StackPanel>
+                                <Image Source="{Binding ImageUrl}" Height="133" Width="109"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Margin="0 5 0 0 " />
+                                <TextBlock Text="{Binding Name}" Width="99" TextWrapping="Wrap"
+                                           TextTrimming="WordEllipsis"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                            <Image Source="../../Images/warning-sign.png"
+                                   Height="25" Width="25"
+                                   Name="UpdateAlert"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   Margin="75 10 5 5  "
+                                   Visibility="{Binding CanUpdate}" />
+                        </Canvas>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListView>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="1.5*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Name="SelectAllButton" Content="Select All" Style="{StaticResource LoginButton}"
+                <Button Name="SelectAllButton" Width="150" Content="Select All" Style="{StaticResource LoginButton}"
                         Margin="20" Click="ToggleSelected" />
-                <Button Name="DownloadButton" Grid.Column="2" Content="Download"
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Margin="5 5 10 5"
+                                  Name="UpdateCheckbox"
+                                  Foreground="White"
+                                  FontSize="18"
+                                  VerticalAlignment="Center"
+                                  Click="SelectUpdateCheckbox_OnClick" />
+                        <TextBlock VerticalAlignment="Center" Text="Select out-of-date packs"
+                                   Foreground="White" FontSize="20" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Margin="5 5 10 5 "
+                                  Name="UnDownloadedCheckbox"
+                                  Foreground="White"
+                                  FontSize="18"
+                                  VerticalAlignment="Center"
+                                  Click="SelectUnDownloadedCheckbox" />
+                        <TextBlock VerticalAlignment="Center" Text="Select missing packs"
+                                   Foreground="White" FontSize="20" />
+                    </StackPanel>
+                </StackPanel>
+                <Button Name="DownloadButton" Width="150" Grid.Column="2" Content="Download"
                         Style="{StaticResource LoginButton}"
                         Margin="20" Click="Download" />
             </Grid>

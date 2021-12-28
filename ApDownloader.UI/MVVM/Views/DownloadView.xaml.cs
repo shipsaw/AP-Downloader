@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,6 +18,8 @@ public partial class DownloadView : UserControl
     private readonly SQLiteDataAccess _dataService;
     private HttpDataAccess _access;
     private bool _selectedToggle;
+    private bool _toggleItemsNotDownloaded;
+    private bool _toggleItemsToUpdate;
 
     public DownloadView()
     {
@@ -36,9 +39,14 @@ public partial class DownloadView : UserControl
         Overlay.Visibility = Visibility.Visible;
         _access = new HttpDataAccess(LoginView.Client);
         Products = await _dataService.GetProductsOnly();
-        var products = await _access.GetPurchasedProducts(Products);
-        await _dataService.UpdateContentLength(products);
-        foreach (var product in products)
+        Products = await _access.GetPurchasedProducts(Products);
+        await _dataService.UpdateCurrentContentLength(Products);
+        var allFiles = Directory.EnumerateFiles(DownloadOption.DownloadFilepath, "*.zip", SearchOption.AllDirectories)
+            .Select(file => (new FileInfo(file).Length, new FileInfo(file).Name));
+        foreach (var product in Products)
+            product.UserContentLength = allFiles.FirstOrDefault(file => file.Name == product.FileName).Length;
+        //await _dataService.UpdateUserContentLength(products);
+        foreach (var product in Products)
         {
             var cell = new Cell
             {
@@ -47,6 +55,8 @@ public partial class DownloadView : UserControl
                 Name = product.Name,
                 IsNotOnDisk = product.UserContentLength == 0,
                 CanUpdate = product.UserContentLength != 0 && product.UserContentLength != product.CurrentContentLength
+                    ? Visibility.Visible
+                    : Visibility.Hidden
             };
             ProductCells.Add(cell);
         }
@@ -60,11 +70,19 @@ public partial class DownloadView : UserControl
         {
             AddonsFoundList.SelectAll();
             SelectAllButton.Content = "Deselect All";
+            _toggleItemsToUpdate = true;
+            _toggleItemsNotDownloaded = true;
+            UpdateCheckbox.IsChecked = true;
+            UnDownloadedCheckbox.IsChecked = true;
         }
         else
         {
             AddonsFoundList.UnselectAll();
             SelectAllButton.Content = "Select All";
+            _toggleItemsToUpdate = false;
+            _toggleItemsNotDownloaded = false;
+            UpdateCheckbox.IsChecked = false;
+            UnDownloadedCheckbox.IsChecked = false;
         }
 
         _selectedToggle = !_selectedToggle;
@@ -105,5 +123,43 @@ public partial class DownloadView : UserControl
             BpFilenames = await dbAccess.GetExtras("BrandingPatch", productIds),
             LpFilenames = await dbAccess.GetExtras("LiveryPack", productIds)
         };
+    }
+
+    private void SelectUpdateCheckbox_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (_toggleItemsToUpdate == false)
+        {
+            foreach (var product in ProductCells)
+                if (product.CanUpdate == Visibility.Visible)
+                    AddonsFoundList.SelectedItems.Add(product);
+            _toggleItemsToUpdate = true;
+        }
+        else
+        {
+            foreach (var product in ProductCells)
+                if (product.CanUpdate == Visibility.Visible)
+                    AddonsFoundList.SelectedItems.Remove(product);
+            _toggleItemsToUpdate = false;
+        }
+    }
+
+    private void SelectUnDownloadedCheckbox(object sender, RoutedEventArgs e)
+    {
+        {
+            if (_toggleItemsNotDownloaded == false)
+            {
+                foreach (var product in ProductCells)
+                    if (product.IsNotOnDisk)
+                        AddonsFoundList.SelectedItems.Add(product);
+                _toggleItemsNotDownloaded = true;
+            }
+            else
+            {
+                foreach (var product in ProductCells)
+                    if (product.IsNotOnDisk)
+                        AddonsFoundList.SelectedItems.Remove(product);
+                _toggleItemsNotDownloaded = false;
+            }
+        }
     }
 }

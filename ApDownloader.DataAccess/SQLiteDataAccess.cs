@@ -48,7 +48,7 @@ public class SQLiteDataAccess
         return total + lists.SelectMany(x => x).ToList().Count;
     }
 
-    public async Task UpdateContentLength(IEnumerable<Product> products)
+    public async Task UpdateCurrentContentLength(IEnumerable<Product> products)
     {
         using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDB.db");
         Task.Run(() =>
