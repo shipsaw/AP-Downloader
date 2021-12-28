@@ -8,5 +8,5 @@ public class Cell
     public string ImageUrl { get; set; }
     public string Name { get; set; }
     public Visibility CanUpdate { get; set; }
-    public bool IsNotOnDisk { get; set; }
+    public Visibility IsNotOnDisk { get; set; }
 }

@@ -306,6 +306,10 @@
       <Resource Include="Images\warning-sign.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
+      <None Remove="Images\missingFile.png" />
+      <Resource Include="Images\missingFile.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
     </ItemGroup>
 
     <ItemGroup>

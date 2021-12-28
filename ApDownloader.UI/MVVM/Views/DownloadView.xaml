@@ -56,8 +56,15 @@
                                    Name="UpdateAlert"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
-                                   Margin="75 10 5 5  "
+                                   Margin="78 100 5 5  "
                                    Visibility="{Binding CanUpdate}" />
+                            <Image Source="../../Images/missingFile.png"
+                                   Height="25" Width="25"
+                                   Name="NotOnDiskAlert"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   Margin="78 100 5 5  "
+                                   Visibility="{Binding IsNotOnDisk}" />
                         </Canvas>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

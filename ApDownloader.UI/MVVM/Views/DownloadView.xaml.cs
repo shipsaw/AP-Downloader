@@ -53,7 +53,7 @@ public partial class DownloadView : UserControl
                 ProductID = product.ProductID,
                 ImageUrl = "../../Images/" + product.ImageName,
                 Name = product.Name,
-                IsNotOnDisk = product.UserContentLength == 0,
+                IsNotOnDisk = product.UserContentLength == 0 ? Visibility.Visible : Visibility.Hidden,
                 CanUpdate = product.UserContentLength != 0 && product.UserContentLength != product.CurrentContentLength
                     ? Visibility.Visible
                     : Visibility.Hidden
@@ -149,14 +149,14 @@ public partial class DownloadView : UserControl
             if (_toggleItemsNotDownloaded == false)
             {
                 foreach (var product in ProductCells)
-                    if (product.IsNotOnDisk)
+                    if (product.IsNotOnDisk == Visibility.Visible)
                         AddonsFoundList.SelectedItems.Add(product);
                 _toggleItemsNotDownloaded = true;
             }
             else
             {
                 foreach (var product in ProductCells)
-                    if (product.IsNotOnDisk)
+                    if (product.IsNotOnDisk == Visibility.Visible)
                         AddonsFoundList.SelectedItems.Remove(product);
                 _toggleItemsNotDownloaded = false;
             }
