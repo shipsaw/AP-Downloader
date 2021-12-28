@@ -28,6 +28,8 @@ public partial class DownloadView : UserControl
         InitializeComponent();
         DataContext = this;
         _dataService = new SQLiteDataAccess();
+        _access = new HttpDataAccess(LoginView.Client);
+        Products = new List<Product>();
         ProductCells = new ObservableCollection<Cell>();
         Loaded += DownloadWindow_Loaded;
     }

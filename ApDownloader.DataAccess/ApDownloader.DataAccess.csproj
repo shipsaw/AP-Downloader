@@ -11,10 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Autofac" Version="6.3.0" />
       <PackageReference Include="Dapper" Version="2.0.123" />
       <PackageReference Include="Microsoft.Data.Sqlite" Version="1.1.0" />
-      <PackageReference Include="Polly" Version="7.2.2" />
       <PackageReference Include="System.Data.SQLite.Core" Version="1.0.115.5" />
     </ItemGroup>
 
