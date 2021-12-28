@@ -32,7 +32,7 @@ public static class AddonInstaller
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = filepath.Trim('"'),
-                        Arguments = $"/s /v\"/qb INSTALLDIR=\"{downloadOption.InstallFilePath}\"\""
+                        Arguments = $"/s /v\"/qn INSTALLDIR=\"{downloadOption.InstallFilePath}\"\""
                     }
                 };
                 process.Start();
