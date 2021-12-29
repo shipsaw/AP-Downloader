@@ -19,7 +19,7 @@
     <ItemGroup>
       <None Remove="ProductsDb.db" />
       <Content Include="ProductsDb.db">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
 

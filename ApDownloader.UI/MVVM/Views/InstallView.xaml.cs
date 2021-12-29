@@ -14,7 +14,6 @@ namespace ApDownloader.UI.MVVM.Views;
 
 public partial class InstallView : UserControl
 {
-    public static DownloadOption DownloadOption;
     private readonly SQLiteDataAccess _dataService;
     private HttpDataAccess _access;
     private bool _selectedToggle = true;
@@ -26,7 +25,6 @@ public partial class InstallView : UserControl
         DataContext = this;
         _dataService = new SQLiteDataAccess();
         ProductCells = new ObservableCollection<Cell>();
-        DownloadOption = DownloadView.DownloadOption;
         Loaded += DownloadWindow_Loaded;
     }
 
@@ -80,30 +78,30 @@ public partial class InstallView : UserControl
 
         var completedFileCount = 0;
         var totalFileCount =
-            _dataService.GetTotalFileCount(DownloadView.DownloadOption, productIds);
+            _dataService.GetTotalFileCount(MainWindow.DlOption, productIds);
         var progress =
             new Progress<int>(report =>
             {
                 BusyTextBlock.Text = $"Installing file {++completedFileCount} of {totalFileCount.Result}";
             });
         InstallOverlay.Visibility = Visibility.Visible;
-        DownloadManifest = await GenerateDownloadManifest(DownloadOption, productIds);
+        DownloadManifest = await GenerateDownloadManifest(MainWindow.DlOption, productIds);
         await Task.Run(() =>
         {
-            var dir = new DirectoryInfo(Path.Combine(DownloadOption.TempFilePath + "ApDownloads"));
+            var dir = new DirectoryInfo(Path.Combine(MainWindow.DlOption.TempFilePath + "ApDownloads"));
             if (dir.Exists)
                 dir.Delete(true);
 
             if (DownloadManifest.ProductIds != null && DownloadManifest.ProductIds.Any())
-                InstallAddons(DownloadOption, DownloadManifest.PrFilenames, "Products/", progress);
+                InstallAddons(MainWindow.DlOption, DownloadManifest.PrFilenames, "Products/", progress);
 
-            if (DownloadOption.GetExtraStock && DownloadManifest.EsFilenames.Any())
-                InstallAddons(DownloadOption, DownloadManifest.EsFilenames, "ExtraStock/", progress);
-            if (DownloadOption.GetBrandingPatch && DownloadManifest.BpFilenames.Any())
-                InstallAddons(DownloadOption, DownloadManifest.BpFilenames, "BrandingPatches/", progress);
+            if (MainWindow.DlOption.GetExtraStock && DownloadManifest.EsFilenames.Any())
+                InstallAddons(MainWindow.DlOption, DownloadManifest.EsFilenames, "ExtraStock/", progress);
+            if (MainWindow.DlOption.GetBrandingPatch && DownloadManifest.BpFilenames.Any())
+                InstallAddons(MainWindow.DlOption, DownloadManifest.BpFilenames, "BrandingPatches/", progress);
 
-            if (DownloadOption.GetLiveryPack && DownloadManifest.LpFilenames.Any())
-                InstallAddons(DownloadOption, DownloadManifest.LpFilenames, "LiveryPacks/", progress);
+            if (MainWindow.DlOption.GetLiveryPack && DownloadManifest.LpFilenames.Any())
+                InstallAddons(MainWindow.DlOption, DownloadManifest.LpFilenames, "LiveryPacks/", progress);
 
             dir.Delete(true);
         });
@@ -117,7 +115,7 @@ public partial class InstallView : UserControl
         AddonInstaller.AddonInstaller.InstallAddons(downloadOption, extractPath, progress);
     }
 
-    private async Task<DownloadManifest> GenerateDownloadManifest(DownloadOption downloadOption,
+    private async Task<DownloadManifest> GenerateDownloadManifest(DownloadOption? downloadOption,
         IEnumerable<int> productIds)
     {
         var dbAccess = new SQLiteDataAccess();

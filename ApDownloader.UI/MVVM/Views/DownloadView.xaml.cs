@@ -13,7 +13,6 @@ namespace ApDownloader.UI.MVVM.Views;
 
 public partial class DownloadView : UserControl
 {
-    public static DownloadOption DownloadOption = new();
     public static DownloadManifest DownloadManifest;
     private readonly SQLiteDataAccess _dataService;
     private HttpDataAccess _access;
@@ -44,7 +43,8 @@ public partial class DownloadView : UserControl
         _access = new HttpDataAccess(LoginView.Client);
         Products = await _dataService.GetProductsOnly();
         Products = await _access.GetPurchasedProducts(Products);
-        var allFiles = Directory.EnumerateFiles(DownloadOption.DownloadFilepath, "*.zip", SearchOption.AllDirectories)
+        var allFiles = Directory
+            .EnumerateFiles(MainWindow.DlOption.DownloadFilepath, "*.zip", SearchOption.AllDirectories)
             .Select(file => (new FileInfo(file).Length, new FileInfo(file).Name));
         foreach (var product in Products)
             product.UserContentLength = allFiles.FirstOrDefault(file => file.Name == product.FileName).Length;
@@ -106,19 +106,19 @@ public partial class DownloadView : UserControl
 
         var completedFileCount = 0;
         var totalFileCount =
-            _dataService.GetTotalFileCount(DownloadOption, productIds);
+            _dataService.GetTotalFileCount(MainWindow.DlOption, productIds);
         var progress =
             new Progress<int>(report =>
             {
                 BusyTextBlock.Text = $"Downloading file {++completedFileCount} of {totalFileCount.Result}";
             });
         Overlay.Visibility = Visibility.Visible;
-        DownloadManifest = await GenerateDownloadManifest(DownloadOption, productIds);
-        await _access.Download(DownloadManifest, DownloadOption, progress);
+        DownloadManifest = await GenerateDownloadManifest(MainWindow.DlOption, productIds);
+        await _access.Download(DownloadManifest, MainWindow.DlOption, progress);
         BusyTextBlock.Text = "Download Complete";
     }
 
-    public async Task<DownloadManifest> GenerateDownloadManifest(DownloadOption downloadOption,
+    public async Task<DownloadManifest> GenerateDownloadManifest(DownloadOption? downloadOption,
         IEnumerable<int> productIds)
     {
         var dbAccess = new SQLiteDataAccess();
