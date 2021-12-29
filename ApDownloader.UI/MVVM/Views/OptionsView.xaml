@@ -13,20 +13,6 @@
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
-            <Style TargetType="CheckBox">
-                <Setter Property="Foreground" Value="White" />
-                <Setter Property="FontSize" Value="28" />
-                <Setter Property="BorderBrush" Value="White" />
-                <Setter Property="BorderThickness" Value="2" />
-                <Setter Property="Background" Value="LightBlue" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="IsChecked" Value="True" />
-                <Setter Property="LayoutTransform">
-                    <Setter.Value>
-                        <ScaleTransform ScaleX="1.2" ScaleY="1.2" />
-                    </Setter.Value>
-                </Setter>
-            </Style>
         </Grid.Resources>
         <StackPanel>
             <TextBlock Text="Associated Downloads:"
@@ -34,15 +20,18 @@
                        FontSize="36" />
             <StackPanel Margin="15 0 ">
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox Margin="5" Name="ExtraStockCheckbox" Click="ResetDirty" />
+                    <CheckBox Margin="8" Name="ExtraStockCheckbox"
+                              Style="{StaticResource CheckboxTheme}" Click="ResetDirty" />
                     <TextBlock VerticalAlignment="Center" Text="Extra Stock" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox Margin="5" Name="BrandingPatchCheckbox" Click="ResetDirty" />
+                    <CheckBox Margin="8" Name="BrandingPatchCheckbox"
+                              Style="{StaticResource CheckboxTheme}" Click="ResetDirty" />
                     <TextBlock VerticalAlignment="Center" Text="Branding Patch" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox Margin="5" Name="LiveryPackCheckbox" Click="ResetDirty" />
+                    <CheckBox Margin="8" Name="LiveryPackCheckbox"
+                              Style="{StaticResource CheckboxTheme}" Click="ResetDirty" />
                     <TextBlock VerticalAlignment="Center" Text="Livery Pack" />
                 </StackPanel>
             </StackPanel>

@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style TargetType="{x:Type CheckBox}"
+           x:Key="CheckboxTheme">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="BorderBrush" Value="White" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Background" Value="LightBlue" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="LayoutTransform">
+            <Setter.Value>
+                <ScaleTransform ScaleX="1.2" ScaleY="1.2" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
