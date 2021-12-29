@@ -29,7 +29,7 @@ public partial class InstallView : UserControl
     }
 
     public HttpClient? Client { get; set; }
-    public ObservableCollection<Cell> ProductCells { get; set; }
+    public ObservableCollection<Cell> ProductCells { get; }
     public IEnumerable<Product> Products { get; set; }
 
     private async void InstallWindow_Loaded(object sender, RoutedEventArgs e)
@@ -59,7 +59,7 @@ public partial class InstallView : UserControl
         {
             AddonsFoundList.SelectAll();
             SelectAllButton.Content = "Deselect All";
-            if (AddonsFoundList.SelectedItems.Count > 0)
+            if (AddonsFoundList.SelectedItems.Count > 0 && MainWindow.IsAdmin)
                 InstallButton.IsEnabled = true;
         }
         else
@@ -140,7 +140,7 @@ public partial class InstallView : UserControl
                 ProductCells.Add(cell);
         }
 
-        if (ProductCells.Any() && MainWindow.IsAdmin && AddonsFoundList.SelectedItems.Count > 0)
+        if (ProductCells.Any() && MainWindow.IsAdmin)
             InstallButton.IsEnabled = true;
         if (ProductCells.Any())
             SelectAllButton.IsEnabled = true;
