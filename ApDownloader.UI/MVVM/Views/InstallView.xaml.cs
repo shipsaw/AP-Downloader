@@ -59,11 +59,14 @@ public partial class InstallView : UserControl
         {
             AddonsFoundList.SelectAll();
             SelectAllButton.Content = "Deselect All";
+            if (AddonsFoundList.SelectedItems.Count > 0)
+                InstallButton.IsEnabled = true;
         }
         else
         {
             AddonsFoundList.UnselectAll();
             SelectAllButton.Content = "Select All";
+            InstallButton.IsEnabled = false;
         }
 
         _selectedToggle = !_selectedToggle;
@@ -105,7 +108,8 @@ public partial class InstallView : UserControl
             if (MainWindow.DlOption.GetLiveryPack && DownloadManifest.LpFilenames.Any())
                 InstallAddons(MainWindow.DlOption, DownloadManifest.LpFilenames, "LiveryPacks/", progress);
 
-            dir.Delete(true);
+            if (dir.Exists)
+                dir.Delete(true);
         });
         BusyTextBlock.Text = "Installation Complete";
     }
@@ -120,7 +124,8 @@ public partial class InstallView : UserControl
     private async void GetAllPrevDownloads(object sender, RoutedEventArgs e)
     {
         var allFiles = Directory
-            .EnumerateFiles(MainWindow.DlOption.DownloadFilepath, "*.zip", SearchOption.AllDirectories)
+            .EnumerateFiles(Path.Combine(MainWindow.DlOption.DownloadFilepath, "ApDownloads"), "*.zip",
+                SearchOption.AllDirectories)
             .Select(file => new FileInfo(file).Name);
         var products = await _dataService.GetDownloadedProductsByName(allFiles);
 
@@ -136,7 +141,7 @@ public partial class InstallView : UserControl
                 ProductCells.Add(cell);
         }
 
-        if (ProductCells.Any() && MainWindow.IsAdmin)
+        if (ProductCells.Any() && MainWindow.IsAdmin && AddonsFoundList.SelectedItems.Count > 0)
             InstallButton.IsEnabled = true;
         if (ProductCells.Any())
             SelectAllButton.IsEnabled = true;
@@ -145,5 +150,7 @@ public partial class InstallView : UserControl
             SelectAllButton.Content = "Select All";
             _selectedToggle = false;
         }
+
+        GetAllDownloadedButton.IsEnabled = false;
     }
 }
