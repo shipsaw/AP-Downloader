@@ -9,7 +9,7 @@ namespace ApDownloader.AddonInstaller;
 
 public static class AddonInstaller
 {
-    public static string UnzipAddons(DownloadOption? downloadOption, IEnumerable<string> filePaths, string folder)
+    public static string UnzipAddons(DownloadOption downloadOption, IEnumerable<string> filePaths, string folder)
     {
         var extractPath = Path.Combine(downloadOption.TempFilePath, "ApDownloads", folder);
         foreach (var filepath in filePaths)
@@ -20,7 +20,7 @@ public static class AddonInstaller
         return extractPath;
     }
 
-    public static void InstallAddons(DownloadOption? downloadOption, string folder, IProgress<int> progress)
+    public static void InstallAddons(DownloadOption downloadOption, string folder, IProgress<int> progress)
     {
         var files = Directory.GetFiles(folder);
         foreach (var filepath in files)

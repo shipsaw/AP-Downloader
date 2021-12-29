@@ -38,7 +38,7 @@ public partial class OptionsView : UserControl
         }
     }
 
-    private void RailwordsFolderSelection(object sender, RoutedEventArgs e)
+    private void InstallFolderSelection(object sender, RoutedEventArgs e)
     {
         var openFileDlg = new FolderBrowserDialog();
         var result = openFileDlg.ShowDialog();

@@ -54,7 +54,7 @@
             <TextBlock Text="Railworks Location:" FontSize="36" />
             <TextBox TextChanged="ResetDirty" Name="InstallFolder" Style="{StaticResource FilepathTextBox}" />
             <Button HorizontalAlignment="Left" Margin="0 10" Content="Set Folder Location" Width="200"
-                    Click="RailwordsFolderSelection"
+                    Click="InstallFolderSelection"
                     Style="{StaticResource LoginButton}" />
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom">

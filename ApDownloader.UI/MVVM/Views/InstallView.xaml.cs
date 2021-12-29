@@ -85,7 +85,7 @@ public partial class InstallView : UserControl
                 BusyTextBlock.Text = $"Installing file {++completedFileCount} of {totalFileCount.Result}";
             });
         InstallOverlay.Visibility = Visibility.Visible;
-        DownloadManifest = await GenerateDownloadManifest(MainWindow.DlOption, productIds);
+        DownloadManifest = await _dataService.GetDownloadManifest(MainWindow.DlOption, productIds);
         await Task.Run(() =>
         {
             var dir = new DirectoryInfo(Path.Combine(MainWindow.DlOption.TempFilePath + "ApDownloads"));
@@ -113,19 +113,5 @@ public partial class InstallView : UserControl
     {
         var extractPath = AddonInstaller.AddonInstaller.UnzipAddons(downloadOption, filenames, folder);
         AddonInstaller.AddonInstaller.InstallAddons(downloadOption, extractPath, progress);
-    }
-
-    private async Task<DownloadManifest> GenerateDownloadManifest(DownloadOption? downloadOption,
-        IEnumerable<int> productIds)
-    {
-        var dbAccess = new SQLiteDataAccess();
-        return new DownloadManifest
-        {
-            ProductIds = productIds.Select(id => id.ToString()),
-            PrFilenames = await dbAccess.GetExtras("Product", productIds),
-            EsFilenames = await dbAccess.GetExtras("ExtraStock", productIds),
-            BpFilenames = await dbAccess.GetExtras("BrandingPatch", productIds),
-            LpFilenames = await dbAccess.GetExtras("LiveryPack", productIds)
-        };
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using ApDownloader.DataAccess;
@@ -106,30 +105,16 @@ public partial class DownloadView : UserControl
 
         var completedFileCount = 0;
         var totalFileCount =
-            _dataService.GetTotalFileCount(MainWindow.DlOption, productIds);
+            await _dataService.GetTotalFileCount(MainWindow.DlOption, productIds);
         var progress =
             new Progress<int>(report =>
             {
-                BusyTextBlock.Text = $"Downloading file {++completedFileCount} of {totalFileCount.Result}";
+                BusyTextBlock.Text = $"Downloading file {++completedFileCount} of {totalFileCount}";
             });
         Overlay.Visibility = Visibility.Visible;
-        DownloadManifest = await GenerateDownloadManifest(MainWindow.DlOption, productIds);
+        DownloadManifest = await _dataService.GetDownloadManifest(MainWindow.DlOption, productIds);
         await _access.Download(DownloadManifest, MainWindow.DlOption, progress);
         BusyTextBlock.Text = "Download Complete";
-    }
-
-    public async Task<DownloadManifest> GenerateDownloadManifest(DownloadOption? downloadOption,
-        IEnumerable<int> productIds)
-    {
-        var dbAccess = new SQLiteDataAccess();
-        return new DownloadManifest
-        {
-            ProductIds = productIds.Select(id => id.ToString()),
-            PrFilenames = await dbAccess.GetExtras("Product", productIds),
-            EsFilenames = await dbAccess.GetExtras("ExtraStock", productIds),
-            BpFilenames = await dbAccess.GetExtras("BrandingPatch", productIds),
-            LpFilenames = await dbAccess.GetExtras("LiveryPack", productIds)
-        };
     }
 
     private void SelectUpdateCheckbox_OnClick(object sender, RoutedEventArgs e)

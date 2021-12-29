@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using ApDownloader.Model;
@@ -8,6 +9,7 @@ using Microsoft.Data.Sqlite;
 
 namespace ApDownloader.DataAccess;
 
+[SuppressMessage("ReSharper", "RedundantAnonymousTypePropertyName")]
 public class SQLiteDataAccess
 {
     public async Task<IEnumerable<Product>> GetProductsOnly()
@@ -30,22 +32,42 @@ public class SQLiteDataAccess
     {
         using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
         var products =
-            await conn.QueryAsync<string>("SELECT Filename FROM @dbName WHERE ProductID IN @productList",
-                new {dbName, productList});
+            await conn.QueryAsync<string>("SELECT Filename FROM @DbName WHERE ProductID IN @ProductList",
+                new {DbName = dbName, ProductList = productList});
         return products;
     }
 
-    public async Task<int> GetTotalFileCount(DownloadOption? downloadOption, List<int> productIds)
+    public async Task<DownloadManifest> GetDownloadManifest(DownloadOption options,
+        IEnumerable<int> productList)
     {
-        var dbNames = new List<string>();
-        if (downloadOption.GetExtraStock) dbNames.Add("ExtraStock");
-        if (downloadOption.GetBrandingPatch) dbNames.Add("BrandingPatch");
-        if (downloadOption.GetLiveryPack) dbNames.Add("LiveryPack");
-        var total = productIds.Count();
-        var tasks = new List<Task<IEnumerable<string>>>();
-        foreach (var dbName in dbNames) tasks.Add(GetExtras(dbName, productIds));
-        var lists = await Task.WhenAll(tasks);
-        return total + lists.SelectMany(x => x).ToList().Count;
+        var manifest = new DownloadManifest();
+        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
+        if (options.GetExtraStock)
+            manifest.EsFilenames =
+                await conn.QueryAsync<string>("SELECT Filename FROM ExtraStock WHERE ProductID IN @ProductList",
+                    new {ProductList = productList});
+        if (options.GetBrandingPatch)
+            manifest.BpFilenames =
+                await conn.QueryAsync<string>("SELECT Filename FROM BrandingPatch WHERE ProductID IN @ProductList",
+                    new {ProductList = productList});
+        if (options.GetLiveryPack)
+            manifest.LpFilenames =
+                await conn.QueryAsync<string>("SELECT Filename FROM LiveryPack WHERE ProductID IN @ProductList",
+                    new {ProductList = productList});
+        manifest.PrFilenames =
+            await conn.QueryAsync<string>("SELECT Filename FROM Product WHERE ProductID IN @ProductList",
+                new {ProductList = productList});
+        manifest.ProductIds = productList.Select(p => p.ToString());
+        return manifest;
+    }
+
+    public async Task<int> GetTotalFileCount(DownloadOption downloadOption, List<int> productIds)
+    {
+        var manifest = await GetDownloadManifest(downloadOption, productIds);
+        return productIds.Count +
+               (manifest.EsFilenames?.Count() ?? 0) +
+               (manifest.BpFilenames?.Count() ?? 0) +
+               (manifest.LpFilenames?.Count() ?? 0);
     }
 
     public async Task<DownloadOption> GetUserOptions()
@@ -68,10 +90,10 @@ public class SQLiteDataAccess
                                             InstallFilepath = @InstallFilepath
                                             WHERE 1 = 1", new
         {
-            downloadOption.GetExtraStock,
-            downloadOption.GetLiveryPack,
-            downloadOption.GetBrandingPatch,
-            downloadOption.DownloadFilepath,
+            GetExtraStock = downloadOption.GetExtraStock,
+            GetLiveryPack = downloadOption.GetLiveryPack,
+            GetBrandingPatch = downloadOption.GetBrandingPatch,
+            DownloadFilepath = downloadOption.DownloadFilepath,
             InstallFilepath = downloadOption.InstallFilePath
         });
     }
