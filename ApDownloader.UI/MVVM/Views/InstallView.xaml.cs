@@ -25,14 +25,14 @@ public partial class InstallView : UserControl
         DataContext = this;
         _dataService = new SQLiteDataAccess();
         ProductCells = new ObservableCollection<Cell>();
-        Loaded += DownloadWindow_Loaded;
+        Loaded += InstallWindow_Loaded;
     }
 
     public HttpClient? Client { get; set; }
     public ObservableCollection<Cell> ProductCells { get; set; }
     public IEnumerable<Product> Products { get; set; }
 
-    private async void DownloadWindow_Loaded(object sender, RoutedEventArgs e)
+    private async void InstallWindow_Loaded(object sender, RoutedEventArgs e)
     {
         var products = await _dataService.GetDownloadedProductsOnly(DownloadView.DownloadManifest?.ProductIds);
         foreach (var product in products)
@@ -49,6 +49,8 @@ public partial class InstallView : UserControl
         AddonsFoundList.SelectAll();
         BusyTextBlock.Text = "Installing Addons";
         InstallOverlay.Visibility = Visibility.Collapsed;
+        InstallButton.IsEnabled = ProductCells.Any() && MainWindow.IsAdmin;
+        SelectAllButton.IsEnabled = ProductCells.Any();
     }
 
     public void ToggleSelected(object sender, RoutedEventArgs e)
@@ -113,5 +115,35 @@ public partial class InstallView : UserControl
     {
         var extractPath = AddonInstaller.AddonInstaller.UnzipAddons(downloadOption, filenames, folder);
         AddonInstaller.AddonInstaller.InstallAddons(downloadOption, extractPath, progress);
+    }
+
+    private async void GetAllPrevDownloads(object sender, RoutedEventArgs e)
+    {
+        var allFiles = Directory
+            .EnumerateFiles(MainWindow.DlOption.DownloadFilepath, "*.zip", SearchOption.AllDirectories)
+            .Select(file => new FileInfo(file).Name);
+        var products = await _dataService.GetDownloadedProductsByName(allFiles);
+
+        foreach (var product in products)
+        {
+            var cell = new Cell
+            {
+                ProductID = product.ProductID,
+                ImageUrl = "../../Images/" + product.ImageName,
+                Name = product.Name
+            };
+            if (!ProductCells.Contains(cell))
+                ProductCells.Add(cell);
+        }
+
+        if (ProductCells.Any() && MainWindow.IsAdmin)
+            InstallButton.IsEnabled = true;
+        if (ProductCells.Any())
+            SelectAllButton.IsEnabled = true;
+        if (allFiles.Any())
+        {
+            SelectAllButton.Content = "Select All";
+            _selectedToggle = false;
+        }
     }
 }

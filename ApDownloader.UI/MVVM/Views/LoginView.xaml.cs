@@ -17,11 +17,18 @@ public partial class LoginView : UserControl
         InitializeComponent();
         Client = new HttpClient(_handler);
         Client.Timeout = TimeSpan.FromMinutes(5);
+        Loaded += Login_Loaded;
     }
 
     public static bool IsLoggedIn { get; private set; }
 
     public static HttpClient? Client { get; private set; } = new(_handler);
+
+    private void Login_Loaded(object sender, RoutedEventArgs e)
+    {
+        LoginButton.IsEnabled = !IsLoggedIn;
+        LogoutButton.IsEnabled = IsLoggedIn;
+    }
 
     private async void Login(object sender, RoutedEventArgs e)
     {

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using System.Windows.Forms;
 using ApDownloader.DataAccess;
 using UserControl = System.Windows.Controls.UserControl;
@@ -19,8 +20,9 @@ public partial class OptionsView : UserControl
         ExtraStockCheckbox.IsChecked = MainWindow.DlOption.GetExtraStock;
         BrandingPatchCheckbox.IsChecked = MainWindow.DlOption.GetBrandingPatch;
         LiveryPackCheckbox.IsChecked = MainWindow.DlOption.GetLiveryPack;
-        DownloadFolder.Text = MainWindow.DlOption.DownloadFilepath;
+        DownloadFolder.Text = Path.Combine(MainWindow.DlOption.DownloadFilepath, @"ApDownloads");
         InstallFolder.Text = MainWindow.DlOption.InstallFilePath;
+        _actualDownloadFolderLoc = MainWindow.DlOption.DownloadFilepath;
     }
 
 

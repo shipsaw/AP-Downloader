@@ -14,7 +14,8 @@ public partial class MainWindow : Window
 {
     private const string LoginUrl = @"https://www.armstrongpowerhouse.com/index.php?route=account/login";
     private static readonly HttpClientHandler _handler = new() {AllowAutoRedirect = false};
-    public static DownloadOption DlOption;
+    public static DownloadOption DlOption = new();
+    public static bool IsAdmin;
     private readonly HttpClient _client = new(_handler);
     private readonly SQLiteDataAccess _dataAccess;
 
@@ -58,10 +59,12 @@ public partial class MainWindow : Window
             var margin = Control.Margin;
             margin.Bottom = 30;
             Control.Margin = margin;
+            IsAdmin = false;
         }
         else
         {
             AdminWarning.Visibility = Visibility.Collapsed;
+            IsAdmin = true;
         }
     }
 }

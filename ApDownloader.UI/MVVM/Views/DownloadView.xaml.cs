@@ -67,6 +67,8 @@ public partial class DownloadView : UserControl
 
         OutOfDateTextBlock.Text = $"Select out-of-date packs ({_canUpdateCount})";
         MissingPackTextBlock.Text = $"Select missing packs ({_isNotOnDiskCount})";
+        DownloadButton.IsEnabled = ProductCells.Any();
+        SelectAllButton.IsEnabled = ProductCells.Any();
         Overlay.Visibility = Visibility.Collapsed;
     }
 

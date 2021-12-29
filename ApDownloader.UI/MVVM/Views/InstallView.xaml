@@ -62,6 +62,9 @@
                 </Grid.ColumnDefinitions>
                 <Button Name="SelectAllButton" Content="Deselect All" Style="{StaticResource LoginButton}"
                         Margin="20" Click="ToggleSelected" />
+                <Button Grid.Column="1" Name="GetAllDownloadedButton" Content="All Downloads"
+                        Style="{StaticResource LoginButton}"
+                        Margin="20" Click="GetAllPrevDownloads" />
                 <Button Name="InstallButton" Grid.Column="2" Content="Install"
                         Style="{StaticResource LoginButton}"
                         Margin="20" Click="Install" />

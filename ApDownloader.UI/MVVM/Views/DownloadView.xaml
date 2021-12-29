@@ -82,7 +82,7 @@
                         <CheckBox Margin="5 5 10 5"
                                   Name="UpdateCheckbox"
                                   Foreground="White"
-                                  FontSize="18"
+                                  FontSize="20"
                                   VerticalAlignment="Center"
                                   Click="SelectUpdateCheckbox_OnClick" />
                         <TextBlock VerticalAlignment="Center" Text="Select out-of-date packs"
@@ -93,7 +93,7 @@
                         <CheckBox Margin="5 5 10 5 "
                                   Name="UnDownloadedCheckbox"
                                   Foreground="White"
-                                  FontSize="18"
+                                  FontSize="20"
                                   VerticalAlignment="Center"
                                   Click="SelectUnDownloadedCheckbox" />
                         <TextBlock VerticalAlignment="Center" Text="Select missing packs"

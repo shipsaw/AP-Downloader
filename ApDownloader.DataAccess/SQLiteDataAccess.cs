@@ -28,6 +28,14 @@ public class SQLiteDataAccess
         return products;
     }
 
+    public async Task<IEnumerable<Product>> GetDownloadedProductsByName(IEnumerable<string> productNames)
+    {
+        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
+        var products = await conn.QueryAsync<Product>("SELECT * FROM Product WHERE Filename IN @productNames",
+            new {productNames});
+        return products;
+    }
+
     public async Task<IEnumerable<string>> GetExtras(string dbName, IEnumerable<int> productList)
     {
         using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
