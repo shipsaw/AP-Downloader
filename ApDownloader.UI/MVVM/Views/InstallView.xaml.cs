@@ -66,7 +66,6 @@ public partial class InstallView : UserControl
         {
             AddonsFoundList.UnselectAll();
             SelectAllButton.Content = "Select All";
-            InstallButton.IsEnabled = false;
         }
 
         _selectedToggle = !_selectedToggle;
