@@ -1,77 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using ApDownloader.DataAccess;
-using ApDownloader.Model;
+using ApDownloader.UI.MVVM.ViewModels;
 
 namespace ApDownloader.UI.MVVM.Views;
 
 public partial class DownloadView : UserControl
 {
-    public static DownloadManifest DownloadManifest;
-    private readonly SQLiteDataAccess _dataService;
-    private HttpDataAccess _access;
-    private int _canUpdateCount;
-    private int _isNotOnDiskCount;
-    private bool _selectedToggle;
-    private bool _toggleItemsNotDownloaded;
-    private bool _toggleItemsToUpdate;
-
     public DownloadView()
     {
         InitializeComponent();
-        DataContext = this;
-        _dataService = new SQLiteDataAccess();
-        _access = new HttpDataAccess(LoginView.Client);
-        Products = new List<Product>();
-        ProductCells = new ObservableCollection<Cell>();
+        DataContext = new DownloadViewModel();
         Loaded += DownloadWindow_Loaded;
     }
 
-    public ObservableCollection<Cell> ProductCells { get; set; }
-    public IEnumerable<Product> Products { get; set; }
-
     private async void DownloadWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        BusyTextBlock.Text = "LOADING ADDONS";
-        Overlay.Visibility = Visibility.Visible;
-        _access = new HttpDataAccess(LoginView.Client);
-        Products = await _dataService.GetProductsOnly();
-        Products = await _access.GetPurchasedProducts(Products);
-        var allFiles = Directory
-            .EnumerateFiles(MainWindow.DlOption.DownloadFilepath, "*.zip", SearchOption.AllDirectories)
-            .Select(file => (new FileInfo(file).Length, new FileInfo(file).Name));
-        foreach (var product in Products)
-            product.UserContentLength = allFiles.FirstOrDefault(file => file.Name == product.FileName).Length;
-        //await _dataService.UpdateUserContentLength(products);
-        foreach (var product in Products)
-        {
-            var cell = new Cell
-            {
-                ProductID = product.ProductID,
-                ImageUrl = "../../Images/" + product.ImageName,
-                Name = product.Name,
-                IsNotOnDisk = product.UserContentLength == 0 ? Visibility.Visible : Visibility.Hidden,
-                CanUpdate = product.UserContentLength != 0 && product.UserContentLength != product.CurrentContentLength
-                    ? Visibility.Visible
-                    : Visibility.Hidden
-            };
-            if (cell.IsNotOnDisk == Visibility.Visible) _isNotOnDiskCount++;
-            if (cell.CanUpdate == Visibility.Visible) _canUpdateCount++;
-            ProductCells.Add(cell);
-        }
-
-        OutOfDateTextBlock.Text = $"Select out-of-date packs ({_canUpdateCount})";
-        MissingPackTextBlock.Text = $"Select missing packs ({_isNotOnDiskCount})";
-        DownloadButton.IsEnabled = ProductCells.Any();
-        SelectAllButton.IsEnabled = ProductCells.Any();
-        Overlay.Visibility = Visibility.Collapsed;
+        var viewModel = (DownloadViewModel) DataContext;
+        viewModel.Loaded();
     }
 
+    /*
     public void ToggleSelected(object sender, RoutedEventArgs e)
     {
         if (!_selectedToggle)
@@ -107,15 +55,15 @@ public partial class DownloadView : UserControl
 
         var completedFileCount = 0;
         var totalFileCount =
-            await _dataService.GetTotalFileCount(MainWindow.DlOption, productIds);
+            await _dataService.GetTotalFileCount(MainViewModel.DlOption, productIds);
         var progress =
             new Progress<int>(report =>
             {
                 BusyTextBlock.Text = $"Downloading file {++completedFileCount} of {totalFileCount}";
             });
         Overlay.Visibility = Visibility.Visible;
-        DownloadManifest = await _dataService.GetDownloadManifest(MainWindow.DlOption, productIds);
-        await _access.Download(DownloadManifest, MainWindow.DlOption, progress);
+        DownloadManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
+        await _access.Download(DownloadManifest, MainViewModel.DlOption, progress);
         BusyTextBlock.Text = "Download Complete";
     }
 
@@ -156,4 +104,5 @@ public partial class DownloadView : UserControl
             }
         }
     }
+        */
 }

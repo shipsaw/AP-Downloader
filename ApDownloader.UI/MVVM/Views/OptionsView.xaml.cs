@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Forms;
 using ApDownloader.DataAccess;
+using ApDownloader.UI.MVVM.ViewModels;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace ApDownloader.UI.MVVM.Views;
@@ -17,12 +18,12 @@ public partial class OptionsView : UserControl
         ApplyButton.IsEnabled = false;
         _dataAccess = new SQLiteDataAccess();
 
-        ExtraStockCheckbox.IsChecked = MainWindow.DlOption.GetExtraStock;
-        BrandingPatchCheckbox.IsChecked = MainWindow.DlOption.GetBrandingPatch;
-        LiveryPackCheckbox.IsChecked = MainWindow.DlOption.GetLiveryPack;
-        DownloadFolder.Text = Path.Combine(MainWindow.DlOption.DownloadFilepath, @"ApDownloads");
-        InstallFolder.Text = MainWindow.DlOption.InstallFilePath;
-        _actualDownloadFolderLoc = MainWindow.DlOption.DownloadFilepath;
+        ExtraStockCheckbox.IsChecked = MainViewModel.DlOption.GetExtraStock;
+        BrandingPatchCheckbox.IsChecked = MainViewModel.DlOption.GetBrandingPatch;
+        LiveryPackCheckbox.IsChecked = MainViewModel.DlOption.GetLiveryPack;
+        DownloadFolder.Text = Path.Combine(MainViewModel.DlOption.DownloadFilepath, @"ApDownloads");
+        InstallFolder.Text = MainViewModel.DlOption.InstallFilePath;
+        _actualDownloadFolderLoc = MainViewModel.DlOption.DownloadFilepath;
     }
 
 
@@ -49,12 +50,12 @@ public partial class OptionsView : UserControl
 
     private async void ApplySettings(object sender, RoutedEventArgs e)
     {
-        MainWindow.DlOption.GetExtraStock = ExtraStockCheckbox.IsChecked ?? false;
-        MainWindow.DlOption.GetBrandingPatch = BrandingPatchCheckbox.IsChecked ?? false;
-        MainWindow.DlOption.GetLiveryPack = LiveryPackCheckbox.IsChecked ?? false;
-        MainWindow.DlOption.DownloadFilepath = _actualDownloadFolderLoc;
-        MainWindow.DlOption.InstallFilePath = InstallFolder.Text;
-        await _dataAccess.SetUserOptions(MainWindow.DlOption);
+        MainViewModel.DlOption.GetExtraStock = ExtraStockCheckbox.IsChecked ?? false;
+        MainViewModel.DlOption.GetBrandingPatch = BrandingPatchCheckbox.IsChecked ?? false;
+        MainViewModel.DlOption.GetLiveryPack = LiveryPackCheckbox.IsChecked ?? false;
+        MainViewModel.DlOption.DownloadFilepath = _actualDownloadFolderLoc;
+        MainViewModel.DlOption.InstallFilePath = InstallFolder.Text;
+        await _dataAccess.SetUserOptions(MainViewModel.DlOption);
         ApplyResponse.Visibility = Visibility.Visible;
         ApplyButton.IsEnabled = false;
     }

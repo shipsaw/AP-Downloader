@@ -16,6 +16,7 @@
                 <ResourceDictionary Source="Themes/ScrollBar.xaml" />
                 <ResourceDictionary Source="Themes/FilepathTextBoxTheme.xaml" />
                 <ResourceDictionary Source="Themes/CheckboxTheme.xaml" />
+                <ResourceDictionary Source="Themes/AdminAlert.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <DataTemplate DataType="{x:Type viewModel:LoginViewModel}">
                 <view:LoginView />

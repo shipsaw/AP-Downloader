@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
+using ApDownloader.UI.MVVM.ViewModels;
 
 namespace ApDownloader.UI.MVVM.Views;
 
@@ -34,7 +35,7 @@ public partial class InstallView : UserControl
 
     private async void InstallWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        var products = await _dataService.GetDownloadedProductsOnly(DownloadView.DownloadManifest?.ProductIds);
+        var products = await _dataService.GetDownloadedProductsOnly(MainViewModel.DlManifest?.ProductIds);
         foreach (var product in products)
         {
             var cell = new Cell
@@ -49,7 +50,7 @@ public partial class InstallView : UserControl
         AddonsFoundList.SelectAll();
         BusyTextBlock.Text = "Installing Addons";
         InstallOverlay.Visibility = Visibility.Collapsed;
-        InstallButton.IsEnabled = ProductCells.Any() && MainWindow.IsAdmin;
+        InstallButton.IsEnabled = ProductCells.Any(); // && MainViewModel.IsAdmin;
         SelectAllButton.IsEnabled = ProductCells.Any();
     }
 
@@ -59,7 +60,7 @@ public partial class InstallView : UserControl
         {
             AddonsFoundList.SelectAll();
             SelectAllButton.Content = "Deselect All";
-            if (AddonsFoundList.SelectedItems.Count > 0 && MainWindow.IsAdmin)
+            if (AddonsFoundList.SelectedItems.Count > 0) // && MainViewModel.IsAdmin)
                 InstallButton.IsEnabled = true;
         }
         else
@@ -82,30 +83,30 @@ public partial class InstallView : UserControl
 
         var completedFileCount = 0;
         var totalFileCount =
-            _dataService.GetTotalFileCount(MainWindow.DlOption, productIds);
+            _dataService.GetTotalFileCount(MainViewModel.DlOption, productIds);
         var progress =
             new Progress<int>(report =>
             {
                 BusyTextBlock.Text = $"Installing file {++completedFileCount} of {totalFileCount.Result}";
             });
         InstallOverlay.Visibility = Visibility.Visible;
-        DownloadManifest = await _dataService.GetDownloadManifest(MainWindow.DlOption, productIds);
+        DownloadManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
         await Task.Run(() =>
         {
-            var dir = new DirectoryInfo(Path.Combine(MainWindow.DlOption.TempFilePath + "ApDownloads"));
+            var dir = new DirectoryInfo(Path.Combine(MainViewModel.DlOption.TempFilePath + "ApDownloads"));
             if (dir.Exists)
                 dir.Delete(true);
 
             if (DownloadManifest.ProductIds != null && DownloadManifest.ProductIds.Any())
-                InstallAddons(MainWindow.DlOption, DownloadManifest.PrFilenames, "Products/", progress);
+                InstallAddons(MainViewModel.DlOption, DownloadManifest.PrFilenames, "Products/", progress);
 
-            if (MainWindow.DlOption.GetExtraStock && DownloadManifest.EsFilenames.Any())
-                InstallAddons(MainWindow.DlOption, DownloadManifest.EsFilenames, "ExtraStock/", progress);
-            if (MainWindow.DlOption.GetBrandingPatch && DownloadManifest.BpFilenames.Any())
-                InstallAddons(MainWindow.DlOption, DownloadManifest.BpFilenames, "BrandingPatches/", progress);
+            if (MainViewModel.DlOption.GetExtraStock && DownloadManifest.EsFilenames.Any())
+                InstallAddons(MainViewModel.DlOption, DownloadManifest.EsFilenames, "ExtraStock/", progress);
+            if (MainViewModel.DlOption.GetBrandingPatch && DownloadManifest.BpFilenames.Any())
+                InstallAddons(MainViewModel.DlOption, DownloadManifest.BpFilenames, "BrandingPatches/", progress);
 
-            if (MainWindow.DlOption.GetLiveryPack && DownloadManifest.LpFilenames.Any())
-                InstallAddons(MainWindow.DlOption, DownloadManifest.LpFilenames, "LiveryPacks/", progress);
+            if (MainViewModel.DlOption.GetLiveryPack && DownloadManifest.LpFilenames.Any())
+                InstallAddons(MainViewModel.DlOption, DownloadManifest.LpFilenames, "LiveryPacks/", progress);
 
             if (dir.Exists)
                 dir.Delete(true);
@@ -123,7 +124,7 @@ public partial class InstallView : UserControl
     private async void GetAllPrevDownloads(object sender, RoutedEventArgs e)
     {
         var allFiles = Directory
-            .EnumerateFiles(Path.Combine(MainWindow.DlOption.DownloadFilepath, "ApDownloads"), "*.zip",
+            .EnumerateFiles(Path.Combine(MainViewModel.DlOption.DownloadFilepath, "ApDownloads"), "*.zip",
                 SearchOption.AllDirectories)
             .Select(file => new FileInfo(file).Name);
         var products = await _dataService.GetDownloadedProductsByName(allFiles);
@@ -140,7 +141,7 @@ public partial class InstallView : UserControl
                 ProductCells.Add(cell);
         }
 
-        if (ProductCells.Any() && MainWindow.IsAdmin)
+        if (ProductCells.Any() /* && MainViewModel.IsAdmin*/)
             InstallButton.IsEnabled = true;
         if (ProductCells.Any())
             SelectAllButton.IsEnabled = true;

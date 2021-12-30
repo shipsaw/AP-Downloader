@@ -78,11 +78,11 @@ public class SQLiteDataAccess
                (manifest.LpFilenames?.Count() ?? 0);
     }
 
-    public async Task<DownloadOption> GetUserOptions()
+    public DownloadOption GetUserOptions()
     {
         using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
         var product =
-            await conn.QueryFirstAsync<DownloadOption>("SELECT * FROM Options") ?? new DownloadOption();
+            conn.QueryFirst<DownloadOption>("SELECT * FROM Options") ?? new DownloadOption();
         return product;
     }
 
