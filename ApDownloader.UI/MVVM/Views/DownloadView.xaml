@@ -105,7 +105,9 @@
                                    Foreground="White" FontSize="20" />
                     </StackPanel>
                 </StackPanel>
-                <Button Name="DownloadButton" Width="150" Grid.Column="2" Content="Download"
+                <Button Width="150" Grid.Column="2" Content="Download"
+                        Command="{Binding DownloadCommand}"
+                        CommandParameter="{Binding SelectedItems, ElementName=AddonsFoundList}"
                         Style="{StaticResource LoginButton}"
                         Margin="20" />
             </Grid>

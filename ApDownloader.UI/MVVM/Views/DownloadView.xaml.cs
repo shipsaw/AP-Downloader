@@ -1,25 +1,19 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using ApDownloader.UI.MVVM.ViewModels;
 
 namespace ApDownloader.UI.MVVM.Views;
 
 public partial class DownloadView : UserControl
 {
+    private bool _selectedToggle;
+    private bool _toggleItemsNotDownloaded;
+    private bool _toggleItemsToUpdate;
+
     public DownloadView()
     {
         InitializeComponent();
-        DataContext = new DownloadViewModel();
-        Loaded += DownloadWindow_Loaded;
     }
 
-    private async void DownloadWindow_Loaded(object sender, RoutedEventArgs e)
-    {
-        var viewModel = (DownloadViewModel) DataContext;
-        viewModel.Loaded();
-    }
-
-    /*
     public void ToggleSelected(object sender, RoutedEventArgs e)
     {
         if (!_selectedToggle)
@@ -44,29 +38,7 @@ public partial class DownloadView : UserControl
         _selectedToggle = !_selectedToggle;
     }
 
-    private async void Download(object sender, RoutedEventArgs e)
-    {
-        var selected = AddonsFoundList.SelectedItems;
-        var productIds = new List<int>();
-        foreach (Cell cell in selected)
-            if (cell.ProductID != null)
-                productIds.Add(cell.ProductID.Value);
-
-
-        var completedFileCount = 0;
-        var totalFileCount =
-            await _dataService.GetTotalFileCount(MainViewModel.DlOption, productIds);
-        var progress =
-            new Progress<int>(report =>
-            {
-                BusyTextBlock.Text = $"Downloading file {++completedFileCount} of {totalFileCount}";
-            });
-        Overlay.Visibility = Visibility.Visible;
-        DownloadManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
-        await _access.Download(DownloadManifest, MainViewModel.DlOption, progress);
-        BusyTextBlock.Text = "Download Complete";
-    }
-
+    /*
     private void SelectUpdateCheckbox_OnClick(object sender, RoutedEventArgs e)
     {
         if (_toggleItemsToUpdate == false)
@@ -104,5 +76,5 @@ public partial class DownloadView : UserControl
             }
         }
     }
-        */
+    */
 }

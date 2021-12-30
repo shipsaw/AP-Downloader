@@ -35,7 +35,7 @@ public class MainViewModel : ObservableObject
         DlOption = _dataAccess.GetUserOptions();
     }
 
-    public static IEnumerable<Product> Products { get; set; }
+    public static IEnumerable<Product> Products { get; set; } = new List<Product>();
 
     public RelayCommand LoginViewCommand { get; set; }
     public RelayCommand DownloadViewCommand { get; set; }
@@ -66,6 +66,8 @@ public class MainViewModel : ObservableObject
             OnPropertyChanged();
         }
     }
+
+    public static bool DirtyProdList { get; set; }
 
     private void CheckAdmin()
     {
