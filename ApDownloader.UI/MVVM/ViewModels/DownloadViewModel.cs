@@ -138,7 +138,7 @@ public class DownloadViewModel : ObservableObject
                 product.UserContentLength = allFiles.FirstOrDefault(file => file.Name == product.FileName).Length;
         }
 
-        //await _dataService.UpdateUserContentLength(products);
+        await _dataService.UpdateUserContentLength(products);
         foreach (var product in MainViewModel.Products)
         {
             var cell = new Cell
