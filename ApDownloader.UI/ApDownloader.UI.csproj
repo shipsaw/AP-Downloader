@@ -310,6 +310,14 @@
       <Resource Include="Images\missingFile.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Resource>
+      <None Remove="Images\APC411_Cover-238x294.png" />
+      <Resource Include="Images\APC411_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC455EPV1_Cover-238x294.png" />
+      <Resource Include="Images\APC455EPV1_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
     </ItemGroup>
 
     <ItemGroup>

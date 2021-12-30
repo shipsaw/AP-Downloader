@@ -1,5 +1,7 @@
-﻿namespace ApDownloader.UI.MVVM.ViewModels;
+﻿using ApDownloader.UI.Core;
 
-public class OptionsViewModel
+namespace ApDownloader.UI.MVVM.ViewModels;
+
+public class OptionsViewModel : ObservableObject
 {
 }
