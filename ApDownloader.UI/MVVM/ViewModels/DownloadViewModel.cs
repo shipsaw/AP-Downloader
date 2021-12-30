@@ -135,10 +135,14 @@ public class DownloadViewModel : ObservableObject
                 .EnumerateFiles(MainViewModel.DlOption.DownloadFilepath, "*.zip", SearchOption.AllDirectories)
                 .Select(file => (new FileInfo(file).Length, new FileInfo(file).Name));
             foreach (var product in MainViewModel.Products)
+            {
                 product.UserContentLength = allFiles.FirstOrDefault(file => file.Name == product.FileName).Length;
+                product.CanUpdate = product.UserContentLength != product.CurrentContentLength &&
+                                    product.UserContentLength != 0;
+                product.IsMissing = product.UserContentLength == 0;
+            }
         }
 
-        await _dataService.UpdateUserContentLength(products);
         foreach (var product in MainViewModel.Products)
         {
             var cell = new Cell
