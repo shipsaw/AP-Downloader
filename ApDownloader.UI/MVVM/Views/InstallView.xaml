@@ -3,20 +3,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewmodel="clr-namespace:ApDownloader.UI.MVVM.ViewModels"
              mc:Ignorable="d"
              Background="Transparent"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.DataContext>
+        <viewmodel:InstallViewModel />
+    </UserControl.DataContext>
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </UserControl.Resources>
     <Grid x:Name="InstallRoot">
-        <Border x:Name="InstallOverlay" Panel.ZIndex="1000" CornerRadius="0 7 7 0 ">
+        <Border Visibility="{Binding OverlayVisibility, Converter={StaticResource BoolToVis}}" Panel.ZIndex="1000"
+                CornerRadius="0 7 7 0 ">
             <Border.Background>
                 <SolidColorBrush Color="Black" Opacity=".8" />
             </Border.Background>
-            <TextBlock Foreground="White" FontSize="40" Text=""
+            <TextBlock Foreground="White" FontSize="40"
                        HorizontalAlignment="Center"
-                       Name="BusyTextBlock"
+                       Text="{Binding BusyText}"
                        Margin="0 200 0 0 " />
         </Border>
         <StackPanel>
@@ -67,10 +72,10 @@
                         Margin="20" Click="ToggleSelected" />
                 <Button Grid.Column="1" Name="GetAllDownloadedButton" Content="All Downloads"
                         Style="{StaticResource LoginButton}"
-                        Margin="20" Click="GetAllPrevDownloads" />
+                        Margin="20" />
                 <Button Name="InstallButton" Grid.Column="2" Content="Install"
                         Style="{StaticResource LoginButton}"
-                        Margin="20" Click="Install" />
+                        Margin="20" />
             </Grid>
         </StackPanel>
     </Grid>
