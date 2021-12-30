@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using ApDownloader.Model;
 
 namespace ApDownloader.UI.MVVM.Views;
 
@@ -14,7 +15,7 @@ public partial class DownloadView : UserControl
         InitializeComponent();
     }
 
-    public void ToggleSelected(object sender, RoutedEventArgs e)
+    private void ToggleSelected(object sender, RoutedEventArgs e)
     {
         if (!_selectedToggle)
         {
@@ -38,21 +39,20 @@ public partial class DownloadView : UserControl
         _selectedToggle = !_selectedToggle;
     }
 
-    /*
     private void SelectUpdateCheckbox_OnClick(object sender, RoutedEventArgs e)
     {
         if (_toggleItemsToUpdate == false)
         {
-            foreach (var product in ProductCells)
-                if (product.CanUpdate == Visibility.Visible)
-                    AddonsFoundList.SelectedItems.Add(product);
+            foreach (Cell cell in AddonsFoundList.Items)
+                if (cell.CanUpdate)
+                    AddonsFoundList.SelectedItems.Add(cell);
             _toggleItemsToUpdate = true;
         }
         else
         {
-            foreach (var product in ProductCells)
-                if (product.CanUpdate == Visibility.Visible)
-                    AddonsFoundList.SelectedItems.Remove(product);
+            foreach (Cell cell in AddonsFoundList.Items)
+                if (cell.CanUpdate)
+                    AddonsFoundList.SelectedItems.Remove(cell);
             _toggleItemsToUpdate = false;
         }
     }
@@ -62,19 +62,18 @@ public partial class DownloadView : UserControl
         {
             if (_toggleItemsNotDownloaded == false)
             {
-                foreach (var product in ProductCells)
-                    if (product.IsNotOnDisk == Visibility.Visible)
-                        AddonsFoundList.SelectedItems.Add(product);
+                foreach (Cell cell in AddonsFoundList.Items)
+                    if (cell.IsNotOnDisk)
+                        AddonsFoundList.SelectedItems.Add(cell);
                 _toggleItemsNotDownloaded = true;
             }
             else
             {
-                foreach (var product in ProductCells)
-                    if (product.IsNotOnDisk == Visibility.Visible)
-                        AddonsFoundList.SelectedItems.Remove(product);
+                foreach (Cell cell in AddonsFoundList.Items)
+                    if (cell.IsNotOnDisk)
+                        AddonsFoundList.SelectedItems.Remove(cell);
                 _toggleItemsNotDownloaded = false;
             }
         }
     }
-    */
 }
