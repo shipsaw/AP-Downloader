@@ -3,17 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="clr-namespace:ApDownloader.UI.MVVM.ViewModels"
              mc:Ignorable="d"
              Background="Transparent"
              d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.DataContext>
+        <vm:DownloadViewModel />
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
     <Grid x:Name="DownloadRoot">
-        <Border x:Name="Overlay" Panel.ZIndex="1000" CornerRadius="0 7 7 0 ">
+        <Border x:Name="Overlay" Panel.ZIndex="1000"
+                CornerRadius="0 7 7 0 "
+                Visibility="{Binding OverlayVisibility, Converter={StaticResource BoolToVis}}">
             <Border.Background>
                 <SolidColorBrush Color="Black" Opacity=".8" />
             </Border.Background>
-            <TextBlock Foreground="White" FontSize="40" Text=""
+            <TextBlock Foreground="White" FontSize="40"
+                       Text="{Binding BusyText}"
                        HorizontalAlignment="Center"
-                       Name="BusyTextBlock"
                        Margin="0 200 0 0 " />
         </Border>
         <StackPanel>
@@ -76,13 +86,12 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Name="SelectAllButton" Width="150" Content="Select All" Style="{StaticResource LoginButton}"
-                        Margin="20" Click="ToggleSelected" />
+                        Margin="20" />
                 <StackPanel Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 5">
                     <StackPanel Orientation="Horizontal">
                         <CheckBox Margin="5 5 10 5"
                                   Name="UpdateCheckbox"
-                                  Style="{StaticResource CheckboxTheme}"
-                                  Click="SelectUpdateCheckbox_OnClick" />
+                                  Style="{StaticResource CheckboxTheme}" />
                         <TextBlock VerticalAlignment="Center" Text="Select out-of-date packs"
                                    Name="OutOfDateTextBlock"
                                    Foreground="White" FontSize="20" />
@@ -90,8 +99,7 @@
                     <StackPanel Orientation="Horizontal">
                         <CheckBox Margin="5 5 10 5 "
                                   Name="UnDownloadedCheckbox"
-                                  Style="{StaticResource CheckboxTheme}"
-                                  Click="SelectUnDownloadedCheckbox" />
+                                  Style="{StaticResource CheckboxTheme}" />
                         <TextBlock VerticalAlignment="Center" Text="Select missing packs"
                                    Name="MissingPackTextBlock"
                                    Foreground="White" FontSize="20" />
@@ -99,7 +107,7 @@
                 </StackPanel>
                 <Button Name="DownloadButton" Width="150" Grid.Column="2" Content="Download"
                         Style="{StaticResource LoginButton}"
-                        Margin="20" Click="Download" />
+                        Margin="20" />
             </Grid>
         </StackPanel>
     </Grid>

@@ -12,6 +12,9 @@
     <Window.DataContext>
         <viewModel:MainViewModel />
     </Window.DataContext>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
 
     <Border Background="#272537"
             CornerRadius="10"
@@ -57,14 +60,16 @@
                 Grid.Column="1"
                 Content="{Binding CurrentView}" />
             <StackPanel Grid.Column="1" Orientation="Horizontal"
-                        Name="AdminWarning"
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Center">
-                <Image Source="../../Images/warning-sign.png" Height="22" Width="22" />
+                        Visibility="{Binding Path=IsAdmin, Converter={StaticResource BoolToVis}}"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Right"
+                        Margin="10 5">
                 <TextBlock Foreground="Gold"
-                           FontSize="18"
-                           Padding="2"
-                           Text="Warning: Program is not being run as administrator" />
+                           FontSize="28"
+                           FontStyle="Italic"
+                           Style="{StaticResource animateFadeOut}"
+                           Text="Warning: Program is not being run as administrator " />
+                <Image Source="../../Images/warning-sign.png" Height="35" Width="35" />
             </StackPanel>
         </Grid>
     </Border>
