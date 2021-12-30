@@ -86,22 +86,23 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Name="SelectAllButton" Width="150" Content="Select All" Style="{StaticResource LoginButton}"
-                        Margin="20" />
+                        Margin="20" Click="ToggleSelected" />
                 <StackPanel Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 5">
                     <StackPanel Orientation="Horizontal">
                         <CheckBox Margin="5 5 10 5"
                                   Name="UpdateCheckbox"
+                                  Click="SelectUpdateCheckbox_OnClick"
                                   Style="{StaticResource CheckboxTheme}" />
-                        <TextBlock VerticalAlignment="Center" Text="Select out-of-date packs"
+                        <TextBlock VerticalAlignment="Center" Text="{Binding OutOfDateText}"
                                    Name="OutOfDateTextBlock"
                                    Foreground="White" FontSize="20" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <CheckBox Margin="5 5 10 5 "
                                   Name="UnDownloadedCheckbox"
+                                  Click="SelectUnDownloadedCheckbox"
                                   Style="{StaticResource CheckboxTheme}" />
-                        <TextBlock VerticalAlignment="Center" Text="Select missing packs"
-                                   Name="MissingPackTextBlock"
+                        <TextBlock VerticalAlignment="Center" Text="{Binding MissingPackText}"
                                    Foreground="White" FontSize="20" />
                     </StackPanel>
                 </StackPanel>

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Windows;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
@@ -120,6 +119,8 @@ public class DownloadViewModel : ObservableObject
         OverlayVisibility = true;
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
         await _access.Download(MainViewModel.DlManifest, MainViewModel.DlOption, progress);
+        MissingPackText = "Select missing packs (" + _isNotOnDiskCount + ")";
+        OutOfDateText = "Select out-of-date packs (" + _canUpdateCount + ")";
         BusyText = "Download Complete";
     }
 
@@ -145,13 +146,11 @@ public class DownloadViewModel : ObservableObject
                 ProductID = product.ProductID,
                 ImageUrl = "../../Images/" + product.ImageName,
                 Name = product.Name,
-                IsNotOnDisk = product.UserContentLength == 0 ? Visibility.Visible : Visibility.Hidden,
-                CanUpdate = product.UserContentLength != 0 && product.UserContentLength != product.CurrentContentLength
-                    ? Visibility.Visible
-                    : Visibility.Hidden
+                IsNotOnDisk = product.IsMissing,
+                CanUpdate = product.CanUpdate
             };
-            if (cell.IsNotOnDisk == Visibility.Visible) _isNotOnDiskCount++;
-            if (cell.CanUpdate == Visibility.Visible) _canUpdateCount++;
+            if (cell.IsNotOnDisk) _isNotOnDiskCount++;
+            if (cell.CanUpdate) _canUpdateCount++;
             ProductCells.Add(cell);
         }
 
