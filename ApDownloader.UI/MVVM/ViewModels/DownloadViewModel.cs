@@ -1,4 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -27,9 +30,16 @@ public class DownloadViewModel : ObservableObject
 
     public DownloadViewModel()
     {
+        DownloadCommand = new RelayCommand(list => DownloadAddons((IList) list));
         _dataService = new SQLiteDataAccess();
         _access = new HttpDataAccess(LoginView.Client);
+        Loaded();
     }
+
+    public RelayCommand ToggleSelectAllCommand { get; set; }
+    public RelayCommand ToggleUpdatedCommand { get; set; }
+    public RelayCommand ToggleMissingCommand { get; set; }
+    public RelayCommand DownloadCommand { get; set; }
 
     public string BusyText
     {
@@ -94,16 +104,39 @@ public class DownloadViewModel : ObservableObject
         }
     }
 
-    public async void Loaded()
+    private async void DownloadAddons(IList selectedCells)
     {
-        _access = new HttpDataAccess(LoginView.Client);
-        MainViewModel.Products = await _dataService.GetProductsOnly();
-        MainViewModel.Products = await _access.GetPurchasedProducts(MainViewModel.Products);
-        var allFiles = Directory
-            .EnumerateFiles(MainViewModel.DlOption.DownloadFilepath, "*.zip", SearchOption.AllDirectories)
-            .Select(file => (new FileInfo(file).Length, new FileInfo(file).Name));
-        foreach (var product in MainViewModel.Products)
-            product.UserContentLength = allFiles.FirstOrDefault(file => file.Name == product.FileName).Length;
+        var productIds = new List<int>();
+        foreach (Cell cell in selectedCells)
+            if (cell.ProductID != null)
+                productIds.Add(cell.ProductID.Value);
+
+
+        var completedFileCount = 0;
+        var totalFileCount =
+            await _dataService.GetTotalFileCount(MainViewModel.DlOption, productIds);
+        var progress =
+            new Progress<int>(report => { BusyText = $"Downloading file {++completedFileCount} of {totalFileCount}"; });
+        OverlayVisibility = true;
+        MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
+        await _access.Download(MainViewModel.DlManifest, MainViewModel.DlOption, progress);
+        BusyText = "Download Complete";
+    }
+
+    private async void Loaded()
+    {
+        if (!MainViewModel.Products.Any())
+        {
+            _access = new HttpDataAccess(LoginView.Client);
+            MainViewModel.Products = await _dataService.GetProductsOnly();
+            MainViewModel.Products = await _access.GetPurchasedProducts(MainViewModel.Products);
+            var allFiles = Directory
+                .EnumerateFiles(MainViewModel.DlOption.DownloadFilepath, "*.zip", SearchOption.AllDirectories)
+                .Select(file => (new FileInfo(file).Length, new FileInfo(file).Name));
+            foreach (var product in MainViewModel.Products)
+                product.UserContentLength = allFiles.FirstOrDefault(file => file.Name == product.FileName).Length;
+        }
+
         //await _dataService.UpdateUserContentLength(products);
         foreach (var product in MainViewModel.Products)
         {
