@@ -6,6 +6,9 @@
              mc:Ignorable="d"
              Background="Transparent"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
     <Grid x:Name="InstallRoot">
         <Border x:Name="InstallOverlay" Panel.ZIndex="1000" CornerRadius="0 7 7 0 ">
             <Border.Background>

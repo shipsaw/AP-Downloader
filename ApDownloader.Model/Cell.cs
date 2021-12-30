@@ -7,4 +7,5 @@ public class Cell
     public string Name { get; set; }
     public bool CanUpdate { get; set; }
     public bool IsNotOnDisk { get; set; }
+    public bool IsSelected { get; set; }
 }
