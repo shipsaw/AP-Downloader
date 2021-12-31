@@ -70,9 +70,6 @@ public class InstallViewModel : ObservableObject
             };
             ProductCells.Add(cell);
         }
-
-        //InstallButton.IsEnabled = ProductCells.Any(); // && MainViewModel.IsAdmin;
-        //SelectAllButton.IsEnabled = ProductCells.Any();
     }
 
     private async Task Install(IList selectedCells)

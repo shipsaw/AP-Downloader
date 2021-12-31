@@ -46,7 +46,7 @@
                 </ListBox.ItemsPanel>
                 <ListBox.Resources>
                     <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="7" />
+                        <Setter Property="CornerRadius" Value="10" />
                     </Style>
                 </ListBox.Resources>
                 <ListBox.ItemTemplate>
@@ -55,8 +55,7 @@
                             Height="230">
                             <StackPanel>
                                 <Image Source="{Binding ImageUrl}" Height="133" Width="109"
-                                       HorizontalAlignment="Left"
-                                       VerticalAlignment="Top" Margin="0 5 0 0 " />
+                                       VerticalAlignment="Top" Margin="5 5 0 0 " />
                                 <TextBlock Text="{Binding Name}" Width="99" TextWrapping="Wrap"
                                            TextTrimming="WordEllipsis"
                                            HorizontalAlignment="Center" />
@@ -66,14 +65,14 @@
                                    Name="UpdateAlert"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
-                                   Margin="78 100 5 5  "
+                                   Margin="80 100 5 5  "
                                    Visibility="{Binding CanUpdate, Converter={StaticResource BoolToVis}}" />
                             <Image Source="../../Images/missingFile.png"
                                    Height="25" Width="25"
                                    Name="NotOnDiskAlert"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
-                                   Margin="78 100 5 5  "
+                                   Margin="80 100 5 5  "
                                    Visibility="{Binding IsNotOnDisk, Converter={StaticResource BoolToVis}}" />
                         </Canvas>
                     </DataTemplate>

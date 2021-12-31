@@ -50,10 +50,7 @@ public class HttpDataAccess
         for (var i = 0; i < products.Count(); i++)
             if (result[i].Content.Headers.ContentDisposition != null)
             {
-                var responseContentLength = result[i].Content.Headers.ContentLength ?? 0;
-                productsList[i].CanUpdate = responseContentLength != productsList[i].UserContentLength &&
-                                            productsList[i].UserContentLength != 0;
-                productsList[i].IsMissing = productsList[i].UserContentLength == 0;
+                productsList[i].CurrentContentLength = result[i].Content.Headers.ContentLength ?? 0;
                 retProducts.Add(productsList[i]);
             }
 
@@ -64,7 +61,6 @@ public class HttpDataAccess
         IProgress<int> progress)
     {
         // Create Download Directories
-        var result = Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\");
         Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\Products\");
         Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\ExtraStock\");
         Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\BrandingPatches\");
