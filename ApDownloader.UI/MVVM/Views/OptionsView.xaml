@@ -3,10 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewmodel="clr-namespace:ApDownloader.UI.MVVM.ViewModels"
              mc:Ignorable="d"
              Background="Transparent"
              d:DesignHeight="600" d:DesignWidth="600">
-    <Grid Margin="20">
+    <UserControl.DataContext>
+        <viewmodel:OptionsViewModel />
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+    <Grid Margin="20" Focusable="True">
         <Grid.Resources>
             <Style TargetType="TextBlock">
                 <Setter Property="FontSize" Value="28" />
@@ -17,42 +24,47 @@
         <StackPanel>
             <TextBlock Text="Associated Downloads:"
                        Margin="0"
-                       FontSize="36" />
+                       FontSize="28" />
             <StackPanel Margin="15 0 ">
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox Margin="8" Name="ExtraStockCheckbox"
-                              Style="{StaticResource CheckboxTheme}" Click="ResetDirty" />
+                    <CheckBox Margin="8"
+                              Style="{StaticResource CheckboxTheme}" IsChecked="{Binding GetExtraStock, Mode=TwoWay}" />
                     <TextBlock VerticalAlignment="Center" Text="Extra Stock" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox Margin="8" Name="BrandingPatchCheckbox"
-                              Style="{StaticResource CheckboxTheme}" Click="ResetDirty" />
+                    <CheckBox Margin="8"
+                              Style="{StaticResource CheckboxTheme}"
+                              IsChecked="{Binding GetBrandingPatch, Mode=TwoWay}" />
                     <TextBlock VerticalAlignment="Center" Text="Branding Patch" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox Margin="8" Name="LiveryPackCheckbox"
-                              Style="{StaticResource CheckboxTheme}" Click="ResetDirty" />
+                    <CheckBox Margin="8"
+                              Style="{StaticResource CheckboxTheme}" IsChecked="{Binding GetLiveryPack, Mode=TwoWay}" />
                     <TextBlock VerticalAlignment="Center" Text="Livery Pack" />
                 </StackPanel>
             </StackPanel>
-            <TextBlock Text="Download Location:" FontSize="36" />
-            <TextBox TextChanged="ResetDirty" Name="DownloadFolder" Style="{StaticResource FilepathTextBox}" />
+            <TextBlock Text="Download Location:" FontSize="28" Margin="0 35 0 0" />
+            <TextBox
+                IsReadOnly="True"
+                Text="{Binding DownloadFilepath, StringFormat={}{0}ApDownloads, Mode=TwoWay}"
+                Style="{StaticResource FilepathTextBox}" />
             <Button HorizontalAlignment="Left" Margin="0 10" Content="Set Folder Location" Width="200"
-                    Click="DownloadFolderSelection"
-                    Style="{StaticResource LoginButton}" />
-            <TextBlock Text="Railworks Location:" FontSize="36" />
-            <TextBox TextChanged="ResetDirty" Name="InstallFolder" Style="{StaticResource FilepathTextBox}" />
+                    Style="{StaticResource LoginButton}" Click="DownloadFolderSelection" />
+            <TextBlock Text="Railworks Location:" FontSize="28" />
+            <TextBox Text="{Binding InstallFilepath, Mode=TwoWay}" IsReadOnly="True"
+                     Style="{StaticResource FilepathTextBox}" />
             <Button HorizontalAlignment="Left" Margin="0 10" Content="Set Folder Location" Width="200"
-                    Click="InstallFolderSelection"
-                    Style="{StaticResource LoginButton}" />
+                    Style="{StaticResource LoginButton}" Click="InstallFolderSelection" />
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom">
-            <TextBlock Name="ApplyResponse" Visibility="Hidden" HorizontalAlignment="Center"
-                       Text="Options Applied Successfully"
-                       Padding="10"
-                       Foreground="LightGray" />
-            <Button IsEnabled="False" HorizontalAlignment="Center" Content="Apply" Width="100"
-                    Click="ApplySettings" Style="{StaticResource LoginButton}" Name="ApplyButton" />
+            <TextBlock
+                Visibility="{Binding ApplyResponseVisibility, Converter={StaticResource BoolToVis}}"
+                HorizontalAlignment="Center"
+                Text="Options Applied Successfully"
+                Padding="10"
+                Foreground="LightGray" />
+            <Button IsEnabled="{Binding CanApply}" HorizontalAlignment="Center" Content="Apply" Width="100"
+                    Style="{StaticResource LoginButton}" Command="{Binding ApplySettingsCommand}" />
         </StackPanel>
     </Grid>
 </UserControl>

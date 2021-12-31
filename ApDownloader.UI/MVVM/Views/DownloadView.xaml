@@ -67,14 +67,14 @@
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
                                    Margin="78 100 5 5  "
-                                   Visibility="{Binding CanUpdate}" />
+                                   Visibility="{Binding CanUpdate, Converter={StaticResource BoolToVis}}" />
                             <Image Source="../../Images/missingFile.png"
                                    Height="25" Width="25"
                                    Name="NotOnDiskAlert"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
                                    Margin="78 100 5 5  "
-                                   Visibility="{Binding IsNotOnDisk}" />
+                                   Visibility="{Binding IsNotOnDisk, Converter={StaticResource BoolToVis}}" />
                         </Canvas>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -87,7 +87,7 @@
                 </Grid.ColumnDefinitions>
                 <Button Name="SelectAllButton" Width="150" Content="Select All" Style="{StaticResource LoginButton}"
                         Margin="20" Click="ToggleSelected" />
-                <StackPanel Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 5">
+                <StackPanel Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10 7 0 5">
                     <StackPanel Orientation="Horizontal">
                         <CheckBox Margin="5 5 10 5"
                                   Name="UpdateCheckbox"

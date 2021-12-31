@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
@@ -32,12 +33,11 @@ public class DownloadViewModel : ObservableObject
         DownloadCommand = new RelayCommand(list => DownloadAddons((IList) list));
         _dataService = new SQLiteDataAccess();
         _access = new HttpDataAccess(LoginView.Client);
-        Loaded();
+        LoadUserAddonsCommand = new AsyncRelayCommand.AsyncCommand(LoadUserAddons);
+        RenderUserAddons();
     }
 
-    public RelayCommand ToggleSelectAllCommand { get; set; }
-    public RelayCommand ToggleUpdatedCommand { get; set; }
-    public RelayCommand ToggleMissingCommand { get; set; }
+    public AsyncRelayCommand.AsyncCommand LoadUserAddonsCommand { get; set; }
     public RelayCommand DownloadCommand { get; set; }
 
     public string BusyText
@@ -124,7 +124,7 @@ public class DownloadViewModel : ObservableObject
         BusyText = "Download Complete";
     }
 
-    private async void Loaded()
+    private async Task LoadUserAddons()
     {
         if (!MainViewModel.Products.Any())
         {
@@ -135,10 +135,17 @@ public class DownloadViewModel : ObservableObject
                 .EnumerateFiles(MainViewModel.DlOption.DownloadFilepath, "*.zip", SearchOption.AllDirectories)
                 .Select(file => (new FileInfo(file).Length, new FileInfo(file).Name));
             foreach (var product in MainViewModel.Products)
+            {
                 product.UserContentLength = allFiles.FirstOrDefault(file => file.Name == product.FileName).Length;
+                product.CanUpdate = product.UserContentLength != product.CurrentContentLength &&
+                                    product.UserContentLength != 0;
+                product.IsMissing = product.UserContentLength == 0;
+            }
         }
+    }
 
-        await _dataService.UpdateUserContentLength(products);
+    public void RenderUserAddons()
+    {
         foreach (var product in MainViewModel.Products)
         {
             var cell = new Cell
