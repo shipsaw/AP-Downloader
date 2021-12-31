@@ -70,12 +70,13 @@
                 </Grid.ColumnDefinitions>
                 <Button Name="SelectAllButton" Content="Deselect All" Style="{StaticResource LoginButton}"
                         Margin="20" Click="ToggleSelected" />
-                <Button Grid.Column="1" Name="GetAllDownloadedButton" Content="All Downloads"
+                <Button Grid.Column="1" Content="All Downloads"
                         Style="{StaticResource LoginButton}"
                         Margin="20" />
                 <Button Name="InstallButton" Grid.Column="2" Content="Install"
                         Style="{StaticResource LoginButton}"
-                        Margin="20" Command="{Binding InstallCommand}" />
+                        Margin="20" Command="{Binding InstallCommand}"
+                        CommandParameter="{Binding SelectedItems, ElementName=AddonsFoundList}" />
             </Grid>
         </StackPanel>
     </Grid>
