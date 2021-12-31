@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
+using ApDownloader.UI.MVVM.ViewModels;
 
 namespace ApDownloader.UI.MVVM.Views;
 
@@ -15,6 +16,7 @@ public partial class LoginView : UserControl
     public LoginView()
     {
         InitializeComponent();
+        DataContext = new DownloadViewModel();
         Client = new HttpClient(_handler);
         Client.Timeout = TimeSpan.FromMinutes(5);
         Loaded += Login_Loaded;
@@ -32,13 +34,14 @@ public partial class LoginView : UserControl
 
     private async void Login(object sender, RoutedEventArgs e)
     {
+        var viewModel = (DownloadViewModel) DataContext;
         var content = new MultipartFormDataContent();
         content.Add(new StringContent(EmailBox.Text), "email");
         content.Add(new StringContent(PasswordBoxName.Password), "password");
         var response = await Client.PostAsync(LoginUrl, content);
         if (response.StatusCode == HttpStatusCode.Redirect)
         {
-            //((DownloadView) DataContext).Client = Client;
+            viewModel.LoadUserAddonsCommand.Execute(e);
             LoginResult.Text = "Login Successful";
             LoginButton.IsEnabled = false;
             LogoutButton.IsEnabled = true;

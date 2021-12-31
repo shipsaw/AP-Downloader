@@ -87,7 +87,7 @@
                 </Grid.ColumnDefinitions>
                 <Button Name="SelectAllButton" Width="150" Content="Select All" Style="{StaticResource LoginButton}"
                         Margin="20" Click="ToggleSelected" />
-                <StackPanel Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 5">
+                <StackPanel Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10 7 0 5">
                     <StackPanel Orientation="Horizontal">
                         <CheckBox Margin="5 5 10 5"
                                   Name="UpdateCheckbox"

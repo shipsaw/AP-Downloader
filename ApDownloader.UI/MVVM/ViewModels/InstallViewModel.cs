@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Windows;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
@@ -29,12 +27,13 @@ public class InstallViewModel : ObservableObject
     {
         _dataService = new SQLiteDataAccess();
         InstallCommand = new RelayCommand(list => Install((IList) list));
+        GetAllPrevDownloadsCommand = new RelayCommand(clickEvent => GetAllPrevDownloads());
         Loaded();
     }
 
-    public RelayCommand InstallCommand { get; set; }
+    public RelayCommand GetAllPrevDownloadsCommand { get; set; }
 
-    public HttpClient? Client { get; set; }
+    public RelayCommand InstallCommand { get; set; }
     public ObservableCollection<Cell> ProductCells { get; } = new();
 
     public string BusyText
@@ -127,7 +126,7 @@ public class InstallViewModel : ObservableObject
         AddonInstaller.AddonInstaller.InstallAddons(downloadOption, extractPath, progress);
     }
 
-    private async void GetAllPrevDownloads(object sender, RoutedEventArgs e)
+    private async void GetAllPrevDownloads()
     {
         var allFiles = Directory
             .EnumerateFiles(Path.Combine(MainViewModel.DlOption.DownloadFilepath, "ApDownloads"), "*.zip",
@@ -146,15 +145,5 @@ public class InstallViewModel : ObservableObject
             if (!ProductCells.Contains(cell))
                 ProductCells.Add(cell);
         }
-
-        if (ProductCells.Any() /* && MainViewModel.IsAdmin*/)
-            //InstallButton.IsEnabled = true;
-            if (ProductCells.Any())
-                //SelectAllButton.IsEnabled = true;
-                if (allFiles.Any())
-                    //SelectAllButton.Content = "Select All";
-                    _selectedToggle = false;
-
-        //GetAllDownloadedButton.IsEnabled = false;
     }
 }

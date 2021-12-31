@@ -32,12 +32,11 @@ public class DownloadViewModel : ObservableObject
         DownloadCommand = new RelayCommand(list => DownloadAddons((IList) list));
         _dataService = new SQLiteDataAccess();
         _access = new HttpDataAccess(LoginView.Client);
-        Loaded();
+        LoadUserAddonsCommand = new RelayCommand(fired => LoadUserAddons());
+        RenderUserAddons();
     }
 
-    public RelayCommand ToggleSelectAllCommand { get; set; }
-    public RelayCommand ToggleUpdatedCommand { get; set; }
-    public RelayCommand ToggleMissingCommand { get; set; }
+    public RelayCommand LoadUserAddonsCommand { get; set; }
     public RelayCommand DownloadCommand { get; set; }
 
     public string BusyText
@@ -124,7 +123,7 @@ public class DownloadViewModel : ObservableObject
         BusyText = "Download Complete";
     }
 
-    private async void Loaded()
+    private async void LoadUserAddons()
     {
         if (!MainViewModel.Products.Any())
         {
@@ -142,7 +141,10 @@ public class DownloadViewModel : ObservableObject
                 product.IsMissing = product.UserContentLength == 0;
             }
         }
+    }
 
+    public void RenderUserAddons()
+    {
         foreach (var product in MainViewModel.Products)
         {
             var cell = new Cell

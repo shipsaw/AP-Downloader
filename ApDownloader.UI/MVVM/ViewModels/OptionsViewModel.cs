@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using ApDownloader.DataAccess;
+﻿using ApDownloader.DataAccess;
 using ApDownloader.UI.Core;
 
 namespace ApDownloader.UI.MVVM.ViewModels;
@@ -8,7 +7,7 @@ public class OptionsViewModel : ObservableObject
 {
     private readonly SQLiteDataAccess _dataAccess;
     private string _actualDownloadFolderLoc;
-    private object _applyResponseVisibility;
+    private object _applyResponseVisibility = false;
     private bool _canApply;
     private string _downloadFilepath;
     private bool _getBrandingPatch;
@@ -17,9 +16,6 @@ public class OptionsViewModel : ObservableObject
     private bool _getLiveryPack;
     private string _installFilepath;
     private string _selectedDownloadPath;
-
-    public RelayCommand SetDownloadFilepathCommand;
-    public RelayCommand SetInstallFilepathCommand;
 
     public OptionsViewModel()
     {
@@ -32,7 +28,12 @@ public class OptionsViewModel : ObservableObject
 
         SetDownloadFilepathCommand = new RelayCommand(path => DownloadFilepath = (string) path);
         SetInstallFilepathCommand = new RelayCommand(path => InstallFilepath = (string) path);
+        ApplySettingsCommand = new RelayCommand(clickEvent => ApplySettings());
     }
+
+    public RelayCommand ApplySettingsCommand { get; set; }
+    public RelayCommand SetDownloadFilepathCommand { get; set; }
+    public RelayCommand SetInstallFilepathCommand { get; set; }
 
     public bool CanApply
     {
@@ -40,6 +41,8 @@ public class OptionsViewModel : ObservableObject
         set
         {
             _canApply = value;
+            if (value)
+                ApplyResponseVisibility = false;
             OnPropertyChanged();
         }
     }
@@ -82,6 +85,7 @@ public class OptionsViewModel : ObservableObject
         get => _downloadFilepath;
         set
         {
+            // If selecting existing Downloads folder, use that, else create one
             if (value.EndsWith(@"\ApDownloads"))
                 _downloadFilepath = value.Remove(value.LastIndexOf(@"ApDownloads"));
             else if (value.EndsWith('\\'))
@@ -114,7 +118,7 @@ public class OptionsViewModel : ObservableObject
         }
     }
 
-    private async void ApplySettings(object sender, RoutedEventArgs e)
+    private async void ApplySettings()
     {
         MainViewModel.DlOption.GetExtraStock = GetExtraStock;
         MainViewModel.DlOption.GetBrandingPatch = GetBrandingPatch;
@@ -122,7 +126,7 @@ public class OptionsViewModel : ObservableObject
         MainViewModel.DlOption.DownloadFilepath = DownloadFilepath;
         MainViewModel.DlOption.InstallFilePath = InstallFilepath;
         await _dataAccess.SetUserOptions(MainViewModel.DlOption);
-        //ApplyResponse.Visibility = Visibility.Visible;
-        //ApplyButton.IsEnabled = false;
+        ApplyResponseVisibility = true;
+        CanApply = false;
     }
 }

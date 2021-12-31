@@ -10,6 +10,9 @@
     <UserControl.DataContext>
         <viewmodel:OptionsViewModel />
     </UserControl.DataContext>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
     <Grid Margin="20">
         <Grid.Resources>
             <Style TargetType="TextBlock">
@@ -51,12 +54,14 @@
                     Style="{StaticResource LoginButton}" Click="InstallFolderSelection" />
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom">
-            <TextBlock Name="ApplyResponse" Visibility="{Binding ApplyResponseVisibility}" HorizontalAlignment="Center"
-                       Text="Options Applied Successfully"
-                       Padding="10"
-                       Foreground="LightGray" />
+            <TextBlock
+                Visibility="{Binding ApplyResponseVisibility, Converter={StaticResource BoolToVis}}"
+                HorizontalAlignment="Center"
+                Text="Options Applied Successfully"
+                Padding="10"
+                Foreground="LightGray" />
             <Button IsEnabled="{Binding CanApply}" HorizontalAlignment="Center" Content="Apply" Width="100"
-                    Style="{StaticResource LoginButton}" />
+                    Style="{StaticResource LoginButton}" Command="{Binding ApplySettingsCommand}" />
         </StackPanel>
     </Grid>
 </UserControl>
