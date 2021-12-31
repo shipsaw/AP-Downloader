@@ -1,4 +1,5 @@
-﻿using ApDownloader.DataAccess;
+﻿using System;
+using ApDownloader.DataAccess;
 using ApDownloader.UI.Core;
 
 namespace ApDownloader.UI.MVVM.ViewModels;
@@ -26,8 +27,16 @@ public class OptionsViewModel : ObservableObject
         _downloadFilepath = MainViewModel.DlOption.DownloadFilepath;
         _installFilepath = MainViewModel.DlOption.InstallFilePath;
 
-        SetDownloadFilepathCommand = new RelayCommand(path => DownloadFilepath = (string) path);
-        SetInstallFilepathCommand = new RelayCommand(path => InstallFilepath = (string) path);
+        SetDownloadFilepathCommand = new RelayCommand(path =>
+        {
+            DownloadFilepath = (string) path;
+            CanApply = true;
+        });
+        SetInstallFilepathCommand = new RelayCommand(path =>
+        {
+            InstallFilepath = (string) path;
+            CanApply = true;
+        });
         ApplySettingsCommand = new RelayCommand(clickEvent => ApplySettings());
     }
 
@@ -86,14 +95,17 @@ public class OptionsViewModel : ObservableObject
         set
         {
             // If selecting existing Downloads folder, use that, else create one
-            if (value.EndsWith(@"\ApDownloads"))
-                _downloadFilepath = value.Remove(value.LastIndexOf(@"ApDownloads"));
-            else if (value.EndsWith('\\'))
-                _downloadFilepath = value;
-            else
-                _downloadFilepath = value + '\\';
-            OnPropertyChanged();
-            CanApply = true;
+            if (Uri.IsWellFormedUriString(value, UriKind.RelativeOrAbsolute))
+            {
+                if (value.EndsWith(@"\ApDownloads"))
+                    _downloadFilepath = value.Remove(value.LastIndexOf(@"ApDownloads"));
+                else if (value.EndsWith('\\'))
+                    _downloadFilepath = value;
+                else
+                    _downloadFilepath = value + '\\';
+                OnPropertyChanged();
+                CanApply = true;
+            }
         }
     }
 
