@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
@@ -32,11 +33,11 @@ public class DownloadViewModel : ObservableObject
         DownloadCommand = new RelayCommand(list => DownloadAddons((IList) list));
         _dataService = new SQLiteDataAccess();
         _access = new HttpDataAccess(LoginView.Client);
-        LoadUserAddonsCommand = new RelayCommand(fired => LoadUserAddons());
+        LoadUserAddonsCommand = new AsyncRelayCommand.AsyncCommand(LoadUserAddons);
         RenderUserAddons();
     }
 
-    public RelayCommand LoadUserAddonsCommand { get; set; }
+    public AsyncRelayCommand.AsyncCommand LoadUserAddonsCommand { get; set; }
     public RelayCommand DownloadCommand { get; set; }
 
     public string BusyText
@@ -123,7 +124,7 @@ public class DownloadViewModel : ObservableObject
         BusyText = "Download Complete";
     }
 
-    private async void LoadUserAddons()
+    private async Task LoadUserAddons()
     {
         if (!MainViewModel.Products.Any())
         {

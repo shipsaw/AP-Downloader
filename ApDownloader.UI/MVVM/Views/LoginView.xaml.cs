@@ -34,6 +34,7 @@ public partial class LoginView : UserControl
 
     private async void Login(object sender, RoutedEventArgs e)
     {
+        LoginResult.Text = "Attempting Login";
         var viewModel = (DownloadViewModel) DataContext;
         var content = new MultipartFormDataContent();
         content.Add(new StringContent(EmailBox.Text), "email");
@@ -41,7 +42,8 @@ public partial class LoginView : UserControl
         var response = await Client.PostAsync(LoginUrl, content);
         if (response.StatusCode == HttpStatusCode.Redirect)
         {
-            viewModel.LoadUserAddonsCommand.Execute(e);
+            LoginResult.Text = "Loading Addons";
+            await viewModel.LoadUserAddonsCommand.ExecuteAsync();
             LoginResult.Text = "Login Successful";
             LoginButton.IsEnabled = false;
             LogoutButton.IsEnabled = true;
