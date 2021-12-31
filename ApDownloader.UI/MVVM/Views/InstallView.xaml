@@ -75,7 +75,7 @@
                         Margin="20" />
                 <Button Name="InstallButton" Grid.Column="2" Content="Install"
                         Style="{StaticResource LoginButton}"
-                        Margin="20" />
+                        Margin="20" Command="{Binding InstallCommand}" />
             </Grid>
         </StackPanel>
     </Grid>

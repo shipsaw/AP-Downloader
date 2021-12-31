@@ -28,8 +28,11 @@ public class InstallViewModel : ObservableObject
     public InstallViewModel()
     {
         _dataService = new SQLiteDataAccess();
+        InstallCommand = new RelayCommand(list => Install((IList) list));
         Loaded();
     }
+
+    public RelayCommand InstallCommand { get; set; }
 
     public HttpClient? Client { get; set; }
     public ObservableCollection<Cell> ProductCells { get; } = new();
@@ -69,14 +72,14 @@ public class InstallViewModel : ObservableObject
             ProductCells.Add(cell);
         }
 
-        BusyText = "Installing Addons";
-        OverlayVisibility = true;
         //InstallButton.IsEnabled = ProductCells.Any(); // && MainViewModel.IsAdmin;
         //SelectAllButton.IsEnabled = ProductCells.Any();
     }
 
     private async Task Install(IList selectedCells)
     {
+        BusyText = "Installing Addons";
+        OverlayVisibility = true;
         var productIds = new List<int>();
         foreach (Cell cell in selectedCells)
             if (cell.ProductID != null)
