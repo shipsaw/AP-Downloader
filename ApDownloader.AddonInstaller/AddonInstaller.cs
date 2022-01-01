@@ -23,8 +23,6 @@ public static class AddonInstaller
     public static void InstallAddons(ApDownloaderConfig downloadOption, string folder, IProgress<int> progress)
     {
         var files = Directory.GetFiles(folder);
-        var Arguments =
-            $"/b\"{Path.Combine(downloadOption.TempFilePath, "ApDownloads")}\" /s /v\"/qn INSTALLDIR=\"{downloadOption.InstallFilePath}\"\"";
         foreach (var filepath in files)
             if (filepath.Trim('"').EndsWith(".exe"))
             {
