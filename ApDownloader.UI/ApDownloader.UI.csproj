@@ -317,6 +317,42 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
       <None Remove="appsettings.json" />
+      <None Remove="Images\APC465EPV2_Cover-238x294.png" />
+      <Resource Include="Images\APC465EPV2_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC455EPV2_Cover-238x294.png" />
+      <Resource Include="Images\APC455EPV2_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC303SP_Cover-238x294.png" />
+      <Resource Include="Images\APC303SP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC325EP_Cover-238x294.png" />
+      <Resource Include="Images\APC325EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC33SPP_Cover-238x294.png" />
+      <Resource Include="Images\APC33SPP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC387EP_Cover-238x294.png" />
+      <Resource Include="Images\APC387EP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APC52SPP_Cover-238x294.png" />
+      <Resource Include="Images\APC52SPP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APWAGMSP_Cover-238x294.png" />
+      <Resource Include="Images\APWAGMSP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\APWAGOSP_Cover-238x294.png" />
+      <Resource Include="Images\APWAGOSP_Cover-238x294.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
     </ItemGroup>
 
     <ItemGroup>

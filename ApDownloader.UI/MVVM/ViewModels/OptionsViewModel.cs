@@ -113,6 +113,7 @@ public class OptionsViewModel : ObservableObject
             _downloadFilepath = value;
             OnPropertyChanged();
             CanApply = true;
+            MainViewModel.IsDownloadDataDirty = true;
         }
     }
 

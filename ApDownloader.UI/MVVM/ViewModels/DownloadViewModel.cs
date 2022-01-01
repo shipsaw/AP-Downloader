@@ -129,8 +129,14 @@ public class DownloadViewModel : ObservableObject
         }
     }
 
-    private void RenderUserAddons()
+    private async void RenderUserAddons()
     {
+        if (MainViewModel.IsDownloadDataDirty)
+        {
+            await LoadUserAddons();
+            MainViewModel.IsDownloadDataDirty = false;
+        }
+
         foreach (var product in MainViewModel.Products)
         {
             var cell = new Cell(

@@ -40,20 +40,29 @@ public partial class LoginView : UserControl
         var content = new MultipartFormDataContent();
         content.Add(new StringContent(EmailBox.Text), "email");
         content.Add(new StringContent(PasswordBoxName.Password), "password");
-        var response = await Client.PostAsync(LoginUrl, content);
-        if (response.StatusCode == HttpStatusCode.Redirect)
+        try
         {
-            LoginResult.Text = "Loading Addons";
-            await viewModel.LoadUserAddonsCommand.ExecuteAsync();
-            LoginResult.Text = "Login Successful";
-            LoginButton.IsEnabled = false;
-            LogoutButton.IsEnabled = true;
-            IsLoggedIn = true;
+            var response = await Client.PostAsync(LoginUrl, content);
+            if (response.StatusCode == HttpStatusCode.Redirect)
+            {
+                LoginResult.Text = "Loading Addons";
+                await viewModel.LoadUserAddonsCommand.ExecuteAsync();
+                LoginResult.Text = "Login Successful";
+                LoginButton.IsEnabled = false;
+                LogoutButton.IsEnabled = true;
+                IsLoggedIn = true;
+            }
+            else
+            {
+                LoginResult.Text = "Login Failed";
+                LoginButton.IsEnabled = true;
+                LogoutButton.IsEnabled = false;
+                IsLoggedIn = false;
+            }
         }
-        else
+        catch (HttpRequestException)
         {
-            //((DownlojjadView) DataContext).Client = null;
-            LoginResult.Text = "Login Failed";
+            LoginResult.Text = "Unable to connect to website";
             LoginButton.IsEnabled = true;
             LogoutButton.IsEnabled = false;
             IsLoggedIn = false;
