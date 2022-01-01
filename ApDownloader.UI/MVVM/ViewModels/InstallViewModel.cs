@@ -25,6 +25,13 @@ public class InstallViewModel : ObservableObject
 
     public InstallViewModel()
     {
+        if (!File.Exists(Path.Combine(MainViewModel.DlOption.InstallFilePath, "RailWorks.exe")))
+        {
+            BusyText = "       Please select a valid\nInstallation folder in Options";
+            OverlayVisibility = true;
+            return;
+        }
+
         _dataService = new SQLiteDataAccess();
         InstallCommand = new RelayCommand(list => Install((IList) list));
         GetAllPrevDownloadsCommand = new RelayCommand(clickEvent => GetAllPrevDownloads());

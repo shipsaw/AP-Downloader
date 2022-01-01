@@ -26,16 +26,13 @@ public class MainViewModel : ObservableObject
         LoginVm = new LoginViewModel();
         DownloadVm = new DownloadViewModel();
         InstallVm = new InstallViewModel();
-        OptionsVm = new OptionsViewModel(IsInstallFolderValid());
+        OptionsVm = new OptionsViewModel(IsInstallFolderValid);
 
         LoginViewCommand = new RelayCommand(clickEvent => CurrentView = LoginVm);
         DownloadViewCommand = new RelayCommand(clickEvent => CurrentView = DownloadVm);
         InstallViewCommand = new RelayCommand(clickEvent => CurrentView = InstallVm);
         OptionsViewCommand = new RelayCommand(clickEvent => CurrentView = OptionsVm);
-        if (IsInstallFolderValid())
-            CurrentView = LoginVm;
-        else
-            CurrentView = OptionsVm;
+        CurrentView = LoginVm;
 
         CheckAdmin();
     }
@@ -85,10 +82,7 @@ public class MainViewModel : ObservableObject
         }
     }
 
-    private bool IsInstallFolderValid()
-    {
-        return File.Exists(Path.Combine(DlOption.InstallFilePath, "RailWorks.exe"));
-    }
+    private bool IsInstallFolderValid => File.Exists(Path.Combine(DlOption.InstallFilePath, "RailWorks.exe"));
 
     public static event PropertyChangedEventHandler StaticPropertyChanged;
 
