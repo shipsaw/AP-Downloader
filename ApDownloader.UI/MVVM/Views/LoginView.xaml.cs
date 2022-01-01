@@ -53,6 +53,8 @@ public partial class LoginView : UserControl
         {
             //((DownlojjadView) DataContext).Client = null;
             LoginResult.Text = "Login Failed";
+            LoginButton.IsEnabled = true;
+            LogoutButton.IsEnabled = false;
             IsLoggedIn = false;
         }
     }

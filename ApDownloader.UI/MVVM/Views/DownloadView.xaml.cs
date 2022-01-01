@@ -20,7 +20,6 @@ public partial class DownloadView : UserControl
         if (!_selectedToggle)
         {
             AddonsFoundList.SelectAll();
-            SelectAllButton.Content = "Deselect All";
             _toggleItemsToUpdate = true;
             _toggleItemsNotDownloaded = true;
             UpdateCheckbox.IsChecked = true;
@@ -34,9 +33,8 @@ public partial class DownloadView : UserControl
             _toggleItemsNotDownloaded = false;
             UpdateCheckbox.IsChecked = false;
             UnDownloadedCheckbox.IsChecked = false;
+            _selectedToggle = !_selectedToggle;
         }
-
-        _selectedToggle = !_selectedToggle;
     }
 
     private void SelectUpdateCheckbox_OnClick(object sender, RoutedEventArgs e)
@@ -74,6 +72,21 @@ public partial class DownloadView : UserControl
                         AddonsFoundList.SelectedItems.Remove(cell);
                 _toggleItemsNotDownloaded = false;
             }
+        }
+    }
+
+    private void IsDownloadEnabled(object sender, SelectionChangedEventArgs e)
+    {
+        DownloadButton.IsEnabled = AddonsFoundList.SelectedItems.Count > 0;
+        if (AddonsFoundList.SelectedItems.Count > 0)
+        {
+            _selectedToggle = true;
+            SelectAllButton.Content = "Deselect All";
+        }
+        else
+        {
+            _selectedToggle = false;
+            SelectAllButton.Content = "Select All";
         }
     }
 }

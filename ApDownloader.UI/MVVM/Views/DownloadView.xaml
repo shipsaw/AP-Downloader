@@ -33,6 +33,7 @@
                 x:Name="AddonsFoundList"
                 Margin="20 20 20 0"
                 Background="#f2f2f2"
+                SelectionChanged="IsDownloadEnabled"
                 Foreground="Black"
                 Height="500"
                 FontSize="15"
@@ -85,11 +86,12 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Name="SelectAllButton" Width="150" Content="Select All" Style="{StaticResource LoginButton}"
-                        Margin="20" Click="ToggleSelected" />
+                        Margin="20" Click="ToggleSelected" IsEnabled="{Binding SelectAllButtonEnabled}" />
                 <StackPanel Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10 7 0 5">
                     <StackPanel Orientation="Horizontal">
                         <CheckBox Margin="5 5 10 5"
                                   Name="UpdateCheckbox"
+                                  IsEnabled="{Binding SelectAllButtonEnabled}"
                                   Click="SelectUpdateCheckbox_OnClick"
                                   Style="{StaticResource CheckboxTheme}" />
                         <TextBlock VerticalAlignment="Center" Text="{Binding OutOfDateText}"
@@ -99,6 +101,7 @@
                     <StackPanel Orientation="Horizontal">
                         <CheckBox Margin="5 5 10 5 "
                                   Name="UnDownloadedCheckbox"
+                                  IsEnabled="{Binding SelectAllButtonEnabled}"
                                   Click="SelectUnDownloadedCheckbox"
                                   Style="{StaticResource CheckboxTheme}" />
                         <TextBlock VerticalAlignment="Center" Text="{Binding MissingPackText}"
@@ -109,7 +112,7 @@
                         Command="{Binding DownloadCommand}"
                         CommandParameter="{Binding SelectedItems, ElementName=AddonsFoundList}"
                         Style="{StaticResource LoginButton}"
-                        Margin="20" />
+                        Margin="20" Name="DownloadButton" IsEnabled="False" />
             </Grid>
         </StackPanel>
     </Grid>

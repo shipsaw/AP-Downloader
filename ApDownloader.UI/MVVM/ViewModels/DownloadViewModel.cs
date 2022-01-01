@@ -20,13 +20,10 @@ public class DownloadViewModel : ObservableObject
     private int _canUpdateCount;
     private bool _downloadButtonVisible;
     private int _isNotOnDiskCount;
-    private string _missingPackText;
-    private string _outOfDateText;
+    private string _missingPackText = "";
+    private string _outOfDateText = "";
     private bool _overlayVisibility = true;
     private bool _selectAllButtonEnabled;
-    private bool _selectedToggle;
-    private bool _toggleItemsNotDownloaded;
-    private bool _toggleItemsToUpdate;
 
     public DownloadViewModel()
     {
@@ -144,7 +141,7 @@ public class DownloadViewModel : ObservableObject
         }
     }
 
-    public void RenderUserAddons()
+    private void RenderUserAddons()
     {
         foreach (var product in MainViewModel.Products)
         {
