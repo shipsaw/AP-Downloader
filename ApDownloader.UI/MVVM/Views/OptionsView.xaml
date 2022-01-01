@@ -26,28 +26,32 @@
                     <CheckBox Margin="8"
                               Style="{StaticResource CheckboxTheme}"
                               IsChecked="{Binding GetExtraStock, Mode=TwoWay}" />
-                    <TextBlock VerticalAlignment="Center" Text="Extra Stock" />
+                    <TextBlock VerticalAlignment="Center" FontSize="22" Text="Extra Stock" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Margin="8"
                               Style="{StaticResource CheckboxTheme}"
                               IsChecked="{Binding GetBrandingPatch, Mode=TwoWay}" />
-                    <TextBlock VerticalAlignment="Center" Text="Branding Patch" />
+                    <TextBlock VerticalAlignment="Center" FontSize="22" Text="Branding Patch" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Margin="8"
                               Style="{StaticResource CheckboxTheme}"
                               IsChecked="{Binding GetLiveryPack, Mode=TwoWay}" />
-                    <TextBlock VerticalAlignment="Center" Text="Livery Pack" />
+                    <TextBlock VerticalAlignment="Center" FontSize="22" Text="Livery Pack" />
                 </StackPanel>
             </StackPanel>
-            <TextBlock Text="Download Location:" FontSize="28" Margin="0 35 0 0" />
+            <TextBlock Text="Download Location:" FontSize="28" Margin="0 30 0 0" />
             <TextBox
                 IsReadOnly="True"
                 Text="{Binding DownloadFilepath, Mode=TwoWay}"
                 Style="{StaticResource FilepathTextBox}" />
-            <Button HorizontalAlignment="Left" Margin="0 10" Content="Set Folder Location" Width="200"
-                    Style="{StaticResource LoginButton}" Click="DownloadFolderSelection" />
+            <Grid>
+                <Button HorizontalAlignment="Left" Margin="0 10" Content="Set Folder Location" Width="200"
+                        Style="{StaticResource LoginButton}" Click="DownloadFolderSelection" />
+                <Button HorizontalAlignment="Right" Margin="25 10" Content="Organize Folder" Width="200"
+                        Style="{StaticResource LoginButton}" />
+            </Grid>
             <TextBlock Text="Railworks Location:" FontSize="28" />
             <TextBox Text="{Binding InstallFilepath, Mode=TwoWay}" IsReadOnly="True"
                      Style="{StaticResource FilepathTextBox}" />
