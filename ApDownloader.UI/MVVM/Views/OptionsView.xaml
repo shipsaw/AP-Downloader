@@ -44,6 +44,7 @@
             <TextBlock Text="Download Location:" FontSize="28" Margin="0 30 0 0" />
             <TextBox
                 IsReadOnly="True"
+                Name="DownloadFolderPath"
                 Text="{Binding DownloadFilepath, Mode=TwoWay}"
                 Style="{StaticResource FilepathTextBox}" />
             <Grid>
@@ -52,7 +53,7 @@
                 <Button HorizontalAlignment="Right" Margin="25 10" Content="Organize Folder" Width="200"
                         Style="{StaticResource LoginButton}" Command="{Binding OrganizeDownloadFolderCommand}" />
             </Grid>
-            <TextBlock Text="Railworks Location:" FontSize="28" />
+            <TextBlock Text="Railworks Location:" FontSize="28" Name="InstallFolderPath" />
             <TextBox Text="{Binding InstallFilepath, Mode=TwoWay}" IsReadOnly="True"
                      Style="{StaticResource FilepathTextBox}" />
             <Button HorizontalAlignment="Left" Margin="0 10" Content="Set Folder Location" Width="200"

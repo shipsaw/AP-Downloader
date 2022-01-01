@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media.Animation;
@@ -22,6 +23,9 @@ public partial class OptionsView : UserControl
     {
         var viewModel = (OptionsViewModel) DataContext;
         var openFileDlg = new FolderBrowserDialog();
+        openFileDlg.SelectedPath = Directory.Exists(DownloadFolderPath.Text)
+            ? DownloadFolderPath.Text
+            : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         var result = openFileDlg.ShowDialog().ToString();
         if (result != string.Empty && result != "Cancel")
             viewModel.SetDownloadFilepathCommand.Execute(openFileDlg.SelectedPath);
@@ -32,6 +36,9 @@ public partial class OptionsView : UserControl
         var viewModel = (OptionsViewModel) DataContext;
         var currentStatus = viewModel.IsInstallFolderInValid;
         var openFileDlg = new FolderBrowserDialog();
+        openFileDlg.SelectedPath = Directory.Exists(InstallFolderPath.Text)
+            ? InstallFolderPath.Text
+            : Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
         var result = openFileDlg.ShowDialog().ToString();
         var valid = File.Exists(Path.Combine(openFileDlg.SelectedPath, "RailWorks.exe"));
         if (result != string.Empty && result != "Cancel" && valid)
