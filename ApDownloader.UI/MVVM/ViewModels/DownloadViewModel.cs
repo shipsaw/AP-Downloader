@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
@@ -80,28 +81,11 @@ public class DownloadViewModel : ObservableObject
         }
     }
 
-    public bool DownloadButtonEnabled
-    {
-        get => _downloadButtonVisible;
-        set
-        {
-            _downloadButtonVisible = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public bool SelectAllButtonEnabled
-    {
-        get => _selectAllButtonEnabled;
-        set
-        {
-            _selectAllButtonEnabled = value;
-            OnPropertyChanged();
-        }
-    }
+    public bool SelectAllButtonEnabled => MainViewModel.Products.Any();
 
     private async void DownloadAddons(IList selectedCells)
     {
+        MainViewModel.IsNotBusy = false;
         var productIds = new List<int>();
         foreach (Cell cell in selectedCells)
             if (cell.ProductID != null)
@@ -112,13 +96,13 @@ public class DownloadViewModel : ObservableObject
         var totalFileCount =
             await _dataService.GetTotalFileCount(MainViewModel.DlOption, productIds);
         var progress =
-            new Progress<int>(report => { BusyText = $"Downloading file {++completedFileCount} of {totalFileCount}"; });
+            new Progress<int>(_ => { BusyText = $"Downloading file {++completedFileCount} of {totalFileCount}"; });
         OverlayVisibility = true;
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
         await _access.Download(MainViewModel.DlManifest, MainViewModel.DlOption, progress);
-        MissingPackText = "Select missing packs (" + _isNotOnDiskCount + ")";
-        OutOfDateText = "Select out-of-date packs (" + _canUpdateCount + ")";
         BusyText = "Download Complete";
+        Mouse.Capture(null);
+        MainViewModel.IsNotBusy = true;
     }
 
     private async Task LoadUserAddons()
@@ -160,8 +144,6 @@ public class DownloadViewModel : ObservableObject
 
         OutOfDateText = $"Select out-of-date packs ({_canUpdateCount})";
         MissingPackText = $"Select missing packs ({_isNotOnDiskCount})";
-        DownloadButtonEnabled = ProductCells.Any();
-        SelectAllButtonEnabled = ProductCells.Any();
         OverlayVisibility = false;
     }
 }

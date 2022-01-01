@@ -34,6 +34,7 @@ public partial class LoginView : UserControl
 
     private async void Login(object sender, RoutedEventArgs e)
     {
+        MainViewModel.IsNotBusy = false;
         LoginResult.Text = "Attempting Login";
         var viewModel = (DownloadViewModel) DataContext;
         var content = new MultipartFormDataContent();
@@ -57,6 +58,8 @@ public partial class LoginView : UserControl
             LogoutButton.IsEnabled = false;
             IsLoggedIn = false;
         }
+
+        MainViewModel.IsNotBusy = true;
     }
 
     private void Logout(object sender, RoutedEventArgs e)

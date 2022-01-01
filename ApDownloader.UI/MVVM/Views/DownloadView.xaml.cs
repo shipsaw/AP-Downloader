@@ -4,7 +4,7 @@ using ApDownloader.Model;
 
 namespace ApDownloader.UI.MVVM.Views;
 
-public partial class DownloadView : UserControl
+public partial class DownloadView
 {
     private bool _selectedToggle;
     private bool _toggleItemsNotDownloaded;
@@ -75,7 +75,7 @@ public partial class DownloadView : UserControl
         }
     }
 
-    private void IsDownloadEnabled(object sender, SelectionChangedEventArgs e)
+    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         DownloadButton.IsEnabled = AddonsFoundList.SelectedItems.Count > 0;
         if (AddonsFoundList.SelectedItems.Count > 0)

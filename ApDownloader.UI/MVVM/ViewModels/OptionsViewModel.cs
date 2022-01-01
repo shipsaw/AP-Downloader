@@ -37,7 +37,7 @@ public class OptionsViewModel : ObservableObject
             InstallFilepath = (string) path;
             CanApply = true;
         });
-        ApplySettingsCommand = new RelayCommand(clickEvent => ApplySettings());
+        ApplySettingsCommand = new RelayCommand(clickEvent => ApplySettings(), clickEvent => CanApply);
     }
 
     public RelayCommand ApplySettingsCommand { get; set; }

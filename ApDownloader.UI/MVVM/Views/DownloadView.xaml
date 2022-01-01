@@ -33,7 +33,7 @@
                 x:Name="AddonsFoundList"
                 Margin="20 20 20 0"
                 Background="#f2f2f2"
-                SelectionChanged="IsDownloadEnabled"
+                SelectionChanged="OnSelectionChanged"
                 Foreground="Black"
                 Height="500"
                 FontSize="15"

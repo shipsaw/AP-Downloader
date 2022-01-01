@@ -32,6 +32,7 @@
                 Margin="20 20 20 0"
                 Background="#f2f2f2"
                 Foreground="Black"
+                SelectionChanged="OnSelectionChanged"
                 Height="500"
                 FontSize="15"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -68,15 +69,17 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Button Name="SelectAllButton" Content="Deselect All" Style="{StaticResource LoginButton}"
-                        Margin="20" Click="ToggleSelected" />
+                <Button Name="SelectAllButton" Content="Select All" Style="{StaticResource LoginButton}"
+                        Margin="20" IsEnabled="{Binding SelectAllButtonEnabled}" Click="ToggleSelected" />
                 <Button Grid.Column="1" Content="All Downloads"
                         Style="{StaticResource LoginButton}"
+                        Click="DisablePrevDownloadsAfterClick"
                         Command="{Binding GetAllPrevDownloadsCommand}"
                         IsEnabled="{Binding GetAllPrevDownloadsCommand}"
-                        Margin="20" />
+                        Margin="20" Name="PreviousDownloadButton" />
                 <Button Name="InstallButton" Grid.Column="2" Content="Install"
                         Style="{StaticResource LoginButton}"
+                        IsEnabled="False"
                         Margin="20" Command="{Binding InstallCommand}"
                         CommandParameter="{Binding SelectedItems, ElementName=AddonsFoundList}" />
             </Grid>

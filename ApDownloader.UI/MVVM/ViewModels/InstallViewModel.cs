@@ -56,6 +56,8 @@ public class InstallViewModel : ObservableObject
         }
     }
 
+    public bool SelectAllButtonEnabled => MainViewModel.Products.Any();
+
     private async void Loaded()
     {
         var products = await _dataService.GetDownloadedProductsOnly(MainViewModel.DlManifest?.ProductIds);
@@ -74,6 +76,7 @@ public class InstallViewModel : ObservableObject
 
     private async Task Install(IList selectedCells)
     {
+        MainViewModel.IsNotBusy = false;
         BusyText = "Installing Addons";
         OverlayVisibility = true;
         var productIds = new List<int>();
@@ -114,6 +117,7 @@ public class InstallViewModel : ObservableObject
                 dir.Delete(true);
         });
         BusyText = "Installation Complete";
+        MainViewModel.IsNotBusy = true;
     }
 
     private static void InstallAddons(DownloadOption downloadOption, IEnumerable<string> filenames, string folder,

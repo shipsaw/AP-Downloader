@@ -63,7 +63,7 @@
                 Text="Options Applied Successfully"
                 Padding="10"
                 Foreground="LightGray" />
-            <Button IsEnabled="{Binding CanApply}" HorizontalAlignment="Center" Content="Apply" Width="100"
+            <Button HorizontalAlignment="Center" Content="Apply" Width="100"
                     Style="{StaticResource LoginButton}" Command="{Binding ApplySettingsCommand}" />
         </StackPanel>
     </Grid>

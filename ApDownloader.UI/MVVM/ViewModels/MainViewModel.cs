@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Net.Http;
+using System.ComponentModel;
 using System.Security.Principal;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
@@ -9,25 +9,25 @@ namespace ApDownloader.UI.MVVM.ViewModels;
 
 public class MainViewModel : ObservableObject
 {
-    private static readonly HttpClientHandler _handler = new() {AllowAutoRedirect = false};
     public static DownloadOption DlOption = new();
     public static DownloadManifest DlManifest = new();
-    private readonly HttpClient _client = new(_handler);
+    private static bool _isNotBusy;
     private readonly SQLiteDataAccess _dataAccess;
     private object _currentView;
     private bool _isAdmin;
 
     public MainViewModel()
     {
+        IsNotBusy = true;
         LoginVm = new LoginViewModel();
-        DownloadVM = new DownloadViewModel();
-        InstallVM = new InstallViewModel();
-        OptionsVM = new OptionsViewModel();
+        DownloadVm = new DownloadViewModel();
+        InstallVm = new InstallViewModel();
+        OptionsVm = new OptionsViewModel();
 
         LoginViewCommand = new RelayCommand(clickEvent => CurrentView = LoginVm);
-        DownloadViewCommand = new RelayCommand(clickEvent => CurrentView = DownloadVM);
-        InstallViewCommand = new RelayCommand(clickEvent => CurrentView = InstallVM);
-        OptionsViewCommand = new RelayCommand(clickEvent => CurrentView = OptionsVM);
+        DownloadViewCommand = new RelayCommand(clickEvent => CurrentView = DownloadVm);
+        InstallViewCommand = new RelayCommand(clickEvent => CurrentView = InstallVm);
+        OptionsViewCommand = new RelayCommand(clickEvent => CurrentView = OptionsVm);
         CurrentView = LoginVm;
 
         CheckAdmin();
@@ -42,10 +42,10 @@ public class MainViewModel : ObservableObject
     public RelayCommand InstallViewCommand { get; set; }
     public RelayCommand OptionsViewCommand { get; set; }
 
-    public LoginViewModel LoginVm { get; set; }
-    public DownloadViewModel DownloadVM { get; set; }
-    public InstallViewModel InstallVM { get; set; }
-    public OptionsViewModel OptionsVM { get; set; }
+    private LoginViewModel LoginVm { get; }
+    private DownloadViewModel DownloadVm { get; }
+    private InstallViewModel InstallVm { get; }
+    private OptionsViewModel OptionsVm { get; }
 
     public object CurrentView
     {
@@ -67,7 +67,18 @@ public class MainViewModel : ObservableObject
         }
     }
 
-    public static bool DirtyProdList { get; set; }
+    public static bool IsNotBusy
+    {
+        get => _isNotBusy;
+        set
+        {
+            _isNotBusy = value;
+            StaticPropertyChanged?.Invoke(null,
+                new PropertyChangedEventArgs(nameof(IsNotBusy)));
+        }
+    }
+
+    public static event PropertyChangedEventHandler StaticPropertyChanged;
 
     private void CheckAdmin()
     {
