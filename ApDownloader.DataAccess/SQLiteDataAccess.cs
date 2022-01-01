@@ -105,4 +105,19 @@ public class SQLiteDataAccess
             InstallFilepath = downloadOption.InstallFilePath
         });
     }
+
+    public async Task<Dictionary<string, string>> GetFilesFolders()
+    {
+        var fileSet = new Dictionary<string, string>();
+        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
+        var products = await conn.QueryAsync<string>("SELECT Filename FROM Product");
+        foreach (var file in products) fileSet.Add(file, "Products");
+        var extraStock = await conn.QueryAsync<string>("SELECT Filename FROM ExtraStock");
+        foreach (var file in extraStock) fileSet.Add(file, "ExtraStock");
+        var brandingPatches = await conn.QueryAsync<string>("SELECT Filename FROM BrandingPatch");
+        foreach (var file in brandingPatches) fileSet.Add(file, "BrandingPatches");
+        var liveryPacks = await conn.QueryAsync<string>("SELECT Filename FROM LiveryPack");
+        foreach (var file in liveryPacks) fileSet.Add(file, "LiveryPacks");
+        return fileSet;
+    }
 }

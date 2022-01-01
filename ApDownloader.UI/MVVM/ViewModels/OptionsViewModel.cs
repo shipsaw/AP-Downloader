@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using ApDownloader.DataAccess;
 using ApDownloader.UI.Core;
 
@@ -29,6 +30,7 @@ public class OptionsViewModel : ObservableObject
         _downloadFilepath = MainViewModel.DlOption.DownloadFilepath;
         _installFilepath = MainViewModel.DlOption.InstallFilePath;
 
+        OrganizeDownloadFolderCommand = new RelayCommand(clickEvent => OrganizeDownloadFolder());
         SetDownloadFilepathCommand = new RelayCommand(path =>
         {
             DownloadFilepath = (string) path;
@@ -55,6 +57,7 @@ public class OptionsViewModel : ObservableObject
     public RelayCommand ApplySettingsCommand { get; set; }
     public RelayCommand SetDownloadFilepathCommand { get; set; }
     public RelayCommand SetInstallFilepathCommand { get; set; }
+    public RelayCommand OrganizeDownloadFolderCommand { get; set; }
 
     public bool CanApply
     {
@@ -132,6 +135,25 @@ public class OptionsViewModel : ObservableObject
             _applyResponseVisibility = value;
             OnPropertyChanged();
         }
+    }
+
+    private async void OrganizeDownloadFolder()
+    {
+        if (!Directory.Exists(Path.Combine(MainViewModel.DlOption.DownloadFilepath))) return;
+        var productsSet = await _dataAccess.GetFilesFolders();
+
+        Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\Products");
+        Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\ExtraStock");
+        Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\BrandingPatches");
+        Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\LiveryPacks");
+
+        var allFiles = Directory
+            .EnumerateFiles(Path.Combine(MainViewModel.DlOption.DownloadFilepath), "*.zip",
+                SearchOption.TopDirectoryOnly)
+            .Select(file => new FileInfo(file).Name);
+        foreach (var filename in allFiles)
+            File.Move(Path.Combine(MainViewModel.DlOption.DownloadFilepath, filename),
+                Path.Combine(MainViewModel.DlOption.DownloadFilepath, productsSet[filename], filename));
     }
 
     private async void ApplySettings()

@@ -134,8 +134,8 @@ public class DownloadViewModel : ObservableObject
                 product.ProductID,
                 "../../Images/" + product.ImageName,
                 product.Name,
-                product.IsMissing,
-                product.CanUpdate
+                product.CanUpdate,
+                product.IsMissing
             );
             if (cell.IsNotOnDisk) _isNotOnDiskCount++;
             if (cell.CanUpdate) _canUpdateCount++;
