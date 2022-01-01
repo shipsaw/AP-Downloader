@@ -107,12 +107,7 @@ public class OptionsViewModel : ObservableObject
         set
         {
             // If selecting existing Downloads folder, use that, else create one
-            if (value.EndsWith(@"\ApDownloads"))
-                _downloadFilepath = value.Remove(value.LastIndexOf(@"ApDownloads"));
-            else if (value.EndsWith('\\'))
-                _downloadFilepath = value;
-            else
-                _downloadFilepath = value + '\\';
+            _downloadFilepath = value;
             OnPropertyChanged();
             CanApply = true;
         }
@@ -146,7 +141,10 @@ public class OptionsViewModel : ObservableObject
         MainViewModel.DlOption.GetLiveryPack = GetLiveryPack;
         MainViewModel.DlOption.DownloadFilepath = DownloadFilepath;
         MainViewModel.DlOption.InstallFilePath = InstallFilepath;
-        Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\ApDownloads\");
+        Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\Products");
+        Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\ExtraStock");
+        Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\BrandingPatches");
+        Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\LiveryPacks");
         await _dataAccess.SetUserOptions(MainViewModel.DlOption);
         ApplyResponseVisibility = true;
         CanApply = false;

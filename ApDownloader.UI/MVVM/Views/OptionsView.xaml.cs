@@ -39,7 +39,7 @@ public partial class OptionsView : UserControl
             viewModel.IsInstallFolderInValid = false;
             viewModel.SetInstallFilepathCommand.Execute(openFileDlg.SelectedPath);
         }
-        else
+        else if (result != string.Empty && result != "Cancel")
         {
             ((Storyboard) FindResource("animate")).Begin(InvalidInstallpathText);
             var viewmodel = (OptionsViewModel) DataContext;

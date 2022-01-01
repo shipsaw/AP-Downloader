@@ -13,7 +13,7 @@ public static class AddonInstaller
     {
         var extractPath = Path.Combine(downloadOption.TempFilePath, "ApDownloads", folder);
         foreach (var filepath in filePaths)
-            ZipFile.ExtractToDirectory(Path.Combine(downloadOption.DownloadFilepath, "ApDownloads", folder, filepath),
+            ZipFile.ExtractToDirectory(Path.Combine(downloadOption.DownloadFilepath, folder, filepath),
                 extractPath,
                 true);
 

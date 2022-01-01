@@ -60,11 +60,6 @@ public class HttpDataAccess
     public async Task Download(DownloadManifest downloadManifest, DownloadOption? downloadOption,
         IProgress<int> progress)
     {
-        // Create Download Directories
-        Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\Products\");
-        Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\ExtraStock\");
-        Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\BrandingPatches\");
-        Directory.CreateDirectory(downloadOption.DownloadFilepath + @"\ApDownloads\LiveryPacks\");
         // Get Base Products
         await DownloadFile(downloadManifest.ProductIds, _productPrefix, progress, downloadOption, "Products");
 
@@ -98,7 +93,7 @@ public class HttpDataAccess
                     try
                     {
                         progress.Report(1);
-                        await SaveFile(downloadOption, uri, "ApDownloads/" + saveLoc,
+                        await SaveFile(downloadOption, uri, saveLoc,
                             prefix == _productPrefix ? "" : filename);
                     }
                     finally

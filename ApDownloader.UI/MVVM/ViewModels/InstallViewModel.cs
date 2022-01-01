@@ -127,8 +127,9 @@ public class InstallViewModel : ObservableObject
 
     private async void GetAllPrevDownloads()
     {
+        if (!Directory.Exists(Path.Combine(MainViewModel.DlOption.DownloadFilepath, "Products"))) return;
         var allFiles = Directory
-            .EnumerateFiles(Path.Combine(MainViewModel.DlOption.DownloadFilepath, "ApDownloads"), "*.zip",
+            .EnumerateFiles(Path.Combine(MainViewModel.DlOption.DownloadFilepath, "Products"), "*.zip",
                 SearchOption.AllDirectories)
             .Select(file => new FileInfo(file).Name);
         var products = await _dataService.GetDownloadedProductsByName(allFiles);
