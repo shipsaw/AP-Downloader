@@ -2,7 +2,7 @@
 
 namespace ApDownloader.Model;
 
-public class DownloadOption
+public class ApDownloaderConfig
 {
     public bool GetExtraStock { get; set; } = true;
     public bool GetBrandingPatch { get; set; } = true;

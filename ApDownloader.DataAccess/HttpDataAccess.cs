@@ -57,7 +57,7 @@ public class HttpDataAccess
         return retProducts;
     }
 
-    public async Task Download(DownloadManifest downloadManifest, DownloadOption? downloadOption,
+    public async Task Download(DownloadManifest downloadManifest, ApDownloaderConfig downloadOption,
         IProgress<int> progress)
     {
         // Get Base Products
@@ -80,7 +80,7 @@ public class HttpDataAccess
     }
 
     private async Task DownloadFile(IEnumerable<string> products, string prefix, IProgress<int> progress,
-        DownloadOption? downloadOption, string saveLoc)
+        ApDownloaderConfig downloadOption, string saveLoc)
     {
         foreach (var filename in products)
         {
@@ -104,7 +104,7 @@ public class HttpDataAccess
         }
     }
 
-    private async Task SaveFile(DownloadOption? downloadOption, Uri uri, string saveLoc, string filename)
+    private async Task SaveFile(ApDownloaderConfig downloadOption, Uri uri, string saveLoc, string filename)
     {
         var response = await _client.GetAsync(uri);
         if (filename == "") filename = response.Content.Headers.ContentDisposition.FileName.Trim('"');

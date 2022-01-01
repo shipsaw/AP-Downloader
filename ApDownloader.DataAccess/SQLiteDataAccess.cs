@@ -45,7 +45,7 @@ public class SQLiteDataAccess
         return products;
     }
 
-    public async Task<DownloadManifest> GetDownloadManifest(DownloadOption options,
+    public async Task<DownloadManifest> GetDownloadManifest(ApDownloaderConfig options,
         IEnumerable<int> productList)
     {
         var manifest = new DownloadManifest();
@@ -69,7 +69,7 @@ public class SQLiteDataAccess
         return manifest;
     }
 
-    public async Task<int> GetTotalFileCount(DownloadOption downloadOption, List<int> productIds)
+    public async Task<int> GetTotalFileCount(ApDownloaderConfig downloadOption, List<int> productIds)
     {
         var manifest = await GetDownloadManifest(downloadOption, productIds);
         return productIds.Count +
@@ -78,19 +78,19 @@ public class SQLiteDataAccess
                (manifest.LpFilenames?.Count() ?? 0);
     }
 
-    public DownloadOption GetUserOptions()
+    public ApDownloaderConfig GetUserOptions()
     {
-        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
+        using IDbConnection conn = new SqliteConnection("Data Source=./Settings.db");
         var product =
-            conn.QueryFirst<DownloadOption>("SELECT * FROM Options") ?? new DownloadOption();
+            conn.QueryFirst<ApDownloaderConfig>("SELECT * FROM Settings") ?? new ApDownloaderConfig();
         return product;
     }
 
-    public async Task SetUserOptions(DownloadOption? downloadOption)
+    public async Task SetUserOptions(ApDownloaderConfig downloadOption)
     {
-        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
+        using IDbConnection conn = new SqliteConnection("Data Source=./Settings.db");
 
-        await conn.ExecuteAsync(@"UPDATE Options
+        await conn.ExecuteAsync(@"UPDATE Settings
                                         SET GetExtraStock = @GetExtraStock,
                                             GetLiveryPack = @GetLiveryPack,
                                             GetBrandingPatch = @GetBrandingPatch,

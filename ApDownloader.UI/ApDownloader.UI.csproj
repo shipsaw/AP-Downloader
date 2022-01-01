@@ -10,6 +10,8 @@
 
     <ItemGroup>
       <PackageReference Include="Autofac" Version="6.3.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
       <PackageReference Include="System.Data.SQLite.Core" Version="1.0.115.5" />
     </ItemGroup>
 
@@ -314,6 +316,7 @@
       <Resource Include="Images\APC455EPV1_Cover-238x294.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
+      <None Remove="appsettings.json" />
     </ItemGroup>
 
     <ItemGroup>

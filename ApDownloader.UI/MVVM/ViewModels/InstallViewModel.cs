@@ -125,7 +125,7 @@ public class InstallViewModel : ObservableObject
         MainViewModel.IsNotBusy = true;
     }
 
-    private static void InstallAddons(DownloadOption downloadOption, IEnumerable<string> filenames, string folder,
+    private static void InstallAddons(ApDownloaderConfig downloadOption, IEnumerable<string> filenames, string folder,
         IProgress<int> progress)
     {
         var extractPath = AddonInstaller.AddonInstaller.UnzipAddons(downloadOption, filenames, folder);

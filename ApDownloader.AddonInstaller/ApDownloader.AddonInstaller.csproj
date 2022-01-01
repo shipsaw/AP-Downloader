@@ -8,8 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ApDownloader.DataAccess\ApDownloader.DataAccess.csproj"/>
-        <ProjectReference Include="..\ApDownloader.Model\ApDownloader.Model.csproj"/>
+        <ProjectReference Include="..\ApDownloader.DataAccess\ApDownloader.DataAccess.csproj" />
+        <ProjectReference Include="..\ApDownloader.Model\ApDownloader.Model.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     </ItemGroup>
 
 </Project>

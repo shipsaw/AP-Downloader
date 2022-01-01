@@ -30,6 +30,7 @@ public class DownloadViewModel : ObservableObject
     {
         DownloadCommand = new RelayCommand(list => DownloadAddons((IList) list));
         _dataService = new SQLiteDataAccess();
+        var DlOption = _dataService.GetUserOptions();
         _access = new HttpDataAccess(LoginView.Client);
         LoadUserAddonsCommand = new AsyncRelayCommand.AsyncCommand(LoadUserAddons);
         RenderUserAddons();

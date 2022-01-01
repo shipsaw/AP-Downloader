@@ -10,7 +10,7 @@ namespace ApDownloader.UI.MVVM.ViewModels;
 
 public class MainViewModel : ObservableObject
 {
-    public static DownloadOption DlOption = new();
+    public static ApDownloaderConfig DlOption = new();
     public static DownloadManifest DlManifest = new();
     private static bool _isNotBusy;
     private readonly SQLiteDataAccess _dataAccess;
