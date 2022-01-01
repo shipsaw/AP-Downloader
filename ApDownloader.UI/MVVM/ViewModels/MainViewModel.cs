@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Security.Principal;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
@@ -18,22 +19,28 @@ public class MainViewModel : ObservableObject
 
     public MainViewModel()
     {
+        _dataAccess = new SQLiteDataAccess();
+        DlOption = _dataAccess.GetUserOptions();
+
         IsNotBusy = true;
         LoginVm = new LoginViewModel();
         DownloadVm = new DownloadViewModel();
         InstallVm = new InstallViewModel();
-        OptionsVm = new OptionsViewModel();
+        OptionsVm = new OptionsViewModel(IsInstallFolderValid());
 
         LoginViewCommand = new RelayCommand(clickEvent => CurrentView = LoginVm);
         DownloadViewCommand = new RelayCommand(clickEvent => CurrentView = DownloadVm);
         InstallViewCommand = new RelayCommand(clickEvent => CurrentView = InstallVm);
         OptionsViewCommand = new RelayCommand(clickEvent => CurrentView = OptionsVm);
-        CurrentView = LoginVm;
+        if (IsInstallFolderValid())
+            CurrentView = LoginVm;
+        else
+            CurrentView = OptionsVm;
 
         CheckAdmin();
-        _dataAccess = new SQLiteDataAccess();
-        DlOption = _dataAccess.GetUserOptions();
     }
+
+    public object GotoOptionPage { get; set; }
 
     public static IEnumerable<Product> Products { get; set; } = new List<Product>();
 
@@ -76,6 +83,11 @@ public class MainViewModel : ObservableObject
             StaticPropertyChanged?.Invoke(null,
                 new PropertyChangedEventArgs(nameof(IsNotBusy)));
         }
+    }
+
+    private bool IsInstallFolderValid()
+    {
+        return File.Exists(Path.Combine(DlOption.InstallFilePath, "RailWorks.exe"));
     }
 
     public static event PropertyChangedEventHandler StaticPropertyChanged;

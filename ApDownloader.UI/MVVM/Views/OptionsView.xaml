@@ -3,13 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:viewmodel="clr-namespace:ApDownloader.UI.MVVM.ViewModels"
              mc:Ignorable="d"
              Background="Transparent"
              d:DesignHeight="600" d:DesignWidth="600">
-    <UserControl.DataContext>
-        <viewmodel:OptionsViewModel />
-    </UserControl.DataContext>
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </UserControl.Resources>
@@ -28,7 +24,8 @@
             <StackPanel Margin="15 0 ">
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Margin="8"
-                              Style="{StaticResource CheckboxTheme}" IsChecked="{Binding GetExtraStock, Mode=TwoWay}" />
+                              Style="{StaticResource CheckboxTheme}"
+                              IsChecked="{Binding GetExtraStock, Mode=TwoWay}" />
                     <TextBlock VerticalAlignment="Center" Text="Extra Stock" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
@@ -39,7 +36,8 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Margin="8"
-                              Style="{StaticResource CheckboxTheme}" IsChecked="{Binding GetLiveryPack, Mode=TwoWay}" />
+                              Style="{StaticResource CheckboxTheme}"
+                              IsChecked="{Binding GetLiveryPack, Mode=TwoWay}" />
                     <TextBlock VerticalAlignment="Center" Text="Livery Pack" />
                 </StackPanel>
             </StackPanel>
@@ -55,6 +53,13 @@
                      Style="{StaticResource FilepathTextBox}" />
             <Button HorizontalAlignment="Left" Margin="0 10" Content="Set Folder Location" Width="200"
                     Style="{StaticResource LoginButton}" Click="InstallFolderSelection" />
+            <TextBlock Foreground="Gold"
+                       FontSize="28"
+                       Name="InvalidInstallpathText"
+                       HorizontalAlignment="Center"
+                       FontStyle="Italic"
+                       Style="{StaticResource animateFadeOut}"
+                       Text="Please select valid Railworks install folder" />
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom">
             <TextBlock

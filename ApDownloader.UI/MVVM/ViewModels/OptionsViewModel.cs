@@ -16,10 +16,12 @@ public class OptionsViewModel : ObservableObject
 
     private bool _getLiveryPack;
     private string _installFilepath;
+    private bool _isInstallFolderInvalid;
     private string _selectedDownloadPath;
 
-    public OptionsViewModel()
+    public OptionsViewModel(bool isInstallFolderValid)
     {
+        IsInstallFolderInValid = !isInstallFolderValid;
         _dataAccess = new SQLiteDataAccess();
         _getExtraStock = MainViewModel.DlOption.GetExtraStock;
         _getBrandingPatch = MainViewModel.DlOption.GetBrandingPatch;
@@ -40,13 +42,23 @@ public class OptionsViewModel : ObservableObject
         ApplySettingsCommand = new RelayCommand(clickEvent => ApplySettings(), clickEvent => CanApply);
     }
 
+    public bool IsInstallFolderInValid
+    {
+        get => _isInstallFolderInvalid;
+        set
+        {
+            _isInstallFolderInvalid = value;
+            OnPropertyChanged();
+        }
+    }
+
     public RelayCommand ApplySettingsCommand { get; set; }
     public RelayCommand SetDownloadFilepathCommand { get; set; }
     public RelayCommand SetInstallFilepathCommand { get; set; }
 
     public bool CanApply
     {
-        get => _canApply;
+        get => _canApply && !IsInstallFolderInValid;
         set
         {
             _canApply = value;

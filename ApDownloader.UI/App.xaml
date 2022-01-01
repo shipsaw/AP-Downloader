@@ -16,6 +16,7 @@
                 <ResourceDictionary Source="Themes/FilepathTextBoxTheme.xaml" />
                 <ResourceDictionary Source="Themes/CheckboxTheme.xaml" />
                 <ResourceDictionary Source="Themes/AdminAlert.xaml" />
+                <ResourceDictionary Source="Themes/FadeoutAnimation.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <DataTemplate DataType="{x:Type viewModel:LoginViewModel}">
                 <view:LoginView />

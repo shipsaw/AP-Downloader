@@ -80,8 +80,7 @@ public class InstallViewModel : ObservableObject
         OverlayVisibility = true;
         var productIds = new List<int>();
         foreach (Cell cell in selectedCells)
-            if (cell.ProductId != null)
-                productIds.Add(cell.ProductId);
+            productIds.Add(cell.ProductId);
 
 
         var completedFileCount = 0;
