@@ -58,7 +58,7 @@
                        Name="InvalidInstallpathText"
                        HorizontalAlignment="Center"
                        FontStyle="Italic"
-                       Style="{StaticResource animateFadeOut}"
+                       Visibility="Collapsed"
                        Text="Please select valid Railworks install folder" />
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom">

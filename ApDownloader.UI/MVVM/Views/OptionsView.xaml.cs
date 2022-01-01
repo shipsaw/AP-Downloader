@@ -12,8 +12,10 @@ public partial class OptionsView : UserControl
     public OptionsView()
     {
         InitializeComponent();
-        DataContext = new OptionsViewModel(false);
-        ((Storyboard) FindResource("animate")).Begin(InvalidInstallpathText);
+        DataContext = new OptionsViewModel(true);
+        var viewmodel = (OptionsViewModel) DataContext;
+        if (viewmodel.IsInstallFolderInValid)
+            ((Storyboard) FindResource("animate")).Begin(InvalidInstallpathText);
     }
 
     private void DownloadFolderSelection(object sender, RoutedEventArgs routedEventArgs)
@@ -28,6 +30,7 @@ public partial class OptionsView : UserControl
     private void InstallFolderSelection(object sender, RoutedEventArgs routedEventArgs)
     {
         var viewModel = (OptionsViewModel) DataContext;
+        var currentStatus = viewModel.IsInstallFolderInValid;
         var openFileDlg = new FolderBrowserDialog();
         var result = openFileDlg.ShowDialog().ToString();
         var valid = File.Exists(Path.Combine(openFileDlg.SelectedPath, "RailWorks.exe"));
@@ -40,7 +43,7 @@ public partial class OptionsView : UserControl
         {
             ((Storyboard) FindResource("animate")).Begin(InvalidInstallpathText);
             var viewmodel = (OptionsViewModel) DataContext;
-            viewmodel.IsInstallFolderInValid = true;
+            viewmodel.IsInstallFolderInValid = currentStatus;
         }
     }
 }
