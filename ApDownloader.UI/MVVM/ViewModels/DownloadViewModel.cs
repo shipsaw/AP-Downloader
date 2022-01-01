@@ -88,8 +88,8 @@ public class DownloadViewModel : ObservableObject
         MainViewModel.IsNotBusy = false;
         var productIds = new List<int>();
         foreach (Cell cell in selectedCells)
-            if (cell.ProductID != null)
-                productIds.Add(cell.ProductID.Value);
+            if (cell.ProductId != null)
+                productIds.Add(cell.ProductId);
 
 
         var completedFileCount = 0;
@@ -129,14 +129,13 @@ public class DownloadViewModel : ObservableObject
     {
         foreach (var product in MainViewModel.Products)
         {
-            var cell = new Cell
-            {
-                ProductID = product.ProductID,
-                ImageUrl = "../../Images/" + product.ImageName,
-                Name = product.Name,
-                IsNotOnDisk = product.IsMissing,
-                CanUpdate = product.CanUpdate
-            };
+            var cell = new Cell(
+                product.ProductID,
+                "../../Images/" + product.ImageName,
+                product.Name,
+                product.IsMissing,
+                product.CanUpdate
+            );
             if (cell.IsNotOnDisk) _isNotOnDiskCount++;
             if (cell.CanUpdate) _canUpdateCount++;
             ProductCells.Add(cell);

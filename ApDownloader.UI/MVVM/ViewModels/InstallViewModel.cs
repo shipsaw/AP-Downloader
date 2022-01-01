@@ -64,12 +64,11 @@ public class InstallViewModel : ObservableObject
         foreach (var product in products)
         {
             var cell = new Cell
-            {
-                ProductID = product.ProductID,
-                ImageUrl = "../../Images/" + product.ImageName,
-                Name = product.Name,
-                IsSelected = true
-            };
+            (
+                product.ProductID,
+                "../../Images/" + product.ImageName,
+                product.Name
+            );
             ProductCells.Add(cell);
         }
     }
@@ -81,8 +80,8 @@ public class InstallViewModel : ObservableObject
         OverlayVisibility = true;
         var productIds = new List<int>();
         foreach (Cell cell in selectedCells)
-            if (cell.ProductID != null)
-                productIds.Add(cell.ProductID.Value);
+            if (cell.ProductId != null)
+                productIds.Add(cell.ProductId);
 
 
         var completedFileCount = 0;
@@ -138,11 +137,11 @@ public class InstallViewModel : ObservableObject
         foreach (var product in products)
         {
             var cell = new Cell
-            {
-                ProductID = product.ProductID,
-                ImageUrl = "../../Images/" + product.ImageName,
-                Name = product.Name
-            };
+            (
+                product.ProductID,
+                "../../Images/" + product.ImageName,
+                product.Name
+            );
             if (!ProductCells.Contains(cell))
                 ProductCells.Add(cell);
         }
