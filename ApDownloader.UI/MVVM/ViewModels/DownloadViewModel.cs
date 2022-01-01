@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
@@ -84,6 +83,7 @@ public class DownloadViewModel : ObservableObject
 
     public bool SelectAllButtonEnabled => MainViewModel.Products.Any();
 
+
     private async void DownloadAddons(IList selectedCells)
     {
         MainViewModel.IsNotBusy = false;
@@ -101,14 +101,15 @@ public class DownloadViewModel : ObservableObject
         OverlayVisibility = true;
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
         await _access.Download(MainViewModel.DlManifest, MainViewModel.DlOption, progress);
+        MainViewModel.IsDownloadDataDirty = true;
+        await LoadUserAddons();
         BusyText = "Download Complete";
-        Mouse.Capture(null);
         MainViewModel.IsNotBusy = true;
     }
 
     private async Task LoadUserAddons()
     {
-        if (!MainViewModel.Products.Any())
+        if (!MainViewModel.Products.Any() || MainViewModel.IsDownloadDataDirty)
         {
             _access = new HttpDataAccess(LoginView.Client);
             MainViewModel.Products = await _dataService.GetProductsOnly();
@@ -123,6 +124,8 @@ public class DownloadViewModel : ObservableObject
                                     product.UserContentLength != 0;
                 product.IsMissing = product.UserContentLength == 0;
             }
+
+            MainViewModel.IsDownloadDataDirty = false;
         }
     }
 

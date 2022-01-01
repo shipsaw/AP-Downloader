@@ -37,6 +37,8 @@ public class MainViewModel : ObservableObject
         CheckAdmin();
     }
 
+    public static bool IsDownloadDataDirty { get; set; } = true;
+
     public object GotoOptionPage { get; set; }
 
     public static IEnumerable<Product> Products { get; set; } = new List<Product>();
