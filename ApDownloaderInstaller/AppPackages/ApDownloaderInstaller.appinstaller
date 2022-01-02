@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AppInstaller
+	Uri="file:///C:/ApDownloader/ApDownloaderInstaller.appinstaller"
+	Version="0.9.0.0" xmlns="http://schemas.microsoft.com/appx/appinstaller/2017/2">
+	<MainBundle
+		Name="fc24016d-efa6-4105-a761-a6d75031feb1"
+		Version="0.9.0.0"
+		Publisher="CN=Paul Kirby"
+		Uri="file:///C:/ApDownloader/ApDownloaderInstaller_0.9.0.0_Debug_Test/ApDownloaderInstaller_0.9.0.0_AnyCPU_Debug.msixbundle" />
+	<UpdateSettings>
+		<OnLaunch
+			HoursBetweenUpdateChecks="0" />
+	</UpdateSettings>
+</AppInstaller>

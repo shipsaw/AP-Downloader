@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using ApDownloader.Model;
@@ -105,16 +106,17 @@ public class HttpDataAccess
     }
 
     private async Task SaveFile(ApDownloaderConfig downloadOption, Uri uri, string saveLoc, string filename)
-    {
-        var response = await _client.GetAsync(uri);
-        if (filename == "") filename = response.Content.Headers.ContentDisposition.FileName.Trim('"');
-        using (var stream = await response.Content.ReadAsStreamAsync())
+{
+        using (HttpResponseMessage response = await _client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead))
         {
-            var fileInfo = new FileInfo(Path.Combine(downloadOption.DownloadFilepath,
-                saveLoc, filename));
-            using (var fileStream = fileInfo.OpenWrite())
+            if (filename == "") filename = response.Content.Headers.ContentDisposition.FileName.Trim('"');
+            using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
             {
-                await stream.CopyToAsync(fileStream);
+                string fileToWriteTo = Path.Combine(downloadOption.DownloadFilepath, saveLoc, filename);
+                using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
+                {
+                    await streamToReadFrom.CopyToAsync(streamToWriteTo);
+                }
             }
         }
     }
