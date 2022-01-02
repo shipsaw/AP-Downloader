@@ -12,13 +12,15 @@ public partial class LoginView : UserControl
     private const string LoginUrl = @"https://www.armstrongpowerhouse.com/index.php?route=account/login";
     private const string LogoutUrl = @"https://www.armstrongpowerhouse.com/index.php?route=account/logout";
     private static readonly HttpClientHandler _handler = new() {AllowAutoRedirect = false};
+    private readonly double _timeoutMinutes;
 
     public LoginView()
     {
         InitializeComponent();
+        _timeoutMinutes = int.TryParse(MainViewModel.Config["TimeoutMinutes"], out var min) ? min : 10;
         DataContext = new DownloadViewModel();
         Client = new HttpClient(_handler);
-        Client.Timeout = TimeSpan.FromMinutes(30);
+        Client.Timeout = TimeSpan.FromMinutes(_timeoutMinutes);
         Loaded += Login_Loaded;
     }
 

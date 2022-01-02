@@ -28,9 +28,9 @@ public class DownloadViewModel : ObservableObject
     public DownloadViewModel()
     {
         DownloadCommand = new RelayCommand(list => DownloadAddons((IList) list));
-        _dataService = new SQLiteDataAccess();
-        var DlOption = _dataService.GetUserOptions();
-        _access = new HttpDataAccess(LoginView.Client);
+        _dataService = new SQLiteDataAccess(MainViewModel.Config["DbConnectionString"]);
+        var concurrentDownloads = int.TryParse(MainViewModel.Config["ConcurrentDownloads"], out var concDl) ? concDl : 1;
+        _access = new HttpDataAccess(LoginView.Client, concurrentDownloads);
         LoadUserAddonsCommand = new AsyncRelayCommand.AsyncCommand(LoadUserAddons);
         RenderUserAddons();
     }

@@ -32,7 +32,7 @@ public class InstallViewModel : ObservableObject
             return;
         }
 
-        _dataService = new SQLiteDataAccess();
+        _dataService = new SQLiteDataAccess(MainViewModel.Config["DbConnectionString"]);
         InstallCommand = new RelayCommand(list => Install((IList) list));
         GetAllPrevDownloadsCommand = new RelayCommand(clickEvent => GetAllPrevDownloads());
         Loaded();
@@ -65,6 +65,8 @@ public class InstallViewModel : ObservableObject
 
     public bool SelectAllButtonEnabled => MainViewModel.Products.Any();
 
+    private IEnumerable<Product> DownloadedProducts { get; set; }
+
     private async void Loaded()
     {
         var products = await _dataService.GetDownloadedProductsOnly(MainViewModel.DlManifest?.ProductIds);
@@ -94,10 +96,7 @@ public class InstallViewModel : ObservableObject
         var totalFileCount =
             _dataService.GetTotalFileCount(MainViewModel.DlOption, productIds);
         var progress =
-            new Progress<int>(report =>
-            {
-                BusyText = $"Installing file {++completedFileCount} of {totalFileCount.Result}";
-            });
+            new Progress<int>(report => { BusyText = $"Installing file {++completedFileCount} of {totalFileCount.Result}"; });
         OverlayVisibility = true;
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
         await Task.Run(() =>
@@ -139,9 +138,9 @@ public class InstallViewModel : ObservableObject
             .EnumerateFiles(Path.Combine(MainViewModel.DlOption.DownloadFilepath, "Products"), "*.zip",
                 SearchOption.AllDirectories)
             .Select(file => new FileInfo(file).Name);
-        var products = await _dataService.GetDownloadedProductsByName(allFiles);
+        DownloadedProducts = await _dataService.GetDownloadedProductsByName(allFiles);
 
-        foreach (var product in products)
+        foreach (var product in DownloadedProducts)
         {
             var cell = new Cell
             (

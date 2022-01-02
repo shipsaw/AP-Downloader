@@ -316,7 +316,6 @@
       <Resource Include="Images\APC455EPV1_Cover-238x294.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
-      <None Remove="appsettings.json" />
       <None Remove="Images\APC465EPV2_Cover-238x294.png" />
       <Resource Include="Images\APC465EPV2_Cover-238x294.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -353,6 +352,9 @@
       <Resource Include="Images\APWAGOSP_Cover-238x294.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

@@ -5,6 +5,7 @@ using System.Security.Principal;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
+using Microsoft.Extensions.Configuration;
 
 namespace ApDownloader.UI.MVVM.ViewModels;
 
@@ -19,7 +20,12 @@ public class MainViewModel : ObservableObject
 
     public MainViewModel()
     {
-        _dataAccess = new SQLiteDataAccess();
+        CheckAdmin();
+        var builder = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", true, true);
+        Config = builder.Build();
+
+        _dataAccess = new SQLiteDataAccess(Config["DbConnectionString"]);
         DlOption = _dataAccess.GetUserOptions();
 
         IsNotBusy = true;
@@ -33,10 +39,9 @@ public class MainViewModel : ObservableObject
         InstallViewCommand = new RelayCommand(clickEvent => CurrentView = InstallVm);
         OptionsViewCommand = new RelayCommand(clickEvent => CurrentView = OptionsVm);
         CurrentView = LoginVm;
-
-        CheckAdmin();
     }
 
+    public static IConfigurationRoot? Config { get; set; }
     public static bool IsDownloadDataDirty { get; set; } = true;
 
     public object GotoOptionPage { get; set; }

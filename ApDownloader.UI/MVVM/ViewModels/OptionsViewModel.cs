@@ -23,7 +23,7 @@ public class OptionsViewModel : ObservableObject
     public OptionsViewModel(bool isInstallFolderValid)
     {
         IsInstallFolderInValid = !isInstallFolderValid;
-        _dataAccess = new SQLiteDataAccess();
+        _dataAccess = new SQLiteDataAccess(MainViewModel.Config["DbConnectionString"]);
         _getExtraStock = MainViewModel.DlOption.GetExtraStock;
         _getBrandingPatch = MainViewModel.DlOption.GetBrandingPatch;
         _getLiveryPack = MainViewModel.DlOption.GetLiveryPack;

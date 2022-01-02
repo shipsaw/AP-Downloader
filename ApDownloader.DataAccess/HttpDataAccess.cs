@@ -24,11 +24,11 @@ public class HttpDataAccess
 
     private readonly SemaphoreSlim _throttler;
 
-    public HttpDataAccess(HttpClient? client)
+    public HttpDataAccess(HttpClient? client, int concurrentDownloads = 1)
     {
         _client = client;
         _allTasks = new List<Task>();
-        _throttler = new SemaphoreSlim(3);
+        _throttler = new SemaphoreSlim(concurrentDownloads);
     }
 
     public async Task<IEnumerable<Product>> GetPurchasedProducts(IEnumerable<Product> products)

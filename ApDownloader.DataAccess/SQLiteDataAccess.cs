@@ -12,9 +12,16 @@ namespace ApDownloader.DataAccess;
 [SuppressMessage("ReSharper", "RedundantAnonymousTypePropertyName")]
 public class SQLiteDataAccess
 {
+    private readonly string _dbConnectionString;
+
+    public SQLiteDataAccess(string dbConnectionString)
+    {
+        _dbConnectionString = dbConnectionString;
+    }
+
     public async Task<IEnumerable<Product>> GetProductsOnly()
     {
-        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
+        using IDbConnection conn = new SqliteConnection($"Data Source={_dbConnectionString}");
         var products = await conn.QueryAsync<Product>("SELECT * FROM Product", new DynamicParameters());
         return products;
     }
@@ -22,7 +29,7 @@ public class SQLiteDataAccess
     public async Task<IEnumerable<Product>> GetDownloadedProductsOnly(IEnumerable<string>? productIds)
     {
         if (productIds == null) return new List<Product>();
-        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
+        using IDbConnection conn = new SqliteConnection($"Data Source={_dbConnectionString}");
         var products = await conn.QueryAsync<Product>("SELECT * FROM Product WHERE ProductID IN @productIds",
             new {productIds});
         return products;
@@ -30,7 +37,7 @@ public class SQLiteDataAccess
 
     public async Task<IEnumerable<Product>> GetDownloadedProductsByName(IEnumerable<string> productNames)
     {
-        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
+        using IDbConnection conn = new SqliteConnection($"Data Source={_dbConnectionString}");
         var products = await conn.QueryAsync<Product>("SELECT * FROM Product WHERE Filename IN @productNames",
             new {productNames});
         return products;
@@ -38,7 +45,7 @@ public class SQLiteDataAccess
 
     public async Task<IEnumerable<string>> GetExtras(string dbName, IEnumerable<int> productList)
     {
-        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
+        using IDbConnection conn = new SqliteConnection($"Data Source={_dbConnectionString}");
         var products =
             await conn.QueryAsync<string>("SELECT Filename FROM @DbName WHERE ProductID IN @ProductList",
                 new {DbName = dbName, ProductList = productList});
@@ -49,7 +56,7 @@ public class SQLiteDataAccess
         IEnumerable<int> productList)
     {
         var manifest = new DownloadManifest();
-        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
+        using IDbConnection conn = new SqliteConnection($"Data Source={_dbConnectionString}");
         if (options.GetExtraStock)
             manifest.EsFilenames =
                 await conn.QueryAsync<string>("SELECT Filename FROM ExtraStock WHERE ProductID IN @ProductList",
@@ -109,7 +116,7 @@ public class SQLiteDataAccess
     public async Task<Dictionary<string, string>> GetFilesFolders()
     {
         var fileSet = new Dictionary<string, string>();
-        using IDbConnection conn = new SqliteConnection("Data Source=./ProductsDb.db");
+        using IDbConnection conn = new SqliteConnection($"Data Source={_dbConnectionString}");
         var products = await conn.QueryAsync<string>("SELECT Filename FROM Product");
         foreach (var file in products) fileSet.Add(file, "Products");
         var extraStock = await conn.QueryAsync<string>("SELECT Filename FROM ExtraStock");
