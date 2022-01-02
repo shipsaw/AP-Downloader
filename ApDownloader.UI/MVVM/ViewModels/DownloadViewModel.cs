@@ -100,10 +100,20 @@ public class DownloadViewModel : ObservableObject
             new Progress<int>(_ => { BusyText = $"Downloading file {++completedFileCount} of {totalFileCount}"; });
         OverlayVisibility = true;
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
-        await _access.Download(MainViewModel.DlManifest, MainViewModel.DlOption, progress);
-        MainViewModel.IsDownloadDataDirty = true;
-        await LoadUserAddons();
-        BusyText = "Download Complete";
+        try
+        {
+            await _access.Download(MainViewModel.DlManifest, MainViewModel.DlOption, progress);
+            MainViewModel.IsDownloadDataDirty = true;
+            await LoadUserAddons();
+            BusyText = "Download Complete";
+        }
+        catch (Exception e)
+        {
+            MainViewModel.IsDownloadDataDirty = true;
+            await LoadUserAddons();
+            BusyText = "Download Failed";
+        }
+
         MainViewModel.IsNotBusy = true;
     }
 
