@@ -12,22 +12,21 @@ public partial class LoginView : UserControl
 {
     private const string LoginUrl = @"https://www.armstrongpowerhouse.com/index.php?route=account/login";
     private const string LogoutUrl = @"https://www.armstrongpowerhouse.com/index.php?route=account/logout";
-    private static readonly HttpClientHandler _handler = new() {AllowAutoRedirect = false};
-    private readonly double _timeoutMinutes;
+    private static readonly HttpClientHandler Handler = new() {AllowAutoRedirect = false};
 
     public LoginView()
     {
         InitializeComponent();
-        _timeoutMinutes = int.TryParse(MainViewModel.Config["TimeoutMinutes"], out var min) ? min : 10;
+        double timeoutMinutes = int.TryParse(MainViewModel.Config["TimeoutMinutes"], out var min) ? min : 10;
         DataContext = new DownloadViewModel();
-        Client = new HttpClient(_handler);
-        Client.Timeout = TimeSpan.FromMinutes(_timeoutMinutes);
+        Client = new HttpClient(Handler);
+        Client.Timeout = TimeSpan.FromMinutes(timeoutMinutes);
         Loaded += Login_Loaded;
     }
 
     public static bool IsLoggedIn { get; private set; }
 
-    public static HttpClient? Client { get; private set; } = new(_handler);
+    public static HttpClient? Client { get; private set; } = new(Handler);
 
     private void Login_Loaded(object sender, RoutedEventArgs e)
     {
