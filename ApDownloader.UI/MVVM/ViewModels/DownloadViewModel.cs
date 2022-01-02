@@ -88,6 +88,10 @@ public class DownloadViewModel : ObservableObject
     private async void DownloadAddons(IList selectedCells)
     {
         MainViewModel.IsNotBusy = false;
+        Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\Products");
+        Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\ExtraStock");
+        Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\BrandingPatches");
+        Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\LiveryPacks");
         var productIds = new List<int>();
         foreach (Cell cell in selectedCells)
             if (cell.ProductId != null)
