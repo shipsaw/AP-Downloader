@@ -11,6 +11,7 @@ public class OptionsViewModel : ObservableObject
     private string _actualDownloadFolderLoc;
     private object _applyResponseVisibility = false;
     private bool _canApply;
+    private bool _canOrganize;
     private string _downloadFilepath;
     private bool _getBrandingPatch;
     private bool _getExtraStock;
@@ -29,8 +30,9 @@ public class OptionsViewModel : ObservableObject
         _getLiveryPack = MainViewModel.DlOption.GetLiveryPack;
         _downloadFilepath = MainViewModel.DlOption.DownloadFilepath;
         _installFilepath = MainViewModel.DlOption.InstallFilePath;
+        CanOrganize = true;
 
-        OrganizeDownloadFolderCommand = new RelayCommand(clickEvent => OrganizeDownloadFolder());
+        OrganizeDownloadFolderCommand = new RelayCommand(clickEvent => OrganizeDownloadFolder(), _ => CanOrganize);
         SetDownloadFilepathCommand = new RelayCommand(path =>
         {
             DownloadFilepath = (string) path;
@@ -67,6 +69,16 @@ public class OptionsViewModel : ObservableObject
             _canApply = value;
             if (value)
                 ApplyResponseVisibility = false;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool CanOrganize
+    {
+        get => _canOrganize;
+        set
+        {
+            _canOrganize = value;
             OnPropertyChanged();
         }
     }
@@ -114,6 +126,7 @@ public class OptionsViewModel : ObservableObject
             OnPropertyChanged();
             CanApply = true;
             MainViewModel.IsDownloadDataDirty = true;
+            CanOrganize = false;
         }
     }
 
@@ -155,6 +168,7 @@ public class OptionsViewModel : ObservableObject
         foreach (var filename in allFiles)
             File.Move(Path.Combine(MainViewModel.DlOption.DownloadFilepath, filename),
                 Path.Combine(MainViewModel.DlOption.DownloadFilepath, productsSet[filename], filename));
+        CanOrganize = true;
     }
 
     private async void ApplySettings()
@@ -171,5 +185,6 @@ public class OptionsViewModel : ObservableObject
         await _dataAccess.SetUserOptions(MainViewModel.DlOption);
         ApplyResponseVisibility = true;
         CanApply = false;
+        CanOrganize = true;
     }
 }
