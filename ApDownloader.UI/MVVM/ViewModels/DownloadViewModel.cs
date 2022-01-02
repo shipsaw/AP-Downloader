@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
+using ApDownloader.UI.Logging;
 using ApDownloader.UI.MVVM.Views;
 
 namespace ApDownloader.UI.MVVM.ViewModels;
@@ -107,8 +108,9 @@ public class DownloadViewModel : ObservableObject
             await LoadUserAddons();
             BusyText = "Download Complete";
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
+            Logger.LogFatal(exception.Message);
             MainViewModel.IsDownloadDataDirty = true;
             await LoadUserAddons();
             BusyText = "Download Failed";

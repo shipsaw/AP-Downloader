@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
+using ApDownloader.UI.Logging;
 using ApDownloader.UI.MVVM.ViewModels;
 
 namespace ApDownloader.UI.MVVM.Views;
@@ -62,8 +63,9 @@ public partial class LoginView : UserControl
                 IsLoggedIn = false;
             }
         }
-        catch (HttpRequestException)
+        catch (HttpRequestException exception)
         {
+            Logger.LogFatal(exception.Message);
             LoginResult.Text = "Unable to connect to website";
             LoginButton.IsEnabled = true;
             LogoutButton.IsEnabled = false;
