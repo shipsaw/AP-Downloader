@@ -16,7 +16,6 @@ public class MainViewModel : ObservableObject
     private static bool _isNotBusy;
     private readonly SQLiteDataAccess _dataAccess;
     private object _currentView;
-    private bool _isAdmin;
 
     public MainViewModel()
     {
@@ -68,15 +67,7 @@ public class MainViewModel : ObservableObject
         }
     }
 
-    public bool IsAdmin
-    {
-        get => !_isAdmin;
-        set
-        {
-            _isAdmin = value;
-            OnPropertyChanged();
-        }
-    }
+    public static bool IsNotAdmin { get; set; }
 
     public static bool IsNotBusy
     {
@@ -97,6 +88,6 @@ public class MainViewModel : ObservableObject
     {
         var identity = WindowsIdentity.GetCurrent();
         var principal = new WindowsPrincipal(identity);
-        IsAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
+        IsNotAdmin = !principal.IsInRole(WindowsBuiltInRole.Administrator);
     }
 }
