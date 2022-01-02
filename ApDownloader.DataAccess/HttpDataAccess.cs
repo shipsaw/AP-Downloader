@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using ApDownloader.Model;
@@ -105,14 +104,39 @@ public class HttpDataAccess
         }
     }
 
+    private async Task DownloadPreviewImages(IEnumerable<string> products, string prefix, IProgress<int> progress,
+        ApDownloaderConfig downloadOption, string saveLoc)
+    {
+        foreach (var filename in products)
+        {
+            var uri = new Uri(prefix + filename);
+            await _throttler.WaitAsync();
+            await Task.Delay(100);
+            _allTasks.Add(
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        progress.Report(1);
+                        await SaveFile(downloadOption, uri, saveLoc,
+                            prefix == _productPrefix ? "" : filename);
+                    }
+                    finally
+                    {
+                        _throttler.Release();
+                    }
+                }));
+        }
+    }
+
     private async Task SaveFile(ApDownloaderConfig downloadOption, Uri uri, string saveLoc, string filename)
-{
-        using (HttpResponseMessage response = await _client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead))
+    {
+        using (var response = await _client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead))
         {
             if (filename == "") filename = response.Content.Headers.ContentDisposition.FileName.Trim('"');
-            using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
+            using (var streamToReadFrom = await response.Content.ReadAsStreamAsync())
             {
-                string fileToWriteTo = Path.Combine(downloadOption.DownloadFilepath, saveLoc, filename);
+                var fileToWriteTo = Path.Combine(downloadOption.DownloadFilepath, saveLoc, filename);
                 using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
                 {
                     await streamToReadFrom.CopyToAsync(streamToWriteTo);
