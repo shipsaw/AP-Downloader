@@ -105,9 +105,9 @@ public class HttpDataAccess
         }
     }
 
-    public async Task DownloadPreviewImages(IEnumerable<string> productImageNames)
+    public async Task DownloadPreviewImages(IEnumerable<string> productImageNames, string imagesPath)
     {
-        Directory.CreateDirectory(@".\PreviewImages\");
+        Directory.CreateDirectory(imagesPath);
         foreach (var filename in productImageNames)
         {
             var uri = new Uri(_previewImagePrefix + filename);
@@ -118,7 +118,7 @@ public class HttpDataAccess
                 {
                     try
                     {
-                        await SavePreviewImage(uri, "./PreviewImages", filename);
+                        await SavePreviewImage(uri, imagesPath, filename);
                     }
                     finally
                     {

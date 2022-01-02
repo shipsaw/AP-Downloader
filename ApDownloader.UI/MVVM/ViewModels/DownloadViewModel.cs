@@ -129,12 +129,13 @@ public class DownloadViewModel : ObservableObject
     private async Task LoadUserAddons()
     {
         AllApProducts = await _dataService.GetProductsOnly();
-        if (!Directory.Exists("./PreviewImages/") || Directory.GetFiles("./Images/", "*.png").Length != AllApProducts.Count())
-            _access.DownloadPreviewImages(AllApProducts.Select(p => p.ImageName));
+        var previewImagesFilepath = Path.Combine(Path.GetTempPath(), "ApDownloads/PreviewImages");
+        if (!Directory.Exists(previewImagesFilepath) || Directory.GetFiles(previewImagesFilepath, "*.png").Length != AllApProducts.Count())
+            _access.DownloadPreviewImages(AllApProducts.Select(p => p.ImageName), previewImagesFilepath);
         if (!MainViewModel.Products.Any() || MainViewModel.IsDownloadDataDirty)
         {
             _access = new HttpDataAccess(LoginView.Client);
-            MainViewModel.Products = await _access.GetPurchasedProducts(MainViewModel.Products);
+            MainViewModel.Products = await _access.GetPurchasedProducts(AllApProducts);
             var allFiles = Directory
                 .EnumerateFiles(MainViewModel.DlOption.DownloadFilepath, "*.zip", SearchOption.AllDirectories)
                 .Select(file => (new FileInfo(file).Length, new FileInfo(file).Name));
@@ -158,11 +159,12 @@ public class DownloadViewModel : ObservableObject
             MainViewModel.IsDownloadDataDirty = false;
         }
 
+        var previewImagesFilepath = Path.Combine(Path.GetTempPath(), "ApDownloads/PreviewImages");
         foreach (var product in MainViewModel.Products)
         {
             var cell = new Cell(
                 product.ProductID,
-                "./PreviewImages/" + product.ImageName,
+                Path.Combine(previewImagesFilepath, product.ImageName),
                 product.Name,
                 product.CanUpdate,
                 product.IsMissing

@@ -80,12 +80,13 @@ public class InstallViewModel : ObservableObject
     private async void Loaded()
     {
         var products = await _dataService.GetDownloadedProductsOnly(MainViewModel.DlManifest?.ProductIds);
+        var previewImagesPath = Path.Combine(Path.GetTempPath(), "ApDownloads/PreviewImages");
         foreach (var product in products)
         {
             var cell = new Cell
             (
                 product.ProductID,
-                "./PreviewImages/" + product.ImageName,
+                Path.Combine(previewImagesPath, product.ImageName),
                 product.Name
             );
             ProductCells.Add(cell);
@@ -150,12 +151,13 @@ public class InstallViewModel : ObservableObject
             .Select(file => new FileInfo(file).Name);
         _downloadedProducts = await _dataService.GetDownloadedProductsByName(allFiles);
 
+        var previewImagesPath = Path.Combine(Path.GetTempPath(), "ApDownloads/PreviewImages");
         foreach (var product in _downloadedProducts)
         {
             var cell = new Cell
             (
                 product.ProductID,
-                "./PreviewImages/" + product.ImageName,
+                Path.Combine(previewImagesPath, product.ImageName),
                 product.Name
             );
             if (!ProductCells.Contains(cell))
