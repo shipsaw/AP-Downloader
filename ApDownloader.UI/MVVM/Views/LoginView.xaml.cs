@@ -18,7 +18,7 @@ public partial class LoginView : UserControl
         InitializeComponent();
         DataContext = new DownloadViewModel();
         Client = new HttpClient(_handler);
-        Client.Timeout = TimeSpan.FromMinutes(5);
+        Client.Timeout = TimeSpan.FromMinutes(30);
         Loaded += Login_Loaded;
     }
 
