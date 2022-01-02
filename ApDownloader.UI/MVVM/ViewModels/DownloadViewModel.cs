@@ -37,6 +37,7 @@ public class DownloadViewModel : ObservableObject
     }
 
     public AsyncRelayCommand.AsyncCommand LoadUserAddonsCommand { get; set; }
+    public AsyncRelayCommand.AsyncCommand DownloadPreviewImagesCommand { get; set; }
     public RelayCommand DownloadCommand { get; set; }
 
     public string BusyText
@@ -84,6 +85,8 @@ public class DownloadViewModel : ObservableObject
 
     public bool SelectAllButtonEnabled => MainViewModel.Products.Any();
 
+    public IEnumerable<Product> AllApProducts { get; set; }
+
 
     private async void DownloadAddons(IList selectedCells)
     {
@@ -125,10 +128,12 @@ public class DownloadViewModel : ObservableObject
 
     private async Task LoadUserAddons()
     {
+        AllApProducts = await _dataService.GetProductsOnly();
+        if (!Directory.Exists("./PreviewImages/") || Directory.GetFiles("./Images/", "*.png").Length != AllApProducts.Count())
+            _access.DownloadPreviewImages(AllApProducts.Select(p => p.ImageName));
         if (!MainViewModel.Products.Any() || MainViewModel.IsDownloadDataDirty)
         {
             _access = new HttpDataAccess(LoginView.Client);
-            MainViewModel.Products = await _dataService.GetProductsOnly();
             MainViewModel.Products = await _access.GetPurchasedProducts(MainViewModel.Products);
             var allFiles = Directory
                 .EnumerateFiles(MainViewModel.DlOption.DownloadFilepath, "*.zip", SearchOption.AllDirectories)
@@ -157,7 +162,7 @@ public class DownloadViewModel : ObservableObject
         {
             var cell = new Cell(
                 product.ProductID,
-                "../../Images/" + product.ImageName,
+                "./PreviewImages/" + product.ImageName,
                 product.Name,
                 product.CanUpdate,
                 product.IsMissing

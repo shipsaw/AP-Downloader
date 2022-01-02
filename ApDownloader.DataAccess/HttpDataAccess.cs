@@ -18,6 +18,7 @@ public class HttpDataAccess
     private readonly string _extraStockPrefix = "https://www.armstrongpowerhouse.com/free_download/";
 
     private readonly string _liveryPrefix = "https://www.armstrongpowerhouse.com/free_download/";
+    private readonly string _previewImagePrefix = "https://www.armstrongpowerhouse.com/image/cache/catalog/";
 
     private readonly string _productPrefix =
         "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=";
@@ -104,12 +105,12 @@ public class HttpDataAccess
         }
     }
 
-    private async Task DownloadPreviewImages(IEnumerable<string> products, string prefix, IProgress<int> progress,
-        ApDownloaderConfig downloadOption, string saveLoc)
+    public async Task DownloadPreviewImages(IEnumerable<string> productImageNames)
     {
-        foreach (var filename in products)
+        Directory.CreateDirectory(@".\PreviewImages\");
+        foreach (var filename in productImageNames)
         {
-            var uri = new Uri(prefix + filename);
+            var uri = new Uri(_previewImagePrefix + filename);
             await _throttler.WaitAsync();
             await Task.Delay(100);
             _allTasks.Add(
@@ -117,9 +118,7 @@ public class HttpDataAccess
                 {
                     try
                     {
-                        progress.Report(1);
-                        await SaveFile(downloadOption, uri, saveLoc,
-                            prefix == _productPrefix ? "" : filename);
+                        await SavePreviewImage(uri, "./PreviewImages", filename);
                     }
                     finally
                     {
@@ -137,6 +136,22 @@ public class HttpDataAccess
             using (var streamToReadFrom = await response.Content.ReadAsStreamAsync())
             {
                 var fileToWriteTo = Path.Combine(downloadOption.DownloadFilepath, saveLoc, filename);
+                using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
+                {
+                    await streamToReadFrom.CopyToAsync(streamToWriteTo);
+                }
+            }
+        }
+    }
+
+    private async Task SavePreviewImage(Uri uri, string saveLoc, string filename)
+    {
+        using (var response = await _client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead))
+        {
+            if (filename == "") filename = response.Content.Headers.ContentDisposition.FileName.Trim('"');
+            using (var streamToReadFrom = await response.Content.ReadAsStreamAsync())
+            {
+                var fileToWriteTo = Path.Combine(saveLoc, filename);
                 using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
                 {
                     await streamToReadFrom.CopyToAsync(streamToWriteTo);

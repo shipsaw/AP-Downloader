@@ -50,6 +50,7 @@ public partial class LoginView : UserControl
             {
                 LoginResult.Text = "Loading Addons";
                 await viewModel.LoadUserAddonsCommand.ExecuteAsync();
+
                 LoginResult.Text = "Login Successful";
                 LoginButton.IsEnabled = false;
                 LogoutButton.IsEnabled = true;

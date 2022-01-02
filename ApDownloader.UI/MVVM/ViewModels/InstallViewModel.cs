@@ -85,7 +85,7 @@ public class InstallViewModel : ObservableObject
             var cell = new Cell
             (
                 product.ProductID,
-                "../../Images/" + product.ImageName,
+                "./PreviewImages/" + product.ImageName,
                 product.Name
             );
             ProductCells.Add(cell);
@@ -155,7 +155,7 @@ public class InstallViewModel : ObservableObject
             var cell = new Cell
             (
                 product.ProductID,
-                "../../Images/" + product.ImageName,
+                "./PreviewImages/" + product.ImageName,
                 product.Name
             );
             if (!ProductCells.Contains(cell))
