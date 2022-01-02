@@ -18,7 +18,11 @@ public class InstallViewModel : ObservableObject
 
     private string _busyText;
 
+    private IEnumerable<Product> _downloadedProducts;
+
     private bool _overlayVisibility;
+
+    private bool _selectAllButtonEnabled;
 
     private bool _selectedToggle = true;
     //private DownloadManifest DownloadManifest;
@@ -63,9 +67,15 @@ public class InstallViewModel : ObservableObject
         }
     }
 
-    public bool SelectAllButtonEnabled => MainViewModel.Products.Any();
-
-    private IEnumerable<Product> DownloadedProducts { get; set; }
+    public bool SelectAllButtonEnabled
+    {
+        get => _selectAllButtonEnabled;
+        set
+        {
+            _selectAllButtonEnabled = value;
+            OnPropertyChanged();
+        }
+    }
 
     private async void Loaded()
     {
@@ -138,9 +148,9 @@ public class InstallViewModel : ObservableObject
             .EnumerateFiles(Path.Combine(MainViewModel.DlOption.DownloadFilepath, "Products"), "*.zip",
                 SearchOption.AllDirectories)
             .Select(file => new FileInfo(file).Name);
-        DownloadedProducts = await _dataService.GetDownloadedProductsByName(allFiles);
+        _downloadedProducts = await _dataService.GetDownloadedProductsByName(allFiles);
 
-        foreach (var product in DownloadedProducts)
+        foreach (var product in _downloadedProducts)
         {
             var cell = new Cell
             (
@@ -151,5 +161,8 @@ public class InstallViewModel : ObservableObject
             if (!ProductCells.Contains(cell))
                 ProductCells.Add(cell);
         }
+
+        if (ProductCells.Any())
+            SelectAllButtonEnabled = true;
     }
 }
