@@ -23,6 +23,10 @@
       <Content Include="ProductsDb.db">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <None Remove="sqlite3.dll" />
+      <Content Include="sqlite3.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
