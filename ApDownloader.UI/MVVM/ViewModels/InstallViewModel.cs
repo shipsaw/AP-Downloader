@@ -69,7 +69,7 @@ public class InstallViewModel : ObservableObject
 
     public bool SelectAllButtonEnabled
     {
-        get => _selectAllButtonEnabled;
+        get => _selectAllButtonEnabled || ProductCells.Any();
         set
         {
             _selectAllButtonEnabled = value;
