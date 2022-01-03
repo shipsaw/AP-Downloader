@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
-using static ApDownloader.UI.Core.AsyncRelayCommand;
 
 namespace ApDownloader.UI.MVVM.ViewModels;
 
@@ -29,22 +28,18 @@ public class InstallViewModel : ObservableObject
     public ObservableCollection<Cell> ProductCells { get; } = new();
     public RelayCommand RenderAllPreviousDownloadsCommand { get; set; }
     public RelayCommand LoadDownloadsCommand { get; }
+
     public InstallViewModel()
     {
         _dataService = new SQLiteDataAccess(MainViewModel.AppFolder);
-        InstallCommand = new RelayCommand(async list =>await Install((IList)list), _ => !MainViewModel.IsNotAdmin);
+        InstallCommand = new RelayCommand(async list => await Install((IList) list), _ => !MainViewModel.IsNotAdmin);
         RenderAllPreviousDownloadsCommand = new RelayCommand(_ => RenderAllPrevDownloads(), _ => AllDownloadsEnabled);
-        LoadDownloadsCommand = new RelayCommand(async _ =>await Loaded());
+        LoadDownloadsCommand = new RelayCommand(async _ => await Loaded());
 
-        if (File.Exists(Path.Combine(MainViewModel.DlOption.InstallFilePath, "RailWorks.exe")))
-        {
-            return;
-        }
+        if (File.Exists(Path.Combine(MainViewModel.DlOption.InstallFilePath, "RailWorks.exe"))) return;
         BusyText = "       Please select a valid\nInstallation folder in Options";
         OverlayVisibility = true;
-        return;
     }
-
 
     public string BusyText
     {
@@ -92,6 +87,7 @@ public class InstallViewModel : ObservableObject
             );
             ProductCells.Add(cell);
         }
+
         await PopulateAllPrevDownloads();
     }
 
@@ -104,44 +100,17 @@ public class InstallViewModel : ObservableObject
         foreach (Cell cell in selectedCells)
             productIds.Add(cell.ProductId);
 
-
         var completedFileCount = 0;
         var totalFileCount =
             _dataService.GetTotalFileCount(MainViewModel.DlOption, productIds);
         var progress =
             new Progress<int>(report => { BusyText = $"Installing file {++completedFileCount} of {totalFileCount.Result}"; });
+
         OverlayVisibility = true;
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
-        await Task.Run(() =>
-        {
-            var dir = new DirectoryInfo(Path.Combine(MainViewModel.DlOption.TempFilePath + "ApDownloads"));
-            if (dir.Exists)
-                dir.Delete(true);
-
-            if (MainViewModel.DlManifest.ProductIds != null && MainViewModel.DlManifest.ProductIds.Any())
-                InstallAddons(MainViewModel.DlOption, MainViewModel.DlManifest.PrFilenames, "Products/", progress);
-
-            if (MainViewModel.DlOption.GetExtraStock && MainViewModel.DlManifest.EsFilenames.Any())
-                InstallAddons(MainViewModel.DlOption, MainViewModel.DlManifest.EsFilenames, "ExtraStock/", progress);
-            if (MainViewModel.DlOption.GetBrandingPatch && MainViewModel.DlManifest.BpFilenames.Any())
-                InstallAddons(MainViewModel.DlOption, MainViewModel.DlManifest.BpFilenames, "BrandingPatches/",
-                    progress);
-
-            if (MainViewModel.DlOption.GetLiveryPack && MainViewModel.DlManifest.LpFilenames.Any())
-                InstallAddons(MainViewModel.DlOption, MainViewModel.DlManifest.LpFilenames, "LiveryPacks/", progress);
-
-            if (dir.Exists)
-                dir.Delete(true);
-        });
+        await Task.Run(() => { DiskAccess.InstallAllAddons(MainViewModel.DlManifest, MainViewModel.DlOption, progress); });
         BusyText = "Installation Complete";
         MainViewModel.IsNotBusy = true;
-    }
-
-    private static void InstallAddons(ApDownloaderConfig downloadOption, IEnumerable<string> filenames, string folder,
-        IProgress<int> progress)
-    {
-        var extractPath = AddonInstaller.AddonInstaller.UnzipAddons(downloadOption, filenames, folder);
-        AddonInstaller.AddonInstaller.InstallAddons(downloadOption, extractPath, progress);
     }
 
     private async Task PopulateAllPrevDownloads()
@@ -150,8 +119,8 @@ public class InstallViewModel : ObservableObject
         var allfiles = DiskAccess.GetAllFilesOnDisk(MainViewModel.DlOption.DownloadFilepath);
         var allFilesList = allfiles.Select(kvp => kvp.Key).ToList();
         DownloadedProducts = await _dataService.GetDownloadedProductsByName(allFilesList);
-
     }
+
     private void RenderAllPrevDownloads()
     {
         AllDownloadsEnabled = false;
