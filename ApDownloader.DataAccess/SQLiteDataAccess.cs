@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApDownloader.Model;
@@ -14,9 +15,9 @@ public class SQLiteDataAccess
 {
     private readonly string _dbConnectionString;
 
-    public SQLiteDataAccess(string dbConnectionString)
+    public SQLiteDataAccess(string appFilepath)
     {
-        _dbConnectionString = dbConnectionString;
+        _dbConnectionString = Path.Combine(appFilepath, Path.GetFileName("./ProductsDb.db"));
     }
 
     public async Task<IEnumerable<Product>> GetProductsOnly()

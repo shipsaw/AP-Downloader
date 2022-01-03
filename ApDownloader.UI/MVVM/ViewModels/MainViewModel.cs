@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Security.Principal;
@@ -14,17 +15,17 @@ public class MainViewModel : ObservableObject
     public static ApDownloaderConfig DlOption = new();
     public static DownloadManifest DlManifest = new();
     private static bool _isNotBusy;
+
+    public static readonly string AppFolder =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ApDownloader");
+
     private readonly SQLiteDataAccess _dataAccess;
     private object _currentView;
 
     public MainViewModel()
     {
         CheckAdmin();
-        var builder = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", true, true);
-        Config = builder.Build();
-
-        _dataAccess = new SQLiteDataAccess(Config["DbConnectionString"]);
+        _dataAccess = new SQLiteDataAccess(AppFolder);
         DlOption = _dataAccess.GetUserOptions();
 
         IsNotBusy = true;

@@ -17,10 +17,9 @@ public partial class LoginView : UserControl
     public LoginView()
     {
         InitializeComponent();
-        double timeoutMinutes = int.TryParse(MainViewModel.Config["TimeoutMinutes"], out var min) ? min : 10;
         DataContext = new DownloadViewModel();
         Client = new HttpClient(Handler);
-        Client.Timeout = TimeSpan.FromMinutes(timeoutMinutes);
+        Client.Timeout = TimeSpan.FromMinutes(60);
         Loaded += Login_Loaded;
     }
 

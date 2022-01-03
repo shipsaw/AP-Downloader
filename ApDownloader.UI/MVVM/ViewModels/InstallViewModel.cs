@@ -34,7 +34,7 @@ public class InstallViewModel : ObservableObject
             return;
         }
 
-        _dataService = new SQLiteDataAccess(MainViewModel.Config["DbConnectionString"]);
+        _dataService = new SQLiteDataAccess(MainViewModel.AppFolder);
         InstallCommand = new RelayCommand(list => Install((IList) list), _ => !MainViewModel.IsNotAdmin);
         GetAllPrevDownloadsCommand = new RelayCommand(clickEvent => GetAllPrevDownloads());
         RenderUserAddonsCommand = new AsyncRelayCommand.AsyncCommand(Loaded);

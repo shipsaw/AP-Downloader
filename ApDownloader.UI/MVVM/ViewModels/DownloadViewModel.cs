@@ -23,20 +23,16 @@ public class DownloadViewModel : ObservableObject
     private HttpDataAccess _access;
     private string _busyText = "LOADING ADDONS";
     private int _canUpdateCount;
-    private bool _downloadButtonVisible;
     private int _isNotOnDiskCount;
     private string _missingPackText = "";
     private string _outOfDateText = "";
     private bool _overlayVisibility = true;
-    private bool _selectAllButtonEnabled;
-
 
     public DownloadViewModel()
     {
         DownloadCommand = new RelayCommand(list => DownloadAddons((IList) list));
-        _dataService = new SQLiteDataAccess(MainViewModel.Config["DbConnectionString"]);
-        var concurrentDownloads = int.TryParse(MainViewModel.Config["ConcurrentDownloads"], out var concDl) ? concDl : 1;
-        _access = new HttpDataAccess(LoginView.Client, concurrentDownloads);
+        _dataService = new SQLiteDataAccess(MainViewModel.AppFolder);
+        _access = new HttpDataAccess(LoginView.Client, 3);
         LoadUserAddonsCommand = new AsyncRelayCommand.AsyncCommand(LoadUserAddons);
         RenderUserAddonsCommand = new AsyncRelayCommand.AsyncCommand(RenderUserAddons);
     }
