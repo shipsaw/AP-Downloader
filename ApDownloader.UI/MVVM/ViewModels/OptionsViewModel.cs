@@ -8,18 +8,15 @@ namespace ApDownloader.UI.MVVM.ViewModels;
 public class OptionsViewModel : ObservableObject
 {
     private readonly SQLiteDataAccess _dataAccess;
-    private string _actualDownloadFolderLoc;
     private object _applyResponseVisibility = false;
     private bool _canApply;
     private bool _canOrganize;
     private string _downloadFilepath;
     private bool _getBrandingPatch;
     private bool _getExtraStock;
-
     private bool _getLiveryPack;
     private string _installFilepath;
     private bool _isInstallFolderInvalid;
-    private string _selectedDownloadPath;
 
     public OptionsViewModel(bool isInstallFolderValid)
     {

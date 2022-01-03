@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
+using ApDownloader.UI.MVVM.ViewModels;
 
 namespace ApDownloader.UI.MVVM.Views;
 
@@ -15,6 +16,13 @@ public partial class InstallView : UserControl
     public InstallView()
     {
         InitializeComponent();
+        Loaded += Window_loaded;
+    }
+
+    private async void Window_loaded(object sender, RoutedEventArgs e)
+    {
+        var viewmodel = (InstallViewModel) DataContext;
+        await viewmodel.RenderUserAddonsCommand.ExecuteAsync();
     }
 
     public void ToggleSelected(object sender, RoutedEventArgs e)

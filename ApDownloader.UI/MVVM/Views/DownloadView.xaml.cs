@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using ApDownloader.Model;
+using ApDownloader.UI.MVVM.ViewModels;
 
 namespace ApDownloader.UI.MVVM.Views;
 
@@ -13,6 +14,13 @@ public partial class DownloadView
     public DownloadView()
     {
         InitializeComponent();
+        Loaded += Window_loaded;
+    }
+
+    private async void Window_loaded(object sender, RoutedEventArgs e)
+    {
+        var viewmodel = (DownloadViewModel) DataContext;
+        await viewmodel.RenderUserAddonsCommand.ExecuteAsync();
     }
 
     private void ToggleSelected(object sender, RoutedEventArgs e)

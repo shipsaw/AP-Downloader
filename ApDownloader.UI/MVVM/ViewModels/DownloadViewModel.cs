@@ -16,6 +16,10 @@ namespace ApDownloader.UI.MVVM.ViewModels;
 public class DownloadViewModel : ObservableObject
 {
     private readonly SQLiteDataAccess _dataService;
+
+    private readonly string _previewImagesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "ApDownloader", "PreviewImages");
+
     private HttpDataAccess _access;
     private string _busyText = "LOADING ADDONS";
     private int _canUpdateCount;
@@ -26,6 +30,7 @@ public class DownloadViewModel : ObservableObject
     private bool _overlayVisibility = true;
     private bool _selectAllButtonEnabled;
 
+
     public DownloadViewModel()
     {
         DownloadCommand = new RelayCommand(list => DownloadAddons((IList) list));
@@ -33,11 +38,11 @@ public class DownloadViewModel : ObservableObject
         var concurrentDownloads = int.TryParse(MainViewModel.Config["ConcurrentDownloads"], out var concDl) ? concDl : 1;
         _access = new HttpDataAccess(LoginView.Client, concurrentDownloads);
         LoadUserAddonsCommand = new AsyncRelayCommand.AsyncCommand(LoadUserAddons);
-        RenderUserAddons();
+        RenderUserAddonsCommand = new AsyncRelayCommand.AsyncCommand(RenderUserAddons);
     }
 
     public AsyncRelayCommand.AsyncCommand LoadUserAddonsCommand { get; set; }
-    public AsyncRelayCommand.AsyncCommand DownloadPreviewImagesCommand { get; set; }
+    public AsyncRelayCommand.AsyncCommand RenderUserAddonsCommand { get; set; }
     public RelayCommand DownloadCommand { get; set; }
 
     public string BusyText
@@ -85,7 +90,7 @@ public class DownloadViewModel : ObservableObject
 
     public bool SelectAllButtonEnabled => MainViewModel.Products.Any();
 
-    public IEnumerable<Product> AllApProducts { get; set; }
+    private IEnumerable<Product> AllApProducts { get; set; }
 
 
     private async void DownloadAddons(IList selectedCells)
@@ -96,9 +101,7 @@ public class DownloadViewModel : ObservableObject
         Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\BrandingPatches");
         Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\LiveryPacks");
         var productIds = new List<int>();
-        foreach (Cell cell in selectedCells)
-            if (cell.ProductId != null)
-                productIds.Add(cell.ProductId);
+        foreach (Cell cell in selectedCells) productIds.Add(cell.ProductId);
 
 
         var completedFileCount = 0;
@@ -129,9 +132,8 @@ public class DownloadViewModel : ObservableObject
     private async Task LoadUserAddons()
     {
         AllApProducts = await _dataService.GetProductsOnly();
-        var previewImagesFilepath = Path.Combine(Path.GetTempPath(), "ApDownloads/PreviewImages");
-        if (!Directory.Exists(previewImagesFilepath) || Directory.GetFiles(previewImagesFilepath, "*.png").Length != AllApProducts.Count())
-            _access.DownloadPreviewImages(AllApProducts.Select(p => p.ImageName), previewImagesFilepath);
+        if (!Directory.Exists(_previewImagesPath) || Directory.GetFiles(_previewImagesPath, "*.png").Length != AllApProducts.Count())
+            await _access.DownloadPreviewImages(AllApProducts.Select(p => p.ImageName), _previewImagesPath);
         if (!MainViewModel.Products.Any() || MainViewModel.IsDownloadDataDirty)
         {
             _access = new HttpDataAccess(LoginView.Client);
@@ -151,7 +153,7 @@ public class DownloadViewModel : ObservableObject
         }
     }
 
-    private async void RenderUserAddons()
+    private async Task RenderUserAddons()
     {
         if (MainViewModel.IsDownloadDataDirty)
         {
@@ -159,20 +161,24 @@ public class DownloadViewModel : ObservableObject
             MainViewModel.IsDownloadDataDirty = false;
         }
 
-        var previewImagesFilepath = Path.Combine(Path.GetTempPath(), "ApDownloads/PreviewImages");
-        foreach (var product in MainViewModel.Products)
+        var builderList = new List<Cell>();
+        await Task.Run(() =>
         {
-            var cell = new Cell(
-                product.ProductID,
-                Path.Combine(previewImagesFilepath, product.ImageName),
-                product.Name,
-                product.CanUpdate,
-                product.IsMissing
-            );
-            if (cell.IsNotOnDisk) _isNotOnDiskCount++;
-            if (cell.CanUpdate) _canUpdateCount++;
-            ProductCells.Add(cell);
-        }
+            foreach (var product in MainViewModel.Products)
+            {
+                var cell = new Cell(
+                    product.ProductID,
+                    Path.Combine(_previewImagesPath, Path.GetFileName(product.ImageName)),
+                    product.Name,
+                    product.CanUpdate,
+                    product.IsMissing
+                );
+                if (cell.IsNotOnDisk) _isNotOnDiskCount++;
+                if (cell.CanUpdate) _canUpdateCount++;
+                builderList.Add(cell);
+            }
+        });
+        foreach (var cell in builderList) ProductCells.Add(cell);
 
         OutOfDateText = $"Select out-of-date packs ({_canUpdateCount})";
         MissingPackText = $"Select missing packs ({_isNotOnDiskCount})";

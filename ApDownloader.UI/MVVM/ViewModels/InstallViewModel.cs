@@ -14,17 +14,15 @@ namespace ApDownloader.UI.MVVM.ViewModels;
 public class InstallViewModel : ObservableObject
 {
     private readonly SQLiteDataAccess _dataService;
-    private HttpDataAccess _access;
+
+    private readonly string _previewImagesPath =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ApDownloader", "PreviewImages");
 
     private string _busyText;
-
     private IEnumerable<Product> _downloadedProducts;
-
     private bool _overlayVisibility;
 
     private bool _selectAllButtonEnabled;
-
-    private bool _selectedToggle = true;
     //private DownloadManifest DownloadManifest;
 
     public InstallViewModel()
@@ -39,7 +37,7 @@ public class InstallViewModel : ObservableObject
         _dataService = new SQLiteDataAccess(MainViewModel.Config["DbConnectionString"]);
         InstallCommand = new RelayCommand(list => Install((IList) list), _ => !MainViewModel.IsNotAdmin);
         GetAllPrevDownloadsCommand = new RelayCommand(clickEvent => GetAllPrevDownloads());
-        Loaded();
+        RenderUserAddonsCommand = new AsyncRelayCommand.AsyncCommand(Loaded);
     }
 
     public RelayCommand GetAllPrevDownloadsCommand { get; set; }
@@ -77,20 +75,26 @@ public class InstallViewModel : ObservableObject
         }
     }
 
-    private async void Loaded()
+    public AsyncRelayCommand.AsyncCommand RenderUserAddonsCommand { get; set; }
+
+    private async Task Loaded()
     {
         var products = await _dataService.GetDownloadedProductsOnly(MainViewModel.DlManifest?.ProductIds);
-        var previewImagesPath = Path.Combine(Path.GetTempPath(), "ApDownloads/PreviewImages");
-        foreach (var product in products)
+        var builderlist = new List<Cell>();
+        await Task.Run(() =>
         {
-            var cell = new Cell
-            (
-                product.ProductID,
-                Path.Combine(previewImagesPath, product.ImageName),
-                product.Name
-            );
-            ProductCells.Add(cell);
-        }
+            foreach (var product in products)
+            {
+                var cell = new Cell
+                (
+                    product.ProductID,
+                    Path.Combine(_previewImagesPath, Path.GetFileName(product.ImageName)),
+                    product.Name
+                );
+                builderlist.Add(cell);
+            }
+        });
+        foreach (var cell in builderlist) ProductCells.Add(cell);
     }
 
     private async Task Install(IList selectedCells)
@@ -151,13 +155,12 @@ public class InstallViewModel : ObservableObject
             .Select(file => new FileInfo(file).Name);
         _downloadedProducts = await _dataService.GetDownloadedProductsByName(allFiles);
 
-        var previewImagesPath = Path.Combine(Path.GetTempPath(), "ApDownloads/PreviewImages");
         foreach (var product in _downloadedProducts)
         {
             var cell = new Cell
             (
                 product.ProductID,
-                Path.Combine(previewImagesPath, product.ImageName),
+                Path.Combine(_previewImagesPath, Path.GetFileName(product.ImageName)),
                 product.Name
             );
             if (!ProductCells.Contains(cell))
