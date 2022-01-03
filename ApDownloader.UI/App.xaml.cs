@@ -42,9 +42,9 @@ public partial class App : Application
         var ProductsDbPath = $"{result.Substring(0, index)}\\ProductsDb.db";
         var SettingsDbPath = $"{result.Substring(0, index)}\\Settings.db";
 
-        var ProductsDestPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\ApDownloader\\ProductsDb.db";
-        var SettingsDestPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\ApDownloader\\Settings.db";
-        var destinationFolder = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\ApDownloader\\";
+        var ProductsDestPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)}\\ApDownloader\\ProductsDb.db";
+        var SettingsDestPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)}\\ApDownloader\\Settings.db";
+        var destinationFolder = $"{Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)}\\ApDownloader\\";
 
         if (File.Exists(ProductsDestPath) && File.Exists(SettingsDestPath)) return;
 

@@ -17,7 +17,7 @@ public class MainViewModel : ObservableObject
     private static bool _isNotBusy;
 
     public static readonly string AppFolder =
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ApDownloader");
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader");
 
     private readonly SQLiteDataAccess _dataAccess;
     private object _currentView;

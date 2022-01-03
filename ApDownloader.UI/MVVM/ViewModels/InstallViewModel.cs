@@ -16,7 +16,7 @@ public class InstallViewModel : ObservableObject
     private readonly SQLiteDataAccess _dataService;
 
     private readonly string _previewImagesPath =
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ApDownloader", "PreviewImages");
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader", "PreviewImages");
 
     private string _busyText;
     private IEnumerable<Product> _downloadedProducts;
