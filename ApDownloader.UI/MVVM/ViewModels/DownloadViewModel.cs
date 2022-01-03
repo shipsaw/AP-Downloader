@@ -134,7 +134,7 @@ public class DownloadViewModel : ObservableObject
         {
             _access = new HttpDataAccess(LoginView.Client);
             MainViewModel.Products = await _access.GetPurchasedProducts(AllApProducts);
-            var allFiles = GetAllFilesOnDisk(MainViewModel.DlOption.DownloadFilepath);
+            var allFiles = DiskAccess.GetAllFilesOnDisk(MainViewModel.DlOption.DownloadFilepath);
             foreach (var product in MainViewModel.Products)
             {
                 product.UserContentLength = allFiles.TryGetValue(product.FileName, out var value) ? value : 0;
@@ -147,42 +147,6 @@ public class DownloadViewModel : ObservableObject
         }
     }
 
-    private Dictionary<string, long> GetAllFilesOnDisk(string dlOptionDownloadFilepath)
-    {
-        Dictionary<string, long> allFiles = new();
-        List<FileInfo> rootFiles = new();
-        List<FileInfo> productFiles = new();
-        List<FileInfo> extraStockFiles = new();
-        List<FileInfo> brandingPatchFiles = new();
-        List<FileInfo> liveryPackFiles = new();
-        if (Directory.Exists(dlOptionDownloadFilepath))
-            rootFiles = Directory
-                .EnumerateFiles(dlOptionDownloadFilepath, "*.zip", SearchOption.TopDirectoryOnly)
-                .Select(file => new FileInfo(file)).ToList();
-        if (Directory.Exists(Path.Combine(dlOptionDownloadFilepath, "Products")))
-            productFiles = Directory
-                .EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "Products"), "*.zip", SearchOption.TopDirectoryOnly)
-                .Select(file => new FileInfo(file)).ToList();
-        if (Directory.Exists(Path.Combine(dlOptionDownloadFilepath, "ExtraStock")))
-            extraStockFiles = Directory
-                .EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "ExtraStock"), "*.zip", SearchOption.TopDirectoryOnly)
-                .Select(file => new FileInfo(file)).ToList();
-        if (Directory.Exists(Path.Combine(dlOptionDownloadFilepath, "BrandingPatches")))
-            brandingPatchFiles = Directory
-                .EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "BrandingPatches"), "*.zip",
-                    SearchOption.TopDirectoryOnly)
-                .Select(file => new FileInfo(file)).ToList();
-        if (Directory.Exists(Path.Combine(dlOptionDownloadFilepath, "LiveryPacks")))
-            liveryPackFiles = Directory
-                .EnumerateFiles(Path.Combine(MainViewModel.DlOption.DownloadFilepath, "LiveryPacks"), "*.zip",
-                    SearchOption.TopDirectoryOnly)
-                .Select(file => new FileInfo(file)).ToList();
-        foreach (var file in rootFiles) allFiles.TryAdd(file.Name, file.Length);
-        foreach (var file in productFiles) allFiles.TryAdd(file.Name, file.Length);
-        foreach (var file in extraStockFiles) allFiles.TryAdd(file.Name, file.Length);
-        foreach (var file in liveryPackFiles) allFiles.TryAdd(file.Name, file.Length);
-        return allFiles;
-    }
 
     private async Task RenderUserAddons()
     {

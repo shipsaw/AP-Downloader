@@ -16,15 +16,7 @@ public partial class InstallView : UserControl
     public InstallView()
     {
         InitializeComponent();
-        Loaded += Window_loaded;
     }
-
-    private async void Window_loaded(object sender, RoutedEventArgs e)
-    {
-        var viewmodel = (InstallViewModel) DataContext;
-        await viewmodel.RenderUserAddonsCommand.ExecuteAsync();
-    }
-
     public void ToggleSelected(object sender, RoutedEventArgs e)
     {
         if (!_selectedToggle)

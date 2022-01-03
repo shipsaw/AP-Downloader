@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
+using static ApDownloader.UI.Core.AsyncRelayCommand;
 
 namespace ApDownloader.UI.MVVM.ViewModels;
 
@@ -23,7 +24,6 @@ public class InstallViewModel : ObservableObject
     private bool _overlayVisibility;
 
     private bool _selectAllButtonEnabled;
-    //private DownloadManifest DownloadManifest;
 
     public InstallViewModel()
     {
@@ -36,11 +36,10 @@ public class InstallViewModel : ObservableObject
 
         _dataService = new SQLiteDataAccess(MainViewModel.AppFolder);
         InstallCommand = new RelayCommand(list => Install((IList) list), _ => !MainViewModel.IsNotAdmin);
-        GetAllPrevDownloadsCommand = new RelayCommand(clickEvent => GetAllPrevDownloads());
-        RenderUserAddonsCommand = new AsyncRelayCommand.AsyncCommand(Loaded);
+        PopulateAllPreviousDownloadsCommand = new RelayCommand(async _ => await PopulateAllPrevDownloads(), _ => AllDownloadsEnabled);
+        Loaded();
     }
-
-    public RelayCommand GetAllPrevDownloadsCommand { get; set; }
+    private bool AllDownloadsEnabled { get; set; } = true;
 
     public RelayCommand InstallCommand { get; set; }
     public ObservableCollection<Cell> ProductCells { get; } = new();
@@ -75,26 +74,22 @@ public class InstallViewModel : ObservableObject
         }
     }
 
-    public AsyncRelayCommand.AsyncCommand RenderUserAddonsCommand { get; set; }
+    public RelayCommand PopulateAllPreviousDownloadsCommand { get; set; }
 
-    private async Task Loaded()
+    private void Loaded()
     {
-        var products = await _dataService.GetDownloadedProductsOnly(MainViewModel.DlManifest?.ProductIds);
+        var products = _dataService.GetDownloadedProductsOnly(MainViewModel.DlManifest?.ProductIds).Result;
         var builderlist = new List<Cell>();
-        await Task.Run(() =>
-        {
-            foreach (var product in products)
-            {
-                var cell = new Cell
-                (
-                    product.ProductID,
-                    Path.Combine(_previewImagesPath, Path.GetFileName(product.ImageName)),
-                    product.Name
-                );
-                builderlist.Add(cell);
-            }
-        });
-        foreach (var cell in builderlist) ProductCells.Add(cell);
+           foreach (var product in products)
+           {
+               var cell = new Cell
+               (
+                   product.ProductID,
+                   Path.Combine(_previewImagesPath, Path.GetFileName(product.ImageName)),
+                   product.Name
+               );
+               ProductCells.Add(cell);
+           }
     }
 
     private async Task Install(IList selectedCells)
@@ -146,27 +141,24 @@ public class InstallViewModel : ObservableObject
         AddonInstaller.AddonInstaller.InstallAddons(downloadOption, extractPath, progress);
     }
 
-    private async void GetAllPrevDownloads()
+    private async Task PopulateAllPrevDownloads()
     {
         if (!Directory.Exists(Path.Combine(MainViewModel.DlOption.DownloadFilepath, "Products"))) return;
-        var allFiles = Directory
-            .EnumerateFiles(Path.Combine(MainViewModel.DlOption.DownloadFilepath, "Products"), "*.zip",
-                SearchOption.AllDirectories)
-            .Select(file => new FileInfo(file).Name);
-        _downloadedProducts = await _dataService.GetDownloadedProductsByName(allFiles);
+        var allfiles = DiskAccess.GetAllFilesOnDisk(MainViewModel.DlOption.DownloadFilepath);
+        var allFilesList = allfiles.Select(kvp => kvp.Key).ToList();
+        _downloadedProducts = await _dataService.GetDownloadedProductsByName(allFilesList);
 
         foreach (var product in _downloadedProducts)
         {
             var cell = new Cell
             (
                 product.ProductID,
-                Path.Combine(_previewImagesPath, Path.GetFileName(product.ImageName)),
+                _previewImagesPath + "\\" + product.ImageName,
                 product.Name
             );
             if (!ProductCells.Contains(cell))
                 ProductCells.Add(cell);
         }
-
         if (ProductCells.Any())
             SelectAllButtonEnabled = true;
     }

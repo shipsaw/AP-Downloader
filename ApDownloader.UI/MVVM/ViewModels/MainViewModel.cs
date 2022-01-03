@@ -24,9 +24,9 @@ public class MainViewModel : ObservableObject
 
     public MainViewModel()
     {
-        CheckAdmin();
         _dataAccess = new SQLiteDataAccess(AppFolder);
         DlOption = _dataAccess.GetUserOptions();
+        CheckAdmin();
 
         IsNotBusy = true;
         LoginVm = new LoginViewModel();
