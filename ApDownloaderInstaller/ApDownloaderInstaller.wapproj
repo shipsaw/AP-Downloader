@@ -58,7 +58,7 @@
     <NoWarn>$(NoWarn);NU1702</NoWarn>
     <EntryPointProjectUniqueName>..\ApDownloader.UI\ApDownloader.UI.csproj</EntryPointProjectUniqueName>
     <PackageCertificateThumbprint>567ED210361B38C0514125B7D7AAECA5EF4FDA8B</PackageCertificateThumbprint>
-    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>

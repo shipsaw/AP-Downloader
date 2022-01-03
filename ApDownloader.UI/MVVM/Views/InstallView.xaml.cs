@@ -43,11 +43,6 @@ public partial class InstallView : UserControl
         _selectedToggle = !_selectedToggle;
     }
 
-    private void DisablePrevDownloadsAfterClick(object sender, RoutedEventArgs e)
-    {
-        PreviousDownloadButton.IsEnabled = false;
-    }
-
     private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         InstallButton.IsEnabled = AddonsFoundList.SelectedItems.Count > 0;
