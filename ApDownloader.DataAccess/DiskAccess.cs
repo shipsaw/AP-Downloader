@@ -9,37 +9,39 @@ public static class DiskAccess
     public static Dictionary<string, long> GetAllFilesOnDisk(string dlOptionDownloadFilepath)
     {
         Dictionary<string, long> allFiles = new();
-        List<FileInfo> rootFiles = new();
-        List<FileInfo> productFiles = new();
-        List<FileInfo> extraStockFiles = new();
-        List<FileInfo> brandingPatchFiles = new();
-        List<FileInfo> liveryPackFiles = new();
+        IEnumerable<FileInfo>? rootFiles = null;
+        IEnumerable<FileInfo>? productFiles = null;
+        IEnumerable<FileInfo>? extraStockFiles = null;
+        IEnumerable<FileInfo>? brandingPatchFiles = null;
+        IEnumerable<FileInfo>? liveryPackFiles = null;
+
         if (Directory.Exists(dlOptionDownloadFilepath))
-            rootFiles = Directory
-                .EnumerateFiles(dlOptionDownloadFilepath, "*.zip", SearchOption.TopDirectoryOnly)
-                .Select(file => new FileInfo(file)).ToList();
+            rootFiles = Directory.EnumerateFiles(dlOptionDownloadFilepath, "*.zip", SearchOption.TopDirectoryOnly)
+                .Select(filename => new FileInfo(filename));
         if (Directory.Exists(Path.Combine(dlOptionDownloadFilepath, "Products")))
-            productFiles = Directory
-                .EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "Products"), "*.zip", SearchOption.TopDirectoryOnly)
-                .Select(file => new FileInfo(file)).ToList();
+            productFiles = Directory.EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "Products"), "*.zip",
+                SearchOption.TopDirectoryOnly).Select(filename => new FileInfo(filename));
         if (Directory.Exists(Path.Combine(dlOptionDownloadFilepath, "ExtraStock")))
-            extraStockFiles = Directory
-                .EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "ExtraStock"), "*.zip", SearchOption.TopDirectoryOnly)
-                .Select(file => new FileInfo(file)).ToList();
+            extraStockFiles = Directory.EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "ExtraStock"), "*.zip",
+                SearchOption.TopDirectoryOnly).Select(filename => new FileInfo(filename));
         if (Directory.Exists(Path.Combine(dlOptionDownloadFilepath, "BrandingPatches")))
-            brandingPatchFiles = Directory
-                .EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "BrandingPatches"), "*.zip",
-                    SearchOption.TopDirectoryOnly)
-                .Select(file => new FileInfo(file)).ToList();
+            brandingPatchFiles = Directory.EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "BrandingPatches"), "*.zip",
+                SearchOption.TopDirectoryOnly).Select(filename => new FileInfo(filename));
         if (Directory.Exists(Path.Combine(dlOptionDownloadFilepath, "LiveryPacks")))
-            liveryPackFiles = Directory
-                .EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "LiveryPacks"), "*.zip",
-                    SearchOption.TopDirectoryOnly)
-                .Select(file => new FileInfo(file)).ToList();
-        foreach (var file in rootFiles) allFiles.TryAdd(file.Name, file.Length);
-        foreach (var file in productFiles) allFiles.TryAdd(file.Name, file.Length);
-        foreach (var file in extraStockFiles) allFiles.TryAdd(file.Name, file.Length);
-        foreach (var file in liveryPackFiles) allFiles.TryAdd(file.Name, file.Length);
+            liveryPackFiles = Directory.EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "LiveryPacks"), "*.zip",
+                SearchOption.TopDirectoryOnly).Select(filename => new FileInfo(filename));
+
+        foreach (var file in rootFiles ?? new List<FileInfo>())
+            allFiles.TryAdd(file.Name, file.Length);
+        foreach (var file in productFiles ?? new List<FileInfo>())
+            allFiles.TryAdd(file.Name, file.Length);
+        foreach (var file in extraStockFiles ?? new List<FileInfo>())
+            allFiles.TryAdd(file.Name, file.Length);
+        foreach (var file in brandingPatchFiles ?? new List<FileInfo>())
+            allFiles.TryAdd(file.Name, file.Length);
+        foreach (var file in liveryPackFiles ?? new List<FileInfo>())
+            allFiles.TryAdd(file.Name, file.Length);
+
         return allFiles;
     }
 }

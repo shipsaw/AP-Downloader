@@ -6,7 +6,6 @@ using System.Security.Principal;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
-using Microsoft.Extensions.Configuration;
 
 namespace ApDownloader.UI.MVVM.ViewModels;
 
@@ -29,22 +28,19 @@ public class MainViewModel : ObservableObject
         CheckAdmin();
 
         IsNotBusy = true;
-        LoginVm = new LoginViewModel();
-        DownloadVm = new DownloadViewModel();
-        InstallVm = new InstallViewModel();
-        OptionsVm = new OptionsViewModel(IsInstallFolderValid);
+        //LoginVm = new LoginViewModel();
+        //DownloadVm = new DownloadViewModel();
+        //InstallVm = new InstallViewModel();
+        //OptionsVm = new OptionsViewModel(IsInstallFolderValid);
 
-        LoginViewCommand = new RelayCommand(clickEvent => CurrentView = LoginVm);
-        DownloadViewCommand = new RelayCommand(clickEvent => CurrentView = DownloadVm);
-        InstallViewCommand = new RelayCommand(clickEvent => CurrentView = InstallVm);
-        OptionsViewCommand = new RelayCommand(clickEvent => CurrentView = OptionsVm);
-        CurrentView = LoginVm;
+        LoginViewCommand = new RelayCommand(clickEvent => CurrentView = new LoginViewModel());
+        DownloadViewCommand = new RelayCommand(clickEvent => CurrentView = new DownloadViewModel());
+        InstallViewCommand = new RelayCommand(clickEvent => CurrentView = new InstallViewModel());
+        OptionsViewCommand = new RelayCommand(clickEvent => CurrentView = new OptionsViewModel(IsInstallFolderValid));
+        CurrentView = new LoginViewModel();
     }
 
-    public static IConfigurationRoot? Config { get; set; }
-    public static bool IsDownloadDataDirty { get; set; } = true;
-
-    public object GotoOptionPage { get; set; }
+    public static bool IsDownloadDataDirty { get; set; } = false;
 
     public static IEnumerable<Product> Products { get; set; } = new List<Product>();
 

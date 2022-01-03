@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using ApDownloader.UI.Logging;
 using ApDownloader.UI.MVVM.ViewModels;
 
@@ -46,7 +47,7 @@ public partial class LoginView : UserControl
             var response = await Client.PostAsync(LoginUrl, content);
             if (response.StatusCode == HttpStatusCode.Redirect)
             {
-                LoginResult.Text = "Loading Addons";
+                LoginResult.Text = "Retrieving Purchased Addons";
                 await viewModel.LoadUserAddonsCommand.ExecuteAsync();
 
                 LoginResult.Text = "Login Successful";
@@ -81,5 +82,11 @@ public partial class LoginView : UserControl
         LogoutButton.IsEnabled = false;
         LoginResult.Text = "Logged out";
         IsLoggedIn = false;
+    }
+
+    private void OnEnterKeyHandler(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Return)
+            this.Login(sender, e);
     }
 }

@@ -16,7 +16,15 @@ public partial class InstallView : UserControl
     public InstallView()
     {
         InitializeComponent();
+        Loaded += Window_loaded;
     }
+
+    private void Window_loaded(object sender, RoutedEventArgs e)
+    {
+        var viewmodel = (InstallViewModel) DataContext;
+        viewmodel.LoadDownloadsCommand.Execute(null);
+    }
+
     public void ToggleSelected(object sender, RoutedEventArgs e)
     {
         if (!_selectedToggle)

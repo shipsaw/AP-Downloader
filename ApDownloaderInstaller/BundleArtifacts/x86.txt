@@ -1,2 +1,2 @@
-MainPackage=C:\Users\Paul Kirby\RiderProjects\ApDownloader\ApDownloaderInstaller\bin\x86\Debug\ApDownloaderInstaller_0.9.8.0_x86_Debug.msix
-SymbolPackage=C:\Users\Paul Kirby\RiderProjects\ApDownloader\ApDownloaderInstaller\obj\x86\Debug\Symbols\ApDownloaderInstaller_0.9.8.0_x86_Debug.appxsym
+MainPackage=C:\Users\Paul Kirby\RiderProjects\ApDownloader\ApDownloaderInstaller\bin\x86\Debug\ApDownloaderInstaller_0.9.9.0_x86_Debug.msix
+SymbolPackage=C:\Users\Paul Kirby\RiderProjects\ApDownloader\ApDownloaderInstaller\obj\x86\Debug\Symbols\ApDownloaderInstaller_0.9.9.0_x86_Debug.appxsym

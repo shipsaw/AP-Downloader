@@ -7,7 +7,7 @@
              Height="500" Width="720">
     <StackPanel HorizontalAlignment="Center">
         <StackPanel Orientation="Horizontal">
-            <Grid>
+            <Grid Width="400">
                 <StackPanel>
                     <TextBlock Text="Enter your login Information"
                                Foreground="White"
@@ -22,6 +22,7 @@
                                    FontSize="16" />
                         <PasswordBox Style="{StaticResource PasswordBoxTheme}"
                                      Name="PasswordBoxName"
+                                     KeyDown="OnEnterKeyHandler"
                                      Margin="0,25,0,0" />
                         <TextBlock Text="Password"
                                    HorizontalAlignment="Center"
@@ -38,6 +39,7 @@
                                 Content="Log In"
                                 Margin="0,0,10,0"
                                 Click="Login"
+                                KeyDown="OnEnterKeyHandler"
                                 Style="{DynamicResource LoginButton}" />
                         <Button Grid.Column="1"
                                 Content="Log Out"

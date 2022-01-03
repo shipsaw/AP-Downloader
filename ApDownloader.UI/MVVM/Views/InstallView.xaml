@@ -73,7 +73,7 @@
                         Margin="20" IsEnabled="{Binding SelectAllButtonEnabled}" Click="ToggleSelected" />
                 <Button Grid.Column="1" Content="All Downloads"
                         Style="{StaticResource LoginButton}"
-                        Command="{Binding PopulateAllPreviousDownloadsCommand}"
+                        Command="{Binding RenderAllPreviousDownloadsCommand}"
                         Margin="20" Name="PreviousDownloadButton" />
                 <Button Name="InstallButton" Grid.Column="2" Content="Install"
                         Style="{StaticResource LoginButton}"
