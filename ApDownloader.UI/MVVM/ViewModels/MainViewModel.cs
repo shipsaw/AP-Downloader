@@ -6,7 +6,6 @@ using System.Security.Principal;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
-using Microsoft.Extensions.Configuration;
 
 namespace ApDownloader.UI.MVVM.ViewModels;
 
@@ -41,10 +40,7 @@ public class MainViewModel : ObservableObject
         CurrentView = LoginVm;
     }
 
-    public static IConfigurationRoot? Config { get; set; }
-    public static bool IsDownloadDataDirty { get; set; } = true;
-
-    public object GotoOptionPage { get; set; }
+    public static bool IsDownloadDataDirty { get; set; } = false;
 
     public static IEnumerable<Product> Products { get; set; } = new List<Product>();
 

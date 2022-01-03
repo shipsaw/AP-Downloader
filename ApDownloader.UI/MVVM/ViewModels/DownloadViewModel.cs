@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
+using ApDownloader.Model.Exceptions;
 using ApDownloader.UI.Core;
 using ApDownloader.UI.Logging;
 using ApDownloader.UI.MVVM.Views;
@@ -92,6 +93,7 @@ public class DownloadViewModel : ObservableObject
     private async void DownloadAddons(IList selectedCells)
     {
         MainViewModel.IsNotBusy = false;
+        OverlayVisibility = true;
         Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\Products");
         Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\ExtraStock");
         Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\BrandingPatches");
@@ -105,7 +107,6 @@ public class DownloadViewModel : ObservableObject
             await _dataService.GetTotalFileCount(MainViewModel.DlOption, productIds);
         var progress =
             new Progress<int>(_ => { BusyText = $"Downloading file {++completedFileCount} of {totalFileCount}"; });
-        OverlayVisibility = true;
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
         try
         {
@@ -113,6 +114,10 @@ public class DownloadViewModel : ObservableObject
             MainViewModel.IsDownloadDataDirty = true;
             await LoadUserAddons();
             BusyText = "Download Complete";
+        }
+        catch (ErrorCheckingPurchasesException e)
+        {
+            BusyText = "Error checking purchased products";
         }
         catch (Exception exception)
         {

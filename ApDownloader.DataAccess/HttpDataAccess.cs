@@ -6,24 +6,22 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using ApDownloader.Model;
+using ApDownloader.Model.Exceptions;
 
 namespace ApDownloader.DataAccess;
 
 public class HttpDataAccess
 {
     private readonly List<Task> _allTasks;
-    private readonly string _brandingPatchPrefix = "https://www.armstrongpowerhouse.com/free_download/Patches/";
+    private readonly SemaphoreSlim _throttler;
     private readonly HttpClient? _client;
 
+    private readonly string _brandingPatchPrefix = "https://www.armstrongpowerhouse.com/free_download/Patches/";
     private readonly string _extraStockPrefix = "https://www.armstrongpowerhouse.com/free_download/";
-
     private readonly string _liveryPrefix = "https://www.armstrongpowerhouse.com/free_download/";
     private readonly string _previewImagePrefix = "https://www.armstrongpowerhouse.com/image/cache/catalog/";
+    private readonly string _productPrefix = "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=";
 
-    private readonly string _productPrefix =
-        "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=";
-
-    private readonly SemaphoreSlim _throttler;
 
     public HttpDataAccess(HttpClient? client, int concurrentDownloads = 1)
     {
@@ -32,32 +30,51 @@ public class HttpDataAccess
         _throttler = new SemaphoreSlim(concurrentDownloads);
     }
 
+    /// <summary>
+    ///     Checkes download headers for Product Information, gets content length
+    /// </summary>
+    /// <param name="products"> List of all AP products we want to check for purchased and populate with content length info</param>
+    /// <returns>Purchased products with website content length filled in</returns>
+    /// <exception cref="ErrorCheckingPurchasesException"></exception>
     public async Task<IEnumerable<Product>> GetPurchasedProducts(IEnumerable<Product> products)
     {
         var productsList = new List<Product>(products);
         var retProducts = new List<Product>();
         var tasks = new List<Task<HttpResponseMessage>>();
+
         foreach (var product in products)
         {
             await Task.Delay(30);
             tasks.Add(_client.SendAsync(new HttpRequestMessage(HttpMethod.Head,
-                "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=" +
+                _productPrefix +
                 product.ProductID)));
         }
 
-        var result = await Task.WhenAll(tasks.ToList());
-        if (result.Count() != products.Count()) throw new Exception("Error Checking purchases");
+        try
+        {
+            var httpResponses = await Task.WhenAll(tasks.ToList());
 
-        for (var i = 0; i < products.Count(); i++)
-            if (result[i].Content.Headers.ContentDisposition != null)
-            {
-                productsList[i].CurrentContentLength = result[i].Content.Headers.ContentLength ?? 0;
-                retProducts.Add(productsList[i]);
-            }
+            for (var i = 0; i < products.Count(); i++)
+                if (httpResponses[i].Content.Headers.ContentDisposition != null)
+                {
+                    productsList[i].CurrentContentLength = httpResponses[i].Content.Headers.ContentLength ?? 0;
+                    retProducts.Add(productsList[i]);
+                }
+        }
+        catch (Exception e)
+        {
+            throw new ErrorCheckingPurchasesException();
+        }
 
         return retProducts;
     }
 
+    /// <summary>
+    ///     Calls all download methods for products, extrastock, brandingpatches, and liverypacks
+    /// </summary>
+    /// <param name="downloadManifest">file ids to download</param>
+    /// <param name="downloadOption"></param>
+    /// <param name="progress"></param>
     public async Task Download(DownloadManifest downloadManifest, ApDownloaderConfig downloadOption,
         IProgress<int> progress)
     {
