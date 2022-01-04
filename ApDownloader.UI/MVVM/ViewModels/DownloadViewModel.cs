@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
@@ -155,9 +156,9 @@ public class DownloadViewModel : ObservableObject
 
     private async Task RenderUserAddons()
     {
+        OverlayVisibility = true;
         if (MainViewModel.IsDownloadDataDirty)
         {
-            OverlayVisibility = true;
             await LoadUserAddons();
             MainViewModel.IsDownloadDataDirty = false;
         }
@@ -184,6 +185,7 @@ public class DownloadViewModel : ObservableObject
 
         OutOfDateText = $"Select out-of-date packs ({_canUpdateCount})";
         MissingPackText = $"Select missing packs ({_isNotOnDiskCount})";
+        Thread.Sleep(500);
         OverlayVisibility = false;
     }
 }
