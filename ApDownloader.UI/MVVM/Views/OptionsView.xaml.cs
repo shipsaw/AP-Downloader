@@ -68,6 +68,9 @@ public partial class OptionsView : UserControl
         //Get the path of specified file
         var filename = openFileDialog.FileName;
         if (filename != null)
+        {
             viewModel.ImportProductDbCommand.Execute(filename);
+        }
+            ((Storyboard)FindResource("animate")).Begin(UpdatedDbNotificationTextBlock);
     }
 }

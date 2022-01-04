@@ -36,7 +36,7 @@ public class OptionsViewModel : ObservableObject
 
         OrganizeDownloadFolderCommand = new RelayCommand(clickEvent => OrganizeDownloadFolder(), _ => CanOrganize);
         ImportProductDbCommand =
-            new RelayCommand(async filename => await UpdateProductDb((string) filename));
+            new RelayCommand(filename => UpdateProductDb((string) filename));
         SetDownloadFilepathCommand = new RelayCommand(path =>
         {
             DownloadFilepath = (string) path;
@@ -216,27 +216,18 @@ public class OptionsViewModel : ObservableObject
         CanOrganize = true;
     }
 
-    private async Task UpdateProductDb(string filename)
+    private void UpdateProductDb(string filename)
     {
-        bool success = false;
-        await Task.Run(() =>
-          {
-              try
-              {
-                  _dataAccess.ImportProductDb(filename);
-                  success = true;
-              }
-              catch (Exception e)
-              {
-                  Logger.LogFatal(e.Message);
-                  success = false;
-              }
-          });
-                  UpdatedDbNotificationVisibility = true;
-        if (success)
-                  UpdateDbNotificationText = "Database updated successfully";
-        else
-                  UpdateDbNotificationText = "Database update failed";
-
+            UpdateDbNotificationText = "Database update failed";
+            try
+            {
+                _dataAccess.ImportProductDb(filename);
+            UpdateDbNotificationText = "Database updated successfully";
+            }
+            catch (Exception e)
+            {
+                Logger.LogFatal(e.Message);
+            }
+        UpdatedDbNotificationVisibility = true;
     }
 }

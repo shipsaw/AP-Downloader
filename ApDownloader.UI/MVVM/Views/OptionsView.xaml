@@ -95,8 +95,8 @@
                 Visibility="{Binding UpdatedDbNotificationVisibility, Converter={StaticResource BoolToVis}}"
                 VerticalAlignment="Center"
                 FontStyle="Italic"
+                Name="UpdatedDbNotificationTextBlock"
                 Margin="20 0"
-                Style="{StaticResource animateFadeOut}"
                 FontSize="20"
                 Text="{Binding UpdateDbNotificationText}"
                 Foreground="LightGray" />
