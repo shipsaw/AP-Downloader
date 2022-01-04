@@ -74,6 +74,9 @@
                             Visibility="{Binding ApplyResponseVisibility, Converter={StaticResource BoolToVis}}"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Top"
+                            Style="{StaticResource animateFadeOut}"
+                            FontSize="24"
+                            FontStyle="Italic"
                             Margin="0 3 0 0"
                             Text="Options Applied Successfully"
                             Foreground="LightGray" />
@@ -84,8 +87,19 @@
                 </StackPanel>
             </Grid>
         </Border>
-        <Button HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="30" FontSize="16" Margin="0 7 0 5 "
-                Content="Import Product Database" Width="200"
-                Style="{StaticResource LoginButton}" Click="ImportDbFolderSelection" />
+        <StackPanel Orientation="Horizontal">
+            <Button HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="30" FontSize="16" Margin="0 9 0 5 "
+                    Content="Import Product Database" Width="200" IsEnabled="{Binding CanUpdateProductsDb}"
+                    Style="{StaticResource LoginButton}" Click="ImportDbFolderSelection" />
+            <TextBlock
+                Visibility="{Binding UpdatedDbNotificationVisibility, Converter={StaticResource BoolToVis}}"
+                VerticalAlignment="Center"
+                FontStyle="Italic"
+                Margin="20 0"
+                Style="{StaticResource animateFadeOut}"
+                FontSize="20"
+                Text="{Binding UpdateDbNotificationText}"
+                Foreground="LightGray" />
+        </StackPanel>
     </StackPanel>
 </UserControl>

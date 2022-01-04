@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using ApDownloader.DataAccess;
 using ApDownloader.UI.Core;
+using ApDownloader.UI.Logging;
 
 namespace ApDownloader.UI.MVVM.ViewModels;
 
@@ -17,6 +19,8 @@ public class OptionsViewModel : ObservableObject
     private bool _getLiveryPack;
     private string _installFilepath;
     private bool _isInstallFolderInvalid;
+    private string _updateDbNotificationText;
+    private bool _updateDbNotificationVisibility;
 
     public OptionsViewModel(bool isInstallFolderValid)
     {
@@ -30,7 +34,8 @@ public class OptionsViewModel : ObservableObject
         CanOrganize = true;
 
         OrganizeDownloadFolderCommand = new RelayCommand(clickEvent => OrganizeDownloadFolder(), _ => CanOrganize);
-        ImportProductDbCommand = new RelayCommand(filename => _dataAccess.ImportProductDb((string) filename));
+        ImportProductDbCommand =
+            new RelayCommand(filename => UpdateProductDb((string) filename));
         SetDownloadFilepathCommand = new RelayCommand(path =>
         {
             DownloadFilepath = (string) path;
@@ -70,6 +75,8 @@ public class OptionsViewModel : ObservableObject
             OnPropertyChanged();
         }
     }
+
+    public bool CanUpdateProductsDb => !MainViewModel.IsNotAdmin;
 
     public bool CanOrganize
     {
@@ -149,6 +156,26 @@ public class OptionsViewModel : ObservableObject
         }
     }
 
+    public string UpdateDbNotificationText
+    {
+        get => _updateDbNotificationText;
+        set
+        {
+            _updateDbNotificationText = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool UpdatedDbNotificationVisibility
+    {
+        get => _updateDbNotificationVisibility;
+        set
+        {
+            _updateDbNotificationVisibility = value;
+            OnPropertyChanged();
+        }
+    }
+
     public RelayCommand ImportProductDbCommand { get; set; }
 
     private async void OrganizeDownloadFolder()
@@ -186,5 +213,21 @@ public class OptionsViewModel : ObservableObject
         ApplyResponseVisibility = true;
         CanApply = false;
         CanOrganize = true;
+    }
+
+    private void UpdateProductDb(string filename)
+    {
+        try
+        {
+            _dataAccess.ImportProductDb(filename);
+            UpdateDbNotificationText = "Database updated successfully";
+            UpdatedDbNotificationVisibility = true;
+        }
+        catch (Exception e)
+        {
+            Logger.LogFatal(e.Message);
+            UpdateDbNotificationText = "Database update failed";
+            UpdatedDbNotificationVisibility = true;
+        }
     }
 }
