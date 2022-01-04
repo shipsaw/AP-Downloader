@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using ApDownloader.DataAccess;
 using ApDownloader.UI.Core;
 using ApDownloader.UI.Logging;
@@ -35,7 +36,7 @@ public class OptionsViewModel : ObservableObject
 
         OrganizeDownloadFolderCommand = new RelayCommand(clickEvent => OrganizeDownloadFolder(), _ => CanOrganize);
         ImportProductDbCommand =
-            new RelayCommand(filename => UpdateProductDb((string) filename));
+            new RelayCommand(async filename => await UpdateProductDb((string) filename));
         SetDownloadFilepathCommand = new RelayCommand(path =>
         {
             DownloadFilepath = (string) path;
@@ -215,19 +216,27 @@ public class OptionsViewModel : ObservableObject
         CanOrganize = true;
     }
 
-    private void UpdateProductDb(string filename)
+    private async Task UpdateProductDb(string filename)
     {
-        try
-        {
-            _dataAccess.ImportProductDb(filename);
-            UpdateDbNotificationText = "Database updated successfully";
-            UpdatedDbNotificationVisibility = true;
-        }
-        catch (Exception e)
-        {
-            Logger.LogFatal(e.Message);
-            UpdateDbNotificationText = "Database update failed";
-            UpdatedDbNotificationVisibility = true;
-        }
+        bool success = false;
+        await Task.Run(() =>
+          {
+              try
+              {
+                  _dataAccess.ImportProductDb(filename);
+                  success = true;
+              }
+              catch (Exception e)
+              {
+                  Logger.LogFatal(e.Message);
+                  success = false;
+              }
+          });
+                  UpdatedDbNotificationVisibility = true;
+        if (success)
+                  UpdateDbNotificationText = "Database updated successfully";
+        else
+                  UpdateDbNotificationText = "Database update failed";
+
     }
 }
