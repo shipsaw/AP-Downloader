@@ -27,7 +27,7 @@ public class DownloadViewModel : ObservableObject
     private int _isNotOnDiskCount;
     private string _missingPackText = "";
     private string _outOfDateText = "";
-    private bool _overlayVisibility = false;
+    private bool _overlayVisibility;
 
     public DownloadViewModel()
     {
@@ -179,6 +179,7 @@ public class DownloadViewModel : ObservableObject
                 builderList.Add(cell);
             }
         });
+        builderList = builderList.OrderByDescending(cell => cell.ProductId).ToList();
         foreach (var cell in builderList) ProductCells.Add(cell);
 
         OutOfDateText = $"Select out-of-date packs ({_canUpdateCount})";
