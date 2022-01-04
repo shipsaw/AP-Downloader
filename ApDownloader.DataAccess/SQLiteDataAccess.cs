@@ -130,4 +130,9 @@ public class SQLiteDataAccess
         foreach (var file in liveryPacks) fileSet.Add(file, "LiveryPacks");
         return fileSet;
     }
+
+    public void ImportProductDb(string filename)
+    {
+        File.Copy(filename, _ProdDbConnectionString, true);
+    }
 }

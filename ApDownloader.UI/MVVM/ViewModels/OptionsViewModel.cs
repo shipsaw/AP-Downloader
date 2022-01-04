@@ -30,6 +30,7 @@ public class OptionsViewModel : ObservableObject
         CanOrganize = true;
 
         OrganizeDownloadFolderCommand = new RelayCommand(clickEvent => OrganizeDownloadFolder(), _ => CanOrganize);
+        ImportProductDbCommand = new RelayCommand(filename => _dataAccess.ImportProductDb((string) filename));
         SetDownloadFilepathCommand = new RelayCommand(path =>
         {
             DownloadFilepath = (string) path;
@@ -147,6 +148,8 @@ public class OptionsViewModel : ObservableObject
             OnPropertyChanged();
         }
     }
+
+    public RelayCommand ImportProductDbCommand { get; set; }
 
     private async void OrganizeDownloadFolder()
     {

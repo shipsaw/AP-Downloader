@@ -9,72 +9,83 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </UserControl.Resources>
-    <Grid Margin="20" Focusable="True">
-        <Grid.Resources>
-            <Style TargetType="TextBlock">
-                <Setter Property="FontSize" Value="28" />
-                <Setter Property="Foreground" Value="White" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-            </Style>
-        </Grid.Resources>
-        <StackPanel>
-            <TextBlock Text="Associated Downloads:"
-                       Margin="0"
-                       FontSize="28" />
-            <StackPanel Margin="15 0 ">
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox Margin="8"
-                              Style="{StaticResource CheckboxTheme}"
-                              IsChecked="{Binding GetExtraStock, Mode=TwoWay}" />
-                    <TextBlock VerticalAlignment="Center" FontSize="22" Text="Extra Stock" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox Margin="8"
-                              Style="{StaticResource CheckboxTheme}"
-                              IsChecked="{Binding GetBrandingPatch, Mode=TwoWay}" />
-                    <TextBlock VerticalAlignment="Center" FontSize="22" Text="Branding Patch" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox Margin="8"
-                              Style="{StaticResource CheckboxTheme}"
-                              IsChecked="{Binding GetLiveryPack, Mode=TwoWay}" />
-                    <TextBlock VerticalAlignment="Center" FontSize="22" Text="Livery Pack" />
-                </StackPanel>
-            </StackPanel>
-            <TextBlock Text="Download Location:" FontSize="28" Margin="0 30 0 0" />
-            <TextBox
-                IsReadOnly="True"
-                Name="DownloadFolderPath"
-                Text="{Binding DownloadFilepath, Mode=TwoWay}"
-                Style="{StaticResource FilepathTextBox}" />
+    <StackPanel Margin="20 20 20 5">
+        <Border Background="#201f2e" CornerRadius="7" BorderBrush="Gray" BorderThickness="2">
             <Grid>
-                <Button HorizontalAlignment="Left" Margin="0 10" Content="Set Folder Location" Width="200"
-                        Style="{StaticResource LoginButton}" Click="DownloadFolderSelection" />
-                <Button HorizontalAlignment="Right" Margin="25 10" Content="Organize Folder" Width="200"
-                        Style="{StaticResource LoginButton}" Command="{Binding OrganizeDownloadFolderCommand}" />
+                <Grid.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="28" />
+                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                    </Style>
+                </Grid.Resources>
+                <StackPanel Margin="10">
+                    <TextBlock Text="Associated Downloads:"
+                               Margin="5 0"
+                               FontSize="28" />
+                    <StackPanel Margin="15 0 0 5 ">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox Margin="8 2"
+                                      Style="{StaticResource CheckboxTheme}"
+                                      IsChecked="{Binding GetExtraStock, Mode=TwoWay}" />
+                            <TextBlock VerticalAlignment="Center" FontSize="22" Text="Extra Stock" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox Margin="8 2"
+                                      Style="{StaticResource CheckboxTheme}"
+                                      IsChecked="{Binding GetBrandingPatch, Mode=TwoWay}" />
+                            <TextBlock VerticalAlignment="Center" FontSize="22" Text="Branding Patch" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox Margin="8 2"
+                                      Style="{StaticResource CheckboxTheme}"
+                                      IsChecked="{Binding GetLiveryPack, Mode=TwoWay}" />
+                            <TextBlock VerticalAlignment="Center" FontSize="22" Text="Livery Pack" />
+                        </StackPanel>
+                    </StackPanel>
+                    <Separator BorderBrush="Gray" BorderThickness="1.5" Margin="15 0" />
+                    <TextBlock Text="Download Location:" FontSize="28" Margin="5 5 0 0" />
+                    <TextBox
+                        IsReadOnly="True" Margin="5 0"
+                        Name="DownloadFolderPath"
+                        Text="{Binding DownloadFilepath, Mode=TwoWay}"
+                        Style="{StaticResource FilepathTextBox}" />
+                    <Grid Margin="5 0">
+                        <Button HorizontalAlignment="Left" Margin="0 5" Content="Set Folder Location" Width="200"
+                                Style="{StaticResource LoginButton}" Click="DownloadFolderSelection" />
+                        <Button HorizontalAlignment="Right" Margin="25 10" Content="Organize Folder" Width="200"
+                                Style="{StaticResource LoginButton}" Command="{Binding OrganizeDownloadFolderCommand}" />
+                    </Grid>
+                    <TextBlock Text="Railworks Location:" FontSize="28" Name="InstallFolderPath" Margin="5 0 " />
+                    <TextBox Text="{Binding InstallFilepath, Mode=TwoWay}" IsReadOnly="True"
+                             Style="{StaticResource FilepathTextBox}" Margin="5 0 " />
+                    <Button HorizontalAlignment="Left" Margin="5 10" Content="Set Folder Location" Width="200"
+                            Style="{StaticResource LoginButton}" Click="InstallFolderSelection" />
+                    <Separator BorderBrush="Gray" BorderThickness="1.5" Margin="15 0" />
+                    <TextBlock Foreground="Gold"
+                               FontSize="28"
+                               Name="InvalidInstallpathText"
+                               HorizontalAlignment="Center"
+                               FontStyle="Italic"
+                               Visibility="Collapsed"
+                               Text="Please select valid Railworks install folder" />
+                    <Grid Height="90">
+                        <TextBlock
+                            Visibility="{Binding ApplyResponseVisibility, Converter={StaticResource BoolToVis}}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Top"
+                            Margin="0 3 0 0"
+                            Text="Options Applied Successfully"
+                            Foreground="LightGray" />
+                        <Button HorizontalAlignment="Center" Margin="0 0 0 3" VerticalAlignment="Bottom"
+                                Content="Apply" Width="100"
+                                Style="{StaticResource LoginButton}" Command="{Binding ApplySettingsCommand}" />
+                    </Grid>
+                </StackPanel>
             </Grid>
-            <TextBlock Text="Railworks Location:" FontSize="28" Name="InstallFolderPath" />
-            <TextBox Text="{Binding InstallFilepath, Mode=TwoWay}" IsReadOnly="True"
-                     Style="{StaticResource FilepathTextBox}" />
-            <Button HorizontalAlignment="Left" Margin="0 10" Content="Set Folder Location" Width="200"
-                    Style="{StaticResource LoginButton}" Click="InstallFolderSelection" />
-            <TextBlock Foreground="Gold"
-                       FontSize="28"
-                       Name="InvalidInstallpathText"
-                       HorizontalAlignment="Center"
-                       FontStyle="Italic"
-                       Visibility="Collapsed"
-                       Text="Please select valid Railworks install folder" />
-        </StackPanel>
-        <StackPanel VerticalAlignment="Bottom">
-            <TextBlock
-                Visibility="{Binding ApplyResponseVisibility, Converter={StaticResource BoolToVis}}"
-                HorizontalAlignment="Center"
-                Text="Options Applied Successfully"
-                Padding="10"
-                Foreground="LightGray" />
-            <Button HorizontalAlignment="Center" Content="Apply" Width="100"
-                    Style="{StaticResource LoginButton}" Command="{Binding ApplySettingsCommand}" />
-        </StackPanel>
-    </Grid>
+        </Border>
+        <Button HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="30" FontSize="16" Margin="0 7 0 5 "
+                Content="Import Product Database" Width="200"
+                Style="{StaticResource LoginButton}" Click="ImportDbFolderSelection" />
+    </StackPanel>
 </UserControl>

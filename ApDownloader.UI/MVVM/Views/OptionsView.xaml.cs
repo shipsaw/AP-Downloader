@@ -53,4 +53,21 @@ public partial class OptionsView : UserControl
             viewmodel.IsInstallFolderInValid = currentStatus;
         }
     }
+
+    private void ImportDbFolderSelection(object sender, RoutedEventArgs e)
+    {
+        var viewModel = (OptionsViewModel) DataContext;
+        string? filePath;
+        using var openFileDialog = new OpenFileDialog();
+
+        openFileDialog.InitialDirectory = "c:\\";
+        openFileDialog.Filter = "db files (*.db)|*.db";
+        openFileDialog.RestoreDirectory = true;
+
+        if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+        //Get the path of specified file
+        var filename = openFileDialog.FileName;
+        if (filename != null)
+            viewModel.ImportProductDbCommand.Execute(filename);
+    }
 }
