@@ -74,7 +74,6 @@
                             Visibility="{Binding ApplyResponseVisibility, Converter={StaticResource BoolToVis}}"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Top"
-                            Style="{StaticResource animateFadeOut}"
                             FontSize="24"
                             FontStyle="Italic"
                             Margin="0 3 0 0"
