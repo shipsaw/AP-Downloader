@@ -3,8 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:ApDownloader_Installer"
         mc:Ignorable="d"
         Height="200" Width="600"
+        Top="0"
+        Left="0"
         WindowStyle="None"
         ResizeMode="NoResize"
         Background="Transparent"
@@ -15,10 +18,9 @@
             CornerRadius="10"
             BorderBrush="Gray"
             BorderThickness="3">
-        <TextBlock Text="Installing Addon"
+            <TextBlock Text="{Binding ProgressText}"
                    Foreground="LightGray"
-                   Margin="40 0 0 0"
-                   Name="ProgressText"
+                   Margin="80 0 0 0"
                    FontSize="32"
                    VerticalAlignment="Center" />
     </Border>

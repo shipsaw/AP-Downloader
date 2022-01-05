@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -106,6 +107,10 @@ public class InstallViewModel : ObservableObject
         await File.WriteAllLinesAsync(
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader") + @"\Downloads.txt",
             downloadList);
+        var info = new ProcessStartInfo(@"./ApDownload_Installer.exe");
+        info.UseShellExecute = true;
+        info.Verb = "runas";
+        Process.Start(info);
         BusyText = "Installation Complete";
         MainViewModel.IsNotBusy = true;
     }
