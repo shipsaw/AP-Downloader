@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
@@ -107,12 +108,17 @@ public class InstallViewModel : ObservableObject
         await File.WriteAllLinesAsync(
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader") + @"\Downloads.txt",
             downloadList);
+        var path = Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName, "InstallerExe") + @"\ApDownloader_Installer.exe";
         var info = new ProcessStartInfo(
-            @"..\..\..\..\ApDownloader_Installer\bin\Release\net6.0-windows\ApDownloader_Installer.exe");
+            path);
         info.UseShellExecute = true;
         info.Verb = "runas";
-        Process.Start(info);
-        Process.
+        var process = new Process
+        {
+            StartInfo = info
+        };
+        process.Start();
+        process.WaitForExit();
         BusyText = "Installation Complete";
         MainViewModel.IsNotBusy = true;
     }
