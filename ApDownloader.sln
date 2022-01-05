@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApDownloader.DataAccess", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApDownloader.Model", "ApDownloader.Model\ApDownloader.Model.csproj", "{38C04257-81E5-4DDE-8701-48B930E16F01}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApDownloader.AddonInstaller", "ApDownloader.AddonInstaller\ApDownloader.AddonInstaller.csproj", "{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}"
-EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "ApDownloaderInstaller", "ApDownloaderInstaller\ApDownloaderInstaller.wapproj", "{BDBC55F6-6333-4055-9FE3-6EA593A6C35D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApDownloader_Installer", "ApDownloader_Installer\ApDownloader_Installer.csproj", "{72108DA9-738B-4F66-925B-B5E160891BC2}"
@@ -89,26 +87,6 @@ Global
 		{38C04257-81E5-4DDE-8701-48B930E16F01}.Release|x64.Build.0 = Release|Any CPU
 		{38C04257-81E5-4DDE-8701-48B930E16F01}.Release|x86.ActiveCfg = Release|Any CPU
 		{38C04257-81E5-4DDE-8701-48B930E16F01}.Release|x86.Build.0 = Release|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Debug|ARM.Build.0 = Debug|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Debug|x64.Build.0 = Debug|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Debug|x86.Build.0 = Debug|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Release|ARM.ActiveCfg = Release|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Release|ARM.Build.0 = Release|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Release|ARM64.Build.0 = Release|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Release|x64.ActiveCfg = Release|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Release|x64.Build.0 = Release|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Release|x86.ActiveCfg = Release|Any CPU
-		{FD2CA61E-2188-449A-8AEC-6DFDFD3527E3}.Release|x86.Build.0 = Release|Any CPU
 		{BDBC55F6-6333-4055-9FE3-6EA593A6C35D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BDBC55F6-6333-4055-9FE3-6EA593A6C35D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDBC55F6-6333-4055-9FE3-6EA593A6C35D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU

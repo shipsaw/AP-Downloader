@@ -108,7 +108,8 @@ public class InstallViewModel : ObservableObject
         await File.WriteAllLinesAsync(
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader") + @"\Downloads.txt",
             downloadList);
-        var path = Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName, "InstallerExe") + @"\ApDownloader_Installer.exe";
+        var path = Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName, @"InstallerExe\net6.0-windows") +
+                   @"\ApDownloader_Installer.exe";
         var info = new ProcessStartInfo(
             path);
         info.UseShellExecute = true;

@@ -31,7 +31,7 @@ public partial class InstallView : UserControl
         {
             AddonsFoundList.SelectAll();
             SelectAllButton.Content = "Deselect All";
-            if (AddonsFoundList.SelectedItems.Count > 0) // && MainViewModel.IsAdmin)
+            if (AddonsFoundList.SelectedItems.Count > 0)
                 InstallButton.IsEnabled = true;
         }
         else
