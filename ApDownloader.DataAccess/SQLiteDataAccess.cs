@@ -55,6 +55,7 @@ public class SQLiteDataAccess
         return products;
     }
 
+
     public async Task<DownloadManifest> GetDownloadManifest(ApDownloaderConfig options,
         IEnumerable<int> productList)
     {

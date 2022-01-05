@@ -32,7 +32,7 @@ public class InstallViewModel : ObservableObject
     public InstallViewModel()
     {
         _dataService = new SQLiteDataAccess(MainViewModel.AppFolder);
-        InstallCommand = new RelayCommand(async list => await Install((IList) list), _ => !MainViewModel.IsNotAdmin);
+        InstallCommand = new RelayCommand(async list => await Install((IList) list));
         RenderAllPreviousDownloadsCommand = new RelayCommand(_ => RenderAllPrevDownloads(), _ => AllDownloadsEnabled);
         LoadDownloadsCommand = new RelayCommand(async _ => await Loaded());
 
@@ -100,15 +100,11 @@ public class InstallViewModel : ObservableObject
         foreach (Cell cell in selectedCells)
             productIds.Add(cell.ProductId);
 
-        var completedFileCount = 0;
-        var totalFileCount =
-            _dataService.GetTotalFileCount(MainViewModel.DlOption, productIds);
-        var progress =
-            new Progress<int>(report => { BusyText = $"Installing file {++completedFileCount} of {totalFileCount.Result}"; });
-
-        OverlayVisibility = true;
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
-        await Task.Run(() => { DiskAccess.InstallAllAddons(MainViewModel.DlManifest, MainViewModel.DlOption, progress); });
+        var downloadList = await GetDownloadList(MainViewModel.DlOption, MainViewModel.DlManifest);
+        await File.WriteAllLinesAsync(
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader") + @"\Downloads.txt",
+            downloadList);
         BusyText = "Installation Complete";
         MainViewModel.IsNotBusy = true;
     }
@@ -139,5 +135,26 @@ public class InstallViewModel : ObservableObject
 
         if (ProductCells.Any())
             SelectAllButtonEnabled = true;
+    }
+
+    private async Task<List<string>> GetDownloadList(ApDownloaderConfig config, DownloadManifest manifest)
+    {
+        var retList = new List<string>();
+        await Task.Run(() =>
+        {
+            // Products
+            foreach (var filename in manifest.PrFilenames)
+                retList.Add(Path.Combine(config.DownloadFilepath, "Products") + @"\" + filename);
+            // ExtraStock
+            foreach (var filename in manifest.EsFilenames)
+                retList.Add(Path.Combine(config.DownloadFilepath, "ExtraStock") + @"\" + filename);
+            // BrandingPatches
+            foreach (var filename in manifest.BpFilenames)
+                retList.Add(Path.Combine(config.DownloadFilepath, "BrandingPatches") + @"\" + filename);
+            // LiveryPacks
+            foreach (var filename in manifest.LpFilenames)
+                retList.Add(Path.Combine(config.DownloadFilepath, "LiveryPacks") + @"\" + filename);
+        });
+        return retList;
     }
 }
