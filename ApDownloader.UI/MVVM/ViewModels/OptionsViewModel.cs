@@ -47,7 +47,7 @@ public class OptionsViewModel : ObservableObject
             InstallFilepath = (string) path;
             CanApply = true;
         });
-        ApplySettingsCommand = new RelayCommand(clickEvent => ApplySettings(), clickEvent => CanApply && !MainViewModel.IsNotAdmin);
+        ApplySettingsCommand = new RelayCommand(clickEvent => ApplySettings(), clickEvent => CanApply);
     }
 
     public bool IsInstallFolderInValid
@@ -76,8 +76,6 @@ public class OptionsViewModel : ObservableObject
             OnPropertyChanged();
         }
     }
-
-    public bool CanUpdateProductsDb => !MainViewModel.IsNotAdmin;
 
     public bool CanOrganize
     {

@@ -1,0 +1,27 @@
+﻿<Window x:Class="ApDownloader_Installer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:ApDownloader_Installer"
+        mc:Ignorable="d"
+        Height="100" Width="420"
+        Top="0"
+        Left="0"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        AllowsTransparency="True"
+        MouseDown="MainWindow_OnMouseDown">
+
+    <Border Background="#272537"
+            CornerRadius="10"
+            BorderBrush="Gray"
+            BorderThickness="3">
+            <TextBlock Text="{Binding ProgressText}"
+                   Foreground="LightGray"
+                   Margin="20 0 0 0"
+                   FontSize="32"
+                   VerticalAlignment="Center" />
+    </Border>
+</Window>

@@ -25,7 +25,17 @@
       "ProjectGuid": "d7704799-66fe-4efe-819c-6dc371f86a62",
       "DisplayName": "AddonInstallerExe",
       "ColorIndex": 3
+    },
+    "9a5f9f1e-c132-4806-88e3-73c00a76c8ca": {
+      "ProjectGuid": "9a5f9f1e-c132-4806-88e3-73c00a76c8ca",
+      "DisplayName": "AP_Installer",
+      "ColorIndex": 4
+    },
+    "72108da9-738b-4f66-925b-b5e160891bc2": {
+      "ProjectGuid": "72108da9-738b-4f66-925b-b5e160891bc2",
+      "DisplayName": "ApDownloader_Installer",
+      "ColorIndex": 5
     }
   },
-  "NextColorIndex": 4
+  "NextColorIndex": 6
 }

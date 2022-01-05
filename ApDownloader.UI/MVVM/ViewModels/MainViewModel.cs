@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Security.Principal;
+using System.Windows;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
@@ -14,6 +14,9 @@ public class MainViewModel : ObservableObject
     public static ApDownloaderConfig DlOption = new();
     public static DownloadManifest DlManifest = new();
     private static bool _isNotBusy;
+    public RelayCommand ExitCommand;
+    private bool IsInstallFolderValid => File.Exists(Path.Combine(DlOption.InstallFilePath, "RailWorks.exe"));
+    public static event PropertyChangedEventHandler StaticPropertyChanged;
 
     public static readonly string AppFolder =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader");
@@ -25,7 +28,6 @@ public class MainViewModel : ObservableObject
     {
         _dataAccess = new SQLiteDataAccess(AppFolder);
         DlOption = _dataAccess.GetUserOptions();
-        CheckAdmin();
 
         IsNotBusy = true;
         //LoginVm = new LoginViewModel();
@@ -37,7 +39,17 @@ public class MainViewModel : ObservableObject
         DownloadViewCommand = new RelayCommand(clickEvent => CurrentView = new DownloadViewModel());
         InstallViewCommand = new RelayCommand(clickEvent => CurrentView = new InstallViewModel());
         OptionsViewCommand = new RelayCommand(clickEvent => CurrentView = new OptionsViewModel(IsInstallFolderValid));
+        ExitCommand = new RelayCommand(_ => Exit());
         CurrentView = new LoginViewModel();
+    }
+
+    private void Exit()
+    {
+        Application.Current.Shutdown();
+        var _tempPath = Path.Combine(Path.GetTempPath(), "ApDownloader");
+        var dir = new DirectoryInfo(_tempPath);
+        if (dir.Exists)
+            dir.Delete(true);
     }
 
     public static bool IsDownloadDataDirty { get; set; } = false;
@@ -64,8 +76,6 @@ public class MainViewModel : ObservableObject
         }
     }
 
-    public static bool IsNotAdmin { get; set; }
-
     public static bool IsNotBusy
     {
         get => _isNotBusy;
@@ -75,16 +85,5 @@ public class MainViewModel : ObservableObject
             StaticPropertyChanged?.Invoke(null,
                 new PropertyChangedEventArgs(nameof(IsNotBusy)));
         }
-    }
-
-    private bool IsInstallFolderValid => File.Exists(Path.Combine(DlOption.InstallFilePath, "RailWorks.exe"));
-
-    public static event PropertyChangedEventHandler StaticPropertyChanged;
-
-    private void CheckAdmin()
-    {
-        var identity = WindowsIdentity.GetCurrent();
-        var principal = new WindowsPrincipal(identity);
-        IsNotAdmin = !principal.IsInRole(WindowsBuiltInRole.Administrator);
     }
 }
