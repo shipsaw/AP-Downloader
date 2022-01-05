@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Net;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ApDownloader.UI.Logging;
 using ApDownloader.UI.MVVM.ViewModels;
 
 namespace ApDownloader.UI.MVVM.Views;
@@ -36,6 +35,12 @@ public partial class LoginView : UserControl
 
     private async void Login(object sender, RoutedEventArgs e)
     {
+        var info = new ProcessStartInfo(
+            @"C:\Users\Paul Kirby\RiderProjects\ApDownloader\AddonInstallerExe\bin\Debug\net6.0-windows\AddonInstallerExe.exe");
+        info.UseShellExecute = true;
+        info.Verb = "runas";
+        Process.Start(info);
+        /*
         MainViewModel.IsNotBusy = false;
         LoginResult.Text = "Attempting Login";
         var viewModel = (DownloadViewModel) DataContext;
@@ -73,6 +78,7 @@ public partial class LoginView : UserControl
         }
 
         MainViewModel.IsNotBusy = true;
+        */
     }
 
     private void Logout(object sender, RoutedEventArgs e)
@@ -87,6 +93,6 @@ public partial class LoginView : UserControl
     private void OnEnterKeyHandler(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Return)
-            this.Login(sender, e);
+            Login(sender, e);
     }
 }
