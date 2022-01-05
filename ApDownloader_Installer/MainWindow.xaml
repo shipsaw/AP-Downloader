@@ -18,6 +18,7 @@
         <TextBlock Text="Installing Addon"
                    Foreground="LightGray"
                    Margin="40 0 0 0"
+                   Name="ProgressText"
                    FontSize="32"
                    VerticalAlignment="Center" />
     </Border>

@@ -102,6 +102,7 @@ public class InstallViewModel : ObservableObject
 
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
         var downloadList = await GetDownloadList(MainViewModel.DlOption, MainViewModel.DlManifest);
+        downloadList = downloadList.Prepend(MainViewModel.DlOption.InstallFilePath).ToList();
         await File.WriteAllLinesAsync(
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader") + @"\Downloads.txt",
             downloadList);
