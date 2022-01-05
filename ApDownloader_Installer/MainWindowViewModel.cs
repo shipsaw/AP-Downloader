@@ -59,10 +59,8 @@ public class MainWindowViewModel : ObservableObject
         UnzipAddons(filenames);
         InstallAddons(installFolder, progress);
 
-        ProgressText = "Cleaning up temp folders..";
-        Thread.Sleep(10000); // Make sure everything is wrapped up
-        if (dir.Exists)
-            dir.Delete(true);
+        ProgressText = "Running Install Scripts..";
+        Thread.Sleep(2000); // Make sure everything is wrapped up
     }
 
     private static void UnzipAddons(IEnumerable<string> filePaths)
