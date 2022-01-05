@@ -107,10 +107,12 @@ public class InstallViewModel : ObservableObject
         await File.WriteAllLinesAsync(
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader") + @"\Downloads.txt",
             downloadList);
-        var info = new ProcessStartInfo(@"./ApDownload_Installer.exe");
+        var info = new ProcessStartInfo(
+            @"..\..\..\..\ApDownloader_Installer\bin\Release\net6.0-windows\ApDownloader_Installer.exe");
         info.UseShellExecute = true;
         info.Verb = "runas";
         Process.Start(info);
+        Process.
         BusyText = "Installation Complete";
         MainViewModel.IsNotBusy = true;
     }
