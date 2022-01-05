@@ -25,7 +25,6 @@ public class MainViewModel : ObservableObject
     {
         _dataAccess = new SQLiteDataAccess(AppFolder);
         DlOption = _dataAccess.GetUserOptions();
-        CheckAdmin();
 
         IsNotBusy = true;
         //LoginVm = new LoginViewModel();
@@ -64,8 +63,6 @@ public class MainViewModel : ObservableObject
         }
     }
 
-    public static bool IsNotAdmin { get; set; }
-
     public static bool IsNotBusy
     {
         get => _isNotBusy;
@@ -80,11 +77,4 @@ public class MainViewModel : ObservableObject
     private bool IsInstallFolderValid => File.Exists(Path.Combine(DlOption.InstallFilePath, "RailWorks.exe"));
 
     public static event PropertyChangedEventHandler StaticPropertyChanged;
-
-    private void CheckAdmin()
-    {
-        var identity = WindowsIdentity.GetCurrent();
-        var principal = new WindowsPrincipal(identity);
-        IsNotAdmin = !principal.IsInRole(WindowsBuiltInRole.Administrator);
-    }
 }

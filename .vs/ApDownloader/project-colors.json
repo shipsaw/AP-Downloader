@@ -21,16 +21,21 @@
       "DisplayName": "ApDownloaderInstaller",
       "ColorIndex": 2
     },
+    "d7704799-66fe-4efe-819c-6dc371f86a62": {
+      "ProjectGuid": "d7704799-66fe-4efe-819c-6dc371f86a62",
+      "DisplayName": "AddonInstallerExe",
+      "ColorIndex": 3
+    },
+    "9a5f9f1e-c132-4806-88e3-73c00a76c8ca": {
+      "ProjectGuid": "9a5f9f1e-c132-4806-88e3-73c00a76c8ca",
+      "DisplayName": "AP_Installer",
+      "ColorIndex": 4
+    },
     "72108da9-738b-4f66-925b-b5e160891bc2": {
       "ProjectGuid": "72108da9-738b-4f66-925b-b5e160891bc2",
       "DisplayName": "ApDownloader_Installer",
-      "ColorIndex": 3
-    },
-    "fd2ca61e-2188-449a-8aec-6dfdfd3527e3": {
-      "ProjectGuid": "fd2ca61e-2188-449a-8aec-6dfdfd3527e3",
-      "DisplayName": "ApDownloader.AddonInstaller",
-      "ColorIndex": 4
+      "ColorIndex": 5
     }
   },
-  "NextColorIndex": 5
+  "NextColorIndex": 6
 }

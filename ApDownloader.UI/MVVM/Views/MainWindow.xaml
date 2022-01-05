@@ -63,18 +63,6 @@
                 Name="Control"
                 Grid.Column="1"
                 Content="{Binding CurrentView}" />
-            <StackPanel Grid.Column="1" Orientation="Horizontal"
-                        Visibility="{Binding Path=IsNotAdmin, Converter={StaticResource BoolToVis}}"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Right"
-                        Margin="10 5">
-                <TextBlock Foreground="Gold"
-                           FontSize="28"
-                           FontStyle="Italic"
-                           Style="{StaticResource animateFadeOut}"
-                           Text="Warning: Program is not being run as administrator " />
-                <Image Source="../../Images/warning-sign.png" Height="35" Width="35" />
-            </StackPanel>
         </Grid>
     </Border>
 </Window>
