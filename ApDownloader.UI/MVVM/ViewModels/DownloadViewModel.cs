@@ -123,26 +123,35 @@ public class DownloadViewModel : ObservableObject
         MainViewModel.IsNotBusy = true;
     }
 
-    private async Task LoadUserAddons()
+    private async Task<bool> LoadUserAddons()
     {
+        var success = false;
         AllApProducts = await _dataService.GetProductsOnly();
         if (!Directory.Exists(_previewImagesPath) || Directory.GetFiles(_previewImagesPath, "*.png").Length != AllApProducts.Count())
             await _access.DownloadPreviewImages(AllApProducts.Select(p => p.ImageName), _previewImagesPath);
         if (!MainViewModel.Products.Any() || MainViewModel.IsDownloadDataDirty)
-        {
-            _access = new HttpDataAccess(LoginView.Client);
-            MainViewModel.Products = await _access.GetPurchasedProducts(AllApProducts);
-            var allFiles = DiskAccess.GetAllFilesOnDisk(MainViewModel.DlOption.DownloadFilepath);
-            foreach (var product in MainViewModel.Products)
+            try
             {
-                product.UserContentLength = allFiles.TryGetValue(product.FileName, out var value) ? value : 0;
-                product.CanUpdate = product.UserContentLength != product.CurrentContentLength &&
-                                    product.UserContentLength != 0;
-                product.IsMissing = product.UserContentLength == 0;
+                _access = new HttpDataAccess(LoginView.Client);
+                MainViewModel.Products = await _access.GetPurchasedProducts(AllApProducts);
+                var allFiles = DiskAccess.GetAllFilesOnDisk(MainViewModel.DlOption.DownloadFilepath);
+                foreach (var product in MainViewModel.Products)
+                {
+                    product.UserContentLength = allFiles.TryGetValue(product.FileName, out var value) ? value : 0;
+                    product.CanUpdate = product.UserContentLength != product.CurrentContentLength &&
+                                        product.UserContentLength != 0;
+                    product.IsMissing = product.UserContentLength == 0;
+                }
+
+                MainViewModel.IsDownloadDataDirty = false;
+                success = true;
+            }
+            catch (Exception e)
+            {
+                BusyText = "Unable to connect to server";
             }
 
-            MainViewModel.IsDownloadDataDirty = false;
-        }
+        return success;
     }
 
     private async Task RenderUserAddons()
@@ -150,7 +159,12 @@ public class DownloadViewModel : ObservableObject
         OverlayVisibility = true;
         if (MainViewModel.IsDownloadDataDirty)
         {
-            await LoadUserAddons();
+            if (await LoadUserAddons() == false)
+            {
+                MainViewModel.IsNotBusy = true;
+                return;
+            }
+
             MainViewModel.IsDownloadDataDirty = false;
         }
 
