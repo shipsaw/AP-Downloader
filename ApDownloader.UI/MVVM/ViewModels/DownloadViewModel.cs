@@ -42,6 +42,9 @@ public class DownloadViewModel : ObservableObject
     public AsyncRelayCommand.AsyncCommand LoadUserAddonsCommand { get; set; }
     public AsyncRelayCommand.AsyncCommand RenderUserAddonsCommand { get; set; }
     public RelayCommand DownloadCommand { get; set; }
+    public ObservableCollection<Cell> ProductCells { get; set; } = new();
+    public bool SelectAllButtonEnabled => MainViewModel.Products.Any();
+    private IEnumerable<Product> AllApProducts { get; set; }
 
     public string BusyText
     {
@@ -63,9 +66,6 @@ public class DownloadViewModel : ObservableObject
         }
     }
 
-
-    public ObservableCollection<Cell> ProductCells { get; set; } = new();
-
     public string OutOfDateText
     {
         get => _outOfDateText;
@@ -86,11 +86,6 @@ public class DownloadViewModel : ObservableObject
         }
     }
 
-    public bool SelectAllButtonEnabled => MainViewModel.Products.Any();
-
-    private IEnumerable<Product> AllApProducts { get; set; }
-
-
     private async void DownloadAddons(IList selectedCells)
     {
         MainViewModel.IsNotBusy = false;
@@ -99,10 +94,7 @@ public class DownloadViewModel : ObservableObject
         Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\ExtraStock");
         Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\BrandingPatches");
         Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\LiveryPacks");
-        var productIds = new List<int>();
-        foreach (Cell cell in selectedCells) productIds.Add(cell.ProductId);
-
-
+        var productIds = (from Cell cell in selectedCells select cell.ProductId).ToList();
         var completedFileCount = 0;
         var totalFileCount =
             await _dataService.GetTotalFileCount(MainViewModel.DlOption, productIds);
@@ -152,7 +144,6 @@ public class DownloadViewModel : ObservableObject
             MainViewModel.IsDownloadDataDirty = false;
         }
     }
-
 
     private async Task RenderUserAddons()
     {

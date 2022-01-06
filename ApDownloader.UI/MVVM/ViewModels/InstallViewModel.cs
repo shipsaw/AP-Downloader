@@ -21,10 +21,8 @@ public class InstallViewModel : ObservableObject
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader", "PreviewImages");
 
     private string _busyText;
-    private IEnumerable<Product> _downloadedProducts;
     private bool _overlayVisibility;
     private bool _selectAllButtonEnabled;
-
     private bool AllDownloadsEnabled { get; set; } = true;
     public RelayCommand InstallCommand { get; set; }
     public ObservableCollection<Cell> ProductCells { get; } = new();
@@ -75,10 +73,9 @@ public class InstallViewModel : ObservableObject
 
     public IEnumerable<Product> DownloadedProducts { get; private set; }
 
-    public async Task Loaded()
+    private async Task Loaded()
     {
         var products = _dataService.GetDownloadedProductsOnly(MainViewModel.DlManifest?.ProductIds).Result;
-        var builderlist = new List<Cell>();
         foreach (var product in products)
         {
             var cell = new Cell
@@ -90,6 +87,8 @@ public class InstallViewModel : ObservableObject
             ProductCells.Add(cell);
         }
 
+        if (ProductCells.Any())
+            SelectAllButtonEnabled = true;
         await PopulateAllPrevDownloads();
     }
 
@@ -98,9 +97,8 @@ public class InstallViewModel : ObservableObject
         MainViewModel.IsNotBusy = false;
         BusyText = "Installing Addons";
         OverlayVisibility = true;
-        var productIds = new List<int>();
-        foreach (Cell cell in selectedCells)
-            productIds.Add(cell.ProductId);
+
+        var productIds = (from Cell cell in selectedCells select cell.ProductId).ToList();
 
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
         var downloadList = await GetDownloadList(MainViewModel.DlOption, MainViewModel.DlManifest);
@@ -108,33 +106,40 @@ public class InstallViewModel : ObservableObject
         await File.WriteAllLinesAsync(
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader") + @"\Downloads.txt",
             downloadList);
-        var path = Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName, "InstallerExe") + @"\ApDownloader_Installer.exe";
-        var info = new ProcessStartInfo(
-            path);
-        info.UseShellExecute = true;
-        info.Verb = "runas";
-        var process = new Process
+        var fullName = Directory.GetParent(Assembly.GetExecutingAssembly().Location)?.FullName;
+        if (fullName != null)
         {
-            StartInfo = info
-        };
-        process.Start();
-        process.WaitForExit();
-        BusyText = "Installation Complete";
+            var path = Path.Combine(fullName, "InstallerExe") +
+                       @"\ApDownloader_Installer.exe";
+            var info = new ProcessStartInfo(
+                path)
+            {
+                UseShellExecute = true,
+                Verb = "runas"
+            };
+            var process = new Process
+            {
+                StartInfo = info
+            };
+            process.Start();
+            await process.WaitForExitAsync();
+            BusyText = process.ExitCode != 0 ? "Installation failed" : "Installation Complete";
+        }
+
         MainViewModel.IsNotBusy = true;
     }
 
     private async Task PopulateAllPrevDownloads()
     {
         if (!Directory.Exists(Path.Combine(MainViewModel.DlOption.DownloadFilepath, "Products"))) return;
-        var allfiles = DiskAccess.GetAllFilesOnDisk(MainViewModel.DlOption.DownloadFilepath);
-        var allFilesList = allfiles.Select(kvp => kvp.Key).ToList();
+        var allFiles = DiskAccess.GetAllFilesOnDisk(MainViewModel.DlOption.DownloadFilepath);
+        var allFilesList = allFiles.Select(kvp => kvp.Key).ToList();
         DownloadedProducts = await _dataService.GetDownloadedProductsByName(allFilesList);
     }
 
     private void RenderAllPrevDownloads()
     {
         AllDownloadsEnabled = false;
-        if (DownloadedProducts == null) return;
         foreach (var product in DownloadedProducts)
         {
             var cell = new Cell
@@ -151,7 +156,7 @@ public class InstallViewModel : ObservableObject
             SelectAllButtonEnabled = true;
     }
 
-    private async Task<List<string>> GetDownloadList(ApDownloaderConfig config, DownloadManifest manifest)
+    private static async Task<List<string>> GetDownloadList(ApDownloaderConfig config, DownloadManifest manifest)
     {
         var retList = new List<string>();
         await Task.Run(() =>

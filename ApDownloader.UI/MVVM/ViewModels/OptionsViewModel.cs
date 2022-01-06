@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using ApDownloader.DataAccess;
 using ApDownloader.UI.Core;
 using ApDownloader.UI.Logging;
@@ -50,20 +49,11 @@ public class OptionsViewModel : ObservableObject
         ApplySettingsCommand = new RelayCommand(clickEvent => ApplySettings(), clickEvent => CanApply);
     }
 
-    public bool IsInstallFolderInValid
-    {
-        get => _isInstallFolderInvalid;
-        set
-        {
-            _isInstallFolderInvalid = value;
-            OnPropertyChanged();
-        }
-    }
-
     public RelayCommand ApplySettingsCommand { get; set; }
     public RelayCommand SetDownloadFilepathCommand { get; set; }
     public RelayCommand SetInstallFilepathCommand { get; set; }
     public RelayCommand OrganizeDownloadFolderCommand { get; set; }
+    public RelayCommand ImportProductDbCommand { get; set; }
 
     public bool CanApply
     {
@@ -73,6 +63,16 @@ public class OptionsViewModel : ObservableObject
             _canApply = value;
             if (value)
                 ApplyResponseVisibility = false;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool IsInstallFolderInValid
+    {
+        get => _isInstallFolderInvalid;
+        set
+        {
+            _isInstallFolderInvalid = value;
             OnPropertyChanged();
         }
     }
@@ -175,8 +175,6 @@ public class OptionsViewModel : ObservableObject
         }
     }
 
-    public RelayCommand ImportProductDbCommand { get; set; }
-
     private async void OrganizeDownloadFolder()
     {
         if (!Directory.Exists(Path.Combine(MainViewModel.DlOption.DownloadFilepath))) return;
@@ -216,16 +214,17 @@ public class OptionsViewModel : ObservableObject
 
     private void UpdateProductDb(string filename)
     {
-            UpdateDbNotificationText = "Database update failed";
-            try
-            {
-                _dataAccess.ImportProductDb(filename);
+        UpdateDbNotificationText = "Database update failed";
+        try
+        {
+            _dataAccess.ImportProductDb(filename);
             UpdateDbNotificationText = "Database updated successfully";
-            }
-            catch (Exception e)
-            {
-                Logger.LogFatal(e.Message);
-            }
+        }
+        catch (Exception e)
+        {
+            Logger.LogFatal(e.Message);
+        }
+
         UpdatedDbNotificationVisibility = true;
     }
 }

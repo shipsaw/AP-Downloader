@@ -98,7 +98,7 @@ public class MainWindowViewModel : ObservableObject
                     {
                         FileName = filepath.Trim('"'),
                         Arguments =
-                            $"/b\"{Path.Combine(_tempPath, "ApDownloads")}\" /s /v\"/qn INSTALLDIR=\"{installFolder}\"\""
+                            $"/b\"{_tempPath}\" /s /v\"/qn INSTALLDIR=\"{installFolder}\"\""
                     }
                 };
                 process.Start();
