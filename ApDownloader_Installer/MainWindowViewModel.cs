@@ -61,7 +61,7 @@ public class MainWindowViewModel : ObservableObject
         InstallAddons(installFolder, progress);
 
         ProgressText = "Running Install Scripts..";
-        Thread.Sleep(2000); // Make sure everything is wrapped up
+        Thread.Sleep(5000); // Make sure everything is wrapped up
     }
 
     private static void UnzipAddons(IEnumerable<string> filePaths)
