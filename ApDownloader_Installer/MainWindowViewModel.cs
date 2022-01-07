@@ -106,15 +106,14 @@ public class MainWindowViewModel : ObservableObject
             }
             else if (filepath.Trim('"').EndsWith(".rwp"))
             {
-                //How to extract rwp with c#?
                 string zPath = @"7zip\7za.exe"; //add to proj and set CopyToOuputDir
                 try
                 {
-                    ProcessStartInfo pro = new ProcessStartInfo();
-                    pro.WindowStyle = ProcessWindowStyle.Hidden;
-                    pro.FileName = zPath;
-                    pro.Arguments = string.Format("x \"{0}\" -aoa -y -o\"{1}\"", filepath, installFolder);
-                    Process process = Process.Start(pro);
+                    ProcessStartInfo info = new ProcessStartInfo();
+                    info.WindowStyle = ProcessWindowStyle.Hidden;
+                    info.FileName = zPath;
+                    info.Arguments = string.Format("x \"{0}\" -aoa -y -o\"{1}\"", filepath, installFolder);
+                    Process process = Process.Start(info);
                     process.WaitForExit();
                 }
                 catch (System.Exception Ex)
