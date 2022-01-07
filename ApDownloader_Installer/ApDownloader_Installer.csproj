@@ -22,6 +22,22 @@
       <ProjectReference Include="..\ApDownloader.Model\ApDownloader.Model.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="7zip\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="7zip\7za.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="7zip\7za.exe">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="7zip\7zxa.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
       <Exec Command="xcopy &quot;$(ProjectDir)bin\Release\net6.0-windows&quot; &quot;$(SolutionDir)ApDownloader.UI\InstallerExe&quot; /e /y /i /r&#xD;&#xA;" />
     </Target>

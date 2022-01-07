@@ -106,8 +106,8 @@ public class MainWindowViewModel : ObservableObject
             }
             else if (filepath.Trim('"').EndsWith(".rwp"))
             {
-                // How to extract rwp with c#?
-                // ZipFile.ExtractToDirectory(filepath, installFolder);
+                //How to extract rwp with c#?
+                 ZipFile.ExtractToDirectory(filepath, installFolder, true);
             }
     }
 }
