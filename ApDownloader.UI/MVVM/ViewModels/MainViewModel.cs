@@ -30,10 +30,6 @@ public class MainViewModel : ObservableObject
         DlOption = _dataAccess.GetUserOptions();
 
         IsNotBusy = true;
-        //LoginVm = new LoginViewModel();
-        //DownloadVm = new DownloadViewModel();
-        //InstallVm = new InstallViewModel();
-        //OptionsVm = new OptionsViewModel(IsInstallFolderValid);
 
         LoginViewCommand = new RelayCommand(clickEvent => CurrentView = new LoginViewModel());
         DownloadViewCommand = new RelayCommand(clickEvent => CurrentView = new DownloadViewModel());
