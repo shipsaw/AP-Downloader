@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApDownloader.Model", "ApDow
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "ApDownloaderInstaller", "ApDownloaderInstaller\ApDownloaderInstaller.wapproj", "{BDBC55F6-6333-4055-9FE3-6EA593A6C35D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApDownloader_Installer", "ApDownloader_Installer\ApDownloader_Installer.csproj", "{72108DA9-738B-4F66-925B-B5E160891BC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApDownloader_Installer", "ApDownloader_Installer\ApDownloader_Installer.csproj", "{72108DA9-738B-4F66-925B-B5E160891BC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

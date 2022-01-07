@@ -10,13 +10,9 @@
 
     <ItemGroup>
       <PackageReference Include="Autofac" Version="6.3.0" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-      <PackageReference Include="System.Data.SQLite.Core" Version="1.0.115.5" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ApDownloader.AddonInstaller\ApDownloader.AddonInstaller.csproj" />
       <ProjectReference Include="..\ApDownloader.DataAccess\ApDownloader.DataAccess.csproj" />
       <ProjectReference Include="..\ApDownloader.Model\ApDownloader.Model.csproj" />
     </ItemGroup>
@@ -112,6 +108,27 @@
       <Resource Include="Images\missingFile.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Resource>
+      <Content Include="InstallerExe\ApDownloader.Model.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="InstallerExe\ApDownloader.Model.pdb">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="InstallerExe\ApDownloader_Installer.deps.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="InstallerExe\ApDownloader_Installer.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="InstallerExe\ApDownloader_Installer.exe">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="InstallerExe\ApDownloader_Installer.pdb">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="InstallerExe\ApDownloader_Installer.runtimeconfig.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <None Remove="Images\APC411_Cover-238x294.png" />
       <None Remove="Images\APC455EPV1_Cover-238x294.png" />
       <None Remove="Images\APC465EPV2_Cover-238x294.png" />
@@ -135,41 +152,6 @@
 
     <ItemGroup>
       <None Remove="Images\blur-1239439_640.jpg" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="InstallerExe\net6.0-windows\ApDownloader.Model.dll" />
-      <Content Include="InstallerExe\net6.0-windows\ApDownloader.Model.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <None Remove="InstallerExe\net6.0-windows\ApDownloader.Model.pdb" />
-      <Content Include="InstallerExe\net6.0-windows\ApDownloader.Model.pdb">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <None Remove="InstallerExe\net6.0-windows\ApDownloader_Installer.dll" />
-      <Content Include="InstallerExe\net6.0-windows\ApDownloader_Installer.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <None Remove="InstallerExe\net6.0-windows\ApDownloader_Installer.exe" />
-      <Content Include="InstallerExe\net6.0-windows\ApDownloader_Installer.exe">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <None Remove="InstallerExe\net6.0-windows\ApDownloader_Installer.pdb" />
-      <Content Include="InstallerExe\net6.0-windows\ApDownloader_Installer.pdb">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <None Remove="InstallerExe\net6.0-windows\ApDownloader_Installer.deps.json" />
-      <Content Include="InstallerExe\net6.0-windows\ApDownloader_Installer.deps.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <None Remove="InstallerExe\net6.0-windows\ApDownloader_Installer.runtimeconfig.json" />
-      <Content Include="InstallerExe\net6.0-windows\ApDownloader_Installer.runtimeconfig.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <None Remove="InstallerExe\net6.0-windows\Autofac.dll" />
-      <Content Include="InstallerExe\net6.0-windows\Autofac.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
     </ItemGroup>
 
 </Project>
