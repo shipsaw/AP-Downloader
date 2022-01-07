@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "ApDownloader_Installer/1.0.0": {
+        "dependencies": {
+          "ApDownloader.Model": "1.0.0"
+        },
+        "runtime": {
+          "ApDownloader_Installer.dll": {}
+        }
+      },
+      "ApDownloader.Model/1.0.0": {
+        "runtime": {
+          "ApDownloader.Model.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ApDownloader_Installer/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ApDownloader.Model/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

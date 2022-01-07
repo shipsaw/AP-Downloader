@@ -147,10 +147,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="MVVM\ViewModels\Commands" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="Images\blur-1239439_640.jpg" />
     </ItemGroup>
 
