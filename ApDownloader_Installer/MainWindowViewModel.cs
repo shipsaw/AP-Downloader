@@ -13,13 +13,13 @@ namespace ApDownloader_Installer;
 
 public class MainWindowViewModel : ObservableObject
 {
-    private static readonly string _tempPath = Path.Combine(Path.GetTempPath(), "ApDownloader");
-    private string _progressText;
-    public RelayCommand BeginInstall;
+    private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "ApDownloader");
+    private string _progressText = "";
+    public readonly RelayCommand BeginInstall;
 
     public MainWindowViewModel()
     {
-        BeginInstall = new RelayCommand(_ => Install());
+        BeginInstall = new RelayCommand(_ => ReadFilesFromList());
     }
 
     public string ProgressText
@@ -32,26 +32,27 @@ public class MainWindowViewModel : ObservableObject
         }
     }
 
-    public async void Install()
+    private async void ReadFilesFromList()
     {
-        await Task.Run(() => {
-        var list = File.ReadLines(
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader") +
-                @"\Downloads.txt")
-            .ToList();
-        var installPath = list[0];
-        var files = list.GetRange(1, list.Count() - 1);
-        var totalFileCount = files.Count();
-        var completedFileCount = 0;
-        var progress = new Progress<int>(report => { ProgressText = $"Installing file {++completedFileCount} of {totalFileCount}"; });
-        InstallAllAddons(files, installPath, progress);
-    });
-            Application.Current.Shutdown();
+        await Task.Run(() =>
+        {
+            var list = File.ReadLines(
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader") +
+                    @"\Downloads.txt")
+                .ToList();
+            var installPath = list[0];
+            var files = list.GetRange(1, list.Count - 1);
+            var totalFileCount = files.Count;
+            var completedFileCount = 0;
+            var progress = new Progress<int>(report => { ProgressText = $"Installing file {++completedFileCount} of {totalFileCount}"; });
+            UnzipAndInstall(files, installPath, progress);
+        });
+        Application.Current.Shutdown();
     }
 
-    private void InstallAllAddons(List<string> filenames, string installFolder, IProgress<int> progress)
+    private void UnzipAndInstall(List<string> filenames, string installFolder, IProgress<int> progress)
     {
-        var dir = new DirectoryInfo(_tempPath);
+        var dir = new DirectoryInfo(TempPath);
         if (dir.Exists)
             dir.Delete(true);
         dir.Create();
@@ -68,14 +69,13 @@ public class MainWindowViewModel : ObservableObject
         var fileCount = 1;
         foreach (var filepath in filePaths)
         {
-            var filename = Path.GetFileName(filepath);
-
             using (var archive = ZipFile.OpenRead(filepath))
             {
                 foreach (var entry in archive.Entries)
-                    if (entry.FullName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) || entry.FullName.EndsWith(".rwp", StringComparison.OrdinalIgnoreCase))
+                    if (entry.FullName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ||
+                        entry.FullName.EndsWith(".rwp", StringComparison.OrdinalIgnoreCase))
                     {
-                        var destinationPath = Path.GetFullPath(Path.Combine(_tempPath, fileCount + entry.FullName));
+                        var destinationPath = Path.GetFullPath(Path.Combine(TempPath, fileCount + entry.FullName));
                         entry.ExtractToFile(destinationPath);
                     }
             }
@@ -86,7 +86,7 @@ public class MainWindowViewModel : ObservableObject
 
     private static void InstallAddons(string installFolder, IProgress<int> progress)
     {
-        var files = Directory.GetFiles(_tempPath);
+        var files = Directory.GetFiles(TempPath);
         files = files.OrderBy(o => o).ToArray();
         foreach (var filepath in files)
             if (filepath.Trim('"').EndsWith(".exe"))
@@ -98,12 +98,13 @@ public class MainWindowViewModel : ObservableObject
                     {
                         FileName = filepath.Trim('"'),
                         Arguments =
-                            $"/b\"{_tempPath}\" /s /v\"/qn INSTALLDIR=\"{installFolder}\"\""
+                            $"/b\"{TempPath}\" /s /v\"/qn INSTALLDIR=\"{installFolder}\"\""
                     }
                 };
                 process.Start();
                 process.WaitForExit();
-            } else if (filepath.Trim('"').EndsWith(".rwp"))
+            }
+            else if (filepath.Trim('"').EndsWith(".rwp"))
             {
                 // How to extract rwp with c#?
                 // ZipFile.ExtractToDirectory(filepath, installFolder);
