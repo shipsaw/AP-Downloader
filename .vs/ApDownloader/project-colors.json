@@ -35,7 +35,12 @@
       "ProjectGuid": "72108da9-738b-4f66-925b-b5e160891bc2",
       "DisplayName": "ApDownloader_Installer",
       "ColorIndex": 5
+    },
+    "38c04257-81e5-4dde-8701-48b930e16f01": {
+      "ProjectGuid": "38c04257-81e5-4dde-8701-48b930e16f01",
+      "DisplayName": "ApDownloader.Model",
+      "ColorIndex": 6
     }
   },
-  "NextColorIndex": 6
+  "NextColorIndex": 7
 }
