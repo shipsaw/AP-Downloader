@@ -7,6 +7,12 @@ type FileStatus =
     | CanUpdate
     | Ok
 
+type CurrentPage =
+    | LoginPage
+    | DownloadPage
+    | InstallPage
+    | OptionsPage
+
 type DownloadConfig =
     { GetExtraStock: bool
       GetBrandingPatch: bool
@@ -31,37 +37,67 @@ type ProductManifest =
       LiveryPackFilenames: string seq }
 
 type Model =
-    { CurrentView: obj
-      Products: Product seq
-      Client: HttpClient
+    { CurrentPage: CurrentPage
+      AllApProducts: Product seq
+      PurchasedProducts: Product seq
+      DownloadedProducts: Product seq
+      DiscProducts: Product seq
+      Client: HttpClient option
       DlConfig: DownloadConfig
       ProductManifest: ProductManifest }
 
+let init () =
+    { CurrentPage = LoginPage
+      AllApProducts = Seq.empty
+      PurchasedProducts = Seq.empty
+      DownloadedProducts = Seq.empty
+      DiscProducts = Seq.empty
+      Client = None
+      DlConfig =
+          { GetExtraStock = true
+            GetBrandingPatch = true
+            GetLiveryPack = true
+            DownloadFilepath = @"C:\"
+            InstallFilepath = @"C:\Games" }
+      ProductManifest =
+          { ProductIds = Seq.empty
+            ProductFilenames = Seq.empty
+            ExtraStockFilenames = Seq.empty
+            BrandingPatchesFilenames = Seq.empty
+            LiveryPackFilenames = Seq.empty } }
+
 type Msg =
-    | LoginPage
-    | DownloadPage
-    | InstallPage
-    | OptionsPage
-    | Exit
-    | Login
-    | Logout
+    | SelLoginPage
+    | SelDownloadPage
+    | SelInstallPage
+    | SelOptionsPage
+    | Login of HttpClient
     | Download
-    | GetDownloaded
+    | ProductsOnDisc
     | Install
     | ApplyOptions
     | UpdateDb
 
+let DownloadAddons = Seq.empty
+let GetDownloadedAddons = Seq.empty
+let GetProductsOnDisc = Seq.empty
+
+let SetConfig =
+    { GetExtraStock = true
+      GetBrandingPatch = true
+      GetLiveryPack = true
+      DownloadFilepath = @"C:\"
+      InstallFilepath = @"C:\" }
+
 let update (msg: Msg) (model: Model) : Model =
     match msg with
-    | LoginPage -> failwith "Not implemented"
-    | DownloadPage -> failwith "Not implemented"
-    | InstallPage -> failwith "Not implemented"
-    | OptionsPage -> failwith "Not implemented"
-    | Exit -> failwith "Not implemented"
-    | Login -> failwith "Not implemented"
-    | Logout -> failwith "Not implemented"
-    | Download -> failwith "Not implemented"
-    | GetDownloaded -> failwith "Not implemented"
-    | Install -> failwith "Not implemented"
-    | ApplyOptions -> failwith "Not implemented"
-    | UpdateDb -> failwith "Not implemented"
+    | SelLoginPage -> { model with CurrentPage = LoginPage }
+    | SelDownloadPage -> { model with CurrentPage = DownloadPage }
+    | SelInstallPage -> { model with CurrentPage = InstallPage }
+    | SelOptionsPage -> { model with CurrentPage = OptionsPage }
+    | Login client -> { model with Client = Some client }
+    | Download -> { model with DownloadedProducts = DownloadAddons }
+    | ProductsOnDisc -> { model with DiscProducts = GetProductsOnDisc }
+    | Install -> model
+    | ApplyOptions -> { model with DlConfig = SetConfig }
+    | UpdateDb -> model
