@@ -8,11 +8,13 @@
     <ItemGroup>
         <Compile Include="Domain.fs" />
         <Compile Include="Project.fs" />
+        <Compile Include="DataAccess.fs" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Dapper.FSharp" Version="3.1.0" />
         <PackageReference Include="Elmish.WPF" Version="3.5.8" />
+        <PackageReference Include="FSharp.Data.Dapper" Version="2.0.0" />
         <PackageReference Include="Serilog" Version="2.10.0" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
         <PackageReference Include="SQLProvider" Version="1.2.10" />
