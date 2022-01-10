@@ -28,7 +28,7 @@
         </Border>
         <StackPanel>
             <ListView
-                ItemsSource="{Binding ProductCells }"
+                ItemsSource="{Binding DownloadedProducts }"
                 ItemContainerStyle="{StaticResource ListBoxStyle}"
                 x:Name="AddonsFoundList"
                 Margin="20 20 20 0"

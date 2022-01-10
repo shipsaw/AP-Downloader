@@ -1,54 +1,28 @@
 ﻿module ApDownloader.Core.Project
 
+open System
+open System.Data
+open System.IO
 open System.Net.Http
+open Elmish.WPF
+open Domain
+open Dapper.FSharp
+open Microsoft.Data.Sqlite
 
-type FileStatus =
-    | IsMissing
-    | CanUpdate
-    | Ok
+let ProdDbConnectionString: IDbConnection =
+    upcast new SqliteConnection(
+        Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            Path.GetFileName(".ApDownloader/ProductsDb.db")
+        )
+    )
 
-type CurrentPage =
-    | LoginPage
-    | DownloadPage
-    | InstallPage
-    | OptionsPage
-
-type DownloadConfig =
-    { GetExtraStock: bool
-      GetBrandingPatch: bool
-      GetLiveryPack: bool
-      DownloadFilepath: string
-      InstallFilepath: string }
-
-type Product =
-    { ProductId: int
-      Name: string
-      Filename: string
-      ImageName: string
-      FileStatus: FileStatus
-      ServerContentLength: int64
-      CurrentContentLength: int64 }
-
-type ProductManifest =
-    { ProductIds: string seq
-      ProductFilenames: string seq
-      ExtraStockFilenames: string seq
-      BrandingPatchesFilenames: string seq
-      LiveryPackFilenames: string seq }
-
-type Model =
-    { CurrentPage: CurrentPage
-      AllApProducts: Product seq
-      PurchasedProducts: Product seq
-      DownloadedProducts: Product seq
-      DiscProducts: Product seq
-      Client: HttpClient option
-      DlConfig: DownloadConfig
-      ProductManifest: ProductManifest }
+Dapper.FSharp.OptionTypes.register ()
+let productTable = table<Product>
 
 let init () =
     { CurrentPage = LoginPage
-      AllApProducts = Seq.empty
+      AllApProducts = GetProductsOnly()
       PurchasedProducts = Seq.empty
       DownloadedProducts = Seq.empty
       DiscProducts = Seq.empty
@@ -101,3 +75,15 @@ let update (msg: Msg) (model: Model) : Model =
     | Install -> model
     | ApplyOptions -> { model with DlConfig = SetConfig }
     | UpdateDb -> model
+
+let bindings () : Binding<Model, Msg> list =
+    [ "DownloadedProducts"
+      |> Binding.oneWay (fun m -> m.DownloadedProducts) ]
+
+
+let GetProductsOnly =
+    select {
+        for p in productTable do
+            selectAll
+    }
+    |> ProdDbConnectionString.SelectAsync
