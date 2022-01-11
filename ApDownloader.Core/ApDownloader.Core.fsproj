@@ -9,6 +9,12 @@
         <Compile Include="Domain.fs" />
         <Compile Include="Project.fs" />
         <Compile Include="DataAccess.fs" />
+        <Content Include="ProductsDb.db">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Settings.db">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
@@ -22,6 +28,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ApDownloader.DataAccess\ApDownloader.DataAccess.csproj" />
+      <ProjectReference Include="..\ApDownloader_Installer\ApDownloader_Installer.csproj" />
     </ItemGroup>
 
 </Project>

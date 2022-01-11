@@ -1,9 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using Dapper;
-using Microsoft.Data.Sqlite;
+﻿using System.Diagnostics.CodeAnalysis;
 
 //using ApDownloader.Model;
 
@@ -12,6 +7,7 @@ namespace ApDownloader.DataAccess;
 [SuppressMessage("ReSharper", "RedundantAnonymousTypePropertyName")]
 public static class SQLiteDataAccess
 {
+    /*
     private static readonly string ProdDbConnectionString =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
             Path.GetFileName(".ApDownloader/ProductsDb.db"));
@@ -134,4 +130,5 @@ public static void ImportProductDb(string filename)
     File.Copy(filename, ProdDbConnectionString, true);
 }
 
+*/
 }

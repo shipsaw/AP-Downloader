@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using ApDownloader.UI.MVVM.ViewModels;
 
 namespace ApDownloader.UI.MVVM.Views;
 
@@ -22,9 +21,5 @@ public partial class MainWindow : Window
 
     private void Exit(object sender, RoutedEventArgs e)
     {
-        var viewModel = (MainViewModel) DataContext;
-        if (MessageBox.Show("Sure you want to exit?",
-                "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            viewModel.ExitCommand.Execute(null);
     }
 }

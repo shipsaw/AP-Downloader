@@ -8,6 +8,7 @@ open Elmish.WPF
 open Domain
 open Dapper.FSharp
 open Microsoft.Data.Sqlite
+open Serilog
 
 let ProdDbConnectionString: IDbConnection =
     upcast new SqliteConnection(
@@ -22,7 +23,7 @@ let productTable = table<Product>
 
 let init () =
     { CurrentPage = LoginPage
-      AllApProducts = GetProductsOnly()
+      AllApProducts = Seq.empty
       PurchasedProducts = Seq.empty
       DownloadedProducts = Seq.empty
       DiscProducts = Seq.empty
@@ -80,10 +81,14 @@ let bindings () : Binding<Model, Msg> list =
     [ "DownloadedProducts"
       |> Binding.oneWay (fun m -> m.DownloadedProducts) ]
 
+let main window =
+    let logger =
+        LoggerConfiguration()
+            .MinimumLevel.Override("Elmish.WPF.Update", Events.LogEventLevel.Verbose)
+            .MinimumLevel.Override("Elmish.WPF.Bindings", Events.LogEventLevel.Verbose)
+            .MinimumLevel.Override("Elmish.WPF.Performance", Events.LogEventLevel.Verbose)
+            //.WriteTo.Console()
+            .CreateLogger()
 
-let GetProductsOnly =
-    select {
-        for p in productTable do
-            selectAll
-    }
-    |> ProdDbConnectionString.SelectAsync
+    Program.mkSimpleWpf init update bindings
+    |> Program.startElmishLoop (window)

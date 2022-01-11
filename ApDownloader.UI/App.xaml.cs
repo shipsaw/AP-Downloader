@@ -2,9 +2,8 @@
 using System.IO;
 using System.Reflection;
 using System.Windows;
+using ApDownloader.Core;
 using ApDownloader.UI.Logging;
-using ApDownloader.UI.MVVM.ViewModels;
-using ApDownloader.UI.MVVM.Views;
 
 namespace ApDownloader.UI;
 
@@ -13,19 +12,20 @@ namespace ApDownloader.UI;
 /// </summary>
 public partial class App : Application
 {
-    protected override void OnStartup(StartupEventArgs e)
+    public App()
     {
+        Activated += StartElmish;
+    }
+
+    private void StartElmish(object sender, EventArgs e)
+    {
+        Activated -= StartElmish;
         var currentDomain = AppDomain.CurrentDomain;
         currentDomain.UnhandledException +=
             OnUnhandledException;
 
         CopyDatabase();
-        MainWindow = new MainWindow
-        {
-            DataContext = new MainViewModel()
-        };
-        MainWindow.Show();
-        base.OnStartup(e);
+        Project.main(MainWindow);
     }
 
     private static void OnUnhandledException(

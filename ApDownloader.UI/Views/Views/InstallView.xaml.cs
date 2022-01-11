@@ -2,13 +2,12 @@
 using System.Windows.Controls;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
-using ApDownloader.UI.MVVM.ViewModels;
 
 namespace ApDownloader.UI.MVVM.Views;
 
 public partial class InstallView : UserControl
 {
-    private readonly SQLiteDataAccess _dataService;
+    //private readonly SQLiteDataAccess _dataService;
     private HttpDataAccess _access;
     private bool _selectedToggle;
     private DownloadManifest DownloadManifest;
@@ -21,8 +20,6 @@ public partial class InstallView : UserControl
 
     private void Window_loaded(object sender, RoutedEventArgs e)
     {
-        var viewmodel = (InstallViewModel) DataContext;
-        viewmodel.LoadDownloadsCommand.Execute(null);
     }
 
     public void ToggleSelected(object sender, RoutedEventArgs e)

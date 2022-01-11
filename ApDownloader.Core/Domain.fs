@@ -1,5 +1,7 @@
 ﻿namespace Domain
 
+open System.Net.Http
+
 type FileStatus =
     | IsMissing
     | CanUpdate
@@ -43,4 +45,3 @@ type Model =
       Client: HttpClient option
       DlConfig: DownloadConfig
       ProductManifest: ProductManifest }
-

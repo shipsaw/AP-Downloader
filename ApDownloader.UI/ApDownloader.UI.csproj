@@ -10,9 +10,11 @@
 
     <ItemGroup>
       <PackageReference Include="Autofac" Version="6.3.0" />
+      <PackageReference Include="FSharp.Core" Version="6.0.1" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ApDownloader.Core\ApDownloader.Core.fsproj" />
       <ProjectReference Include="..\ApDownloader.DataAccess\ApDownloader.DataAccess.csproj" />
       <ProjectReference Include="..\ApDownloader.Model\ApDownloader.Model.csproj" />
     </ItemGroup>
@@ -148,6 +150,13 @@
 
     <ItemGroup>
       <None Remove="Images\blur-1239439_640.jpg" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Views\ViewModels\DownloadViewModel.cs" />
+      <Compile Remove="Views\ViewModels\InstallViewModel.cs" />
+      <Compile Remove="Views\ViewModels\MainViewModel.cs" />
+      <Compile Remove="Views\ViewModels\OptionsViewModel.cs" />
     </ItemGroup>
 
 </Project>
