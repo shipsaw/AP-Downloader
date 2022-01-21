@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -106,19 +107,21 @@ public class MainWindowViewModel : ObservableObject
             }
             else if (filepath.Trim('"').EndsWith(".rwp"))
             {
-                string zPath = @"7zip\7za.exe"; //add to proj and set CopyToOuputDir
+                var zPath = @"7zip\7za.exe"; //add to proj and set CopyToOuputDir
                 try
                 {
-                    ProcessStartInfo info = new ProcessStartInfo();
+                    var info = new ProcessStartInfo();
                     info.WindowStyle = ProcessWindowStyle.Hidden;
                     info.FileName = zPath;
                     info.Arguments = string.Format("x \"{0}\" -aoa -y -o\"{1}\"", filepath, installFolder);
-                    Process process = Process.Start(info);
+                    var process = Process.Start(info);
                     process.WaitForExit();
                 }
-                catch (System.Exception Ex)
+                catch (Exception e)
                 {
-                    //handle error
+                    File.WriteAllBytes(
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "ApDownloaderInstallerLog.txt"),
+                        Encoding.ASCII.GetBytes(e.Message));
                 }
             }
     }
