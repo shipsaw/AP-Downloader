@@ -78,9 +78,6 @@ public class HttpDataAccess
     public async Task Download(DownloadManifest downloadManifest, ApDownloaderConfig downloadOption,
         IProgress<int> progress)
     {
-        // Get Base Products
-        await DownloadFile(downloadManifest.ProductIds, _productPrefix, progress, downloadOption, "Products");
-
         // Get Extra Stock
         if (downloadOption.GetExtraStock)
             await DownloadFile(downloadManifest.EsFilenames, _extraStockPrefix, progress, downloadOption, "ExtraStock");
@@ -93,6 +90,9 @@ public class HttpDataAccess
         // Get Liveries
         if (downloadOption.GetLiveryPack)
             await DownloadFile(downloadManifest.LpFilenames, _liveryPrefix, progress, downloadOption, "LiveryPacks");
+
+        // Get Base Products
+        await DownloadFile(downloadManifest.ProductIds, _productPrefix, progress, downloadOption, "Products");
 
         await Task.WhenAll(_allTasks);
     }
