@@ -5,11 +5,13 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
+using ApDownloader.UI.MVVM.Views;
 
 namespace ApDownloader.UI.MVVM.ViewModels;
 
@@ -20,6 +22,7 @@ public class InstallViewModel : ObservableObject
     private readonly string _previewImagesPath =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader", "PreviewImages");
 
+    private readonly HttpDataAccess _access;
     private string _busyText;
     private bool _overlayVisibility;
     private bool _selectAllButtonEnabled;
@@ -31,6 +34,7 @@ public class InstallViewModel : ObservableObject
 
     public InstallViewModel()
     {
+        _access = new HttpDataAccess(LoginView.Client ?? new HttpClient(), 3);
         _dataService = new SQLiteDataAccess(MainViewModel.AppFolder);
         InstallCommand = new RelayCommand(async list => await Install((IList) list));
         RenderAllPreviousDownloadsCommand = new RelayCommand(_ => RenderAllPrevDownloads(), _ => AllDownloadsEnabled);
@@ -131,6 +135,10 @@ public class InstallViewModel : ObservableObject
 
     private async Task PopulateAllPrevDownloads()
     {
+        var allApProducts = await _dataService.GetProductsOnly();
+        if (!Directory.Exists(_previewImagesPath) || Directory.GetFiles(_previewImagesPath, "*.png").Length != allApProducts.Count())
+            await _access.DownloadPreviewImages(allApProducts.Select(p => p.ImageName), _previewImagesPath);
+
         if (!Directory.Exists(Path.Combine(MainViewModel.DlOption.DownloadFilepath, "Products"))) return;
         var allFiles = DiskAccess.GetAllFilesOnDisk(MainViewModel.DlOption.DownloadFilepath);
         var allFilesList = allFiles.Select(kvp => kvp.Key).ToList();
