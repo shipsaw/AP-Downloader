@@ -45,10 +45,8 @@ public class MainWindowViewModel : ObservableObject
                 .ToList();
             var installPath = list[0];
             var files = list.GetRange(1, list.Count - 1);
-            var totalFileCount = files.Count;
             var completedFileCount = 0;
-            var progress = new Progress<int>(report => { ProgressText = $"Installing file {++completedFileCount} of {totalFileCount}"; });
-            UnzipAndInstall(files, installPath, progress);
+            UnzipAndInstall(files, installPath, files.Count);
             done = true;
         });
     }
@@ -56,23 +54,41 @@ public class MainWindowViewModel : ObservableObject
     public void ExitIfDone()
     {
         if (done)
+        {
+            var tempPath = Path.Combine(Path.GetTempPath(), "ApDownloader");
+            var dir = new DirectoryInfo(tempPath);
+            if (dir.Exists)
+                dir.Delete(true);
             Application.Current.Shutdown();
+        }
     }
 
-    private void UnzipAndInstall(List<string> filenames, string installFolder, IProgress<int> progress)
+    private void UnzipAndInstall(List<string> filenames, string installFolder, int totalFileCount)
     {
+        var completedFileCount = 0;
+        var progress = new Progress<string>();
         var dir = new DirectoryInfo(TempPath);
         if (dir.Exists)
             dir.Delete(true);
         dir.Create();
+        progress = new Progress<string>(filename =>
+        {
+            ProgressText = $"Extracting file {++completedFileCount} of {totalFileCount}\n{Path.GetFileName(filename)}";
+        });
+        UnzipAddons(filenames, progress);
 
-        UnzipAddons(filenames);
+        completedFileCount = 0;
+        progress = new Progress<string>(filepath =>
+        {
+            var filename = Path.GetFileName(filepath).TrimStart('1', '2', '3', '4', '5', '6', '7', '9', '0');
+            ProgressText = $"Installing file {++completedFileCount} of {totalFileCount}\n{filename}";
+        });
         InstallAddons(installFolder, progress);
 
         ProgressText = "Running scripts; Press any key when finished";
     }
 
-    private static void UnzipAddons(IEnumerable<string> filePaths)
+    private static void UnzipAddons(IEnumerable<string> filePaths, IProgress<string> progress)
     {
         var fileCount = 1;
         foreach (var filepath in filePaths)
@@ -84,6 +100,7 @@ public class MainWindowViewModel : ObservableObject
                         entry.FullName.EndsWith(".rwp", StringComparison.OrdinalIgnoreCase))
                     {
                         var destinationPath = Path.GetFullPath(Path.Combine(TempPath, fileCount + entry.FullName));
+                        progress.Report(entry.FullName);
                         entry.ExtractToFile(destinationPath);
                     }
             }
@@ -92,14 +109,14 @@ public class MainWindowViewModel : ObservableObject
         }
     }
 
-    private static void InstallAddons(string installFolder, IProgress<int> progress)
+    private static void InstallAddons(string installFolder, IProgress<string> progress)
     {
         var files = Directory.GetFiles(TempPath);
         files = files.OrderBy(o => o).ToArray();
         foreach (var filepath in files)
             if (filepath.Trim('"').EndsWith(".exe"))
             {
-                progress.Report(1);
+                progress.Report(filepath);
                 var process = new Process
                 {
                     StartInfo = new ProcessStartInfo
@@ -114,6 +131,7 @@ public class MainWindowViewModel : ObservableObject
             }
             else if (filepath.Trim('"').EndsWith(".rwp"))
             {
+                progress.Report(filepath);
                 var zPath = @"7zip\7za.exe"; //add to proj and set CopyToOuputDir
                 try
                 {

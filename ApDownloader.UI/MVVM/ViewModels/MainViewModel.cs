@@ -42,10 +42,6 @@ public class MainViewModel : ObservableObject
     private void Exit()
     {
         Application.Current.Shutdown();
-        var _tempPath = Path.Combine(Path.GetTempPath(), "ApDownloader");
-        var dir = new DirectoryInfo(_tempPath);
-        if (dir.Exists)
-            dir.Delete(true);
     }
 
     public static bool IsDownloadDataDirty { get; set; } = false;

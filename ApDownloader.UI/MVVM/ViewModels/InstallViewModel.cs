@@ -137,7 +137,14 @@ public class InstallViewModel : ObservableObject
     {
         var allApProducts = await _dataService.GetProductsOnly();
         if (!Directory.Exists(_previewImagesPath) || Directory.GetFiles(_previewImagesPath, "*.png").Length != allApProducts.Count())
+        {
+            MainViewModel.IsNotBusy = false;
+            BusyText = "Loading Addons";
+            OverlayVisibility = true;
             await _access.DownloadPreviewImages(allApProducts.Select(p => p.ImageName), _previewImagesPath);
+            MainViewModel.IsNotBusy = true;
+            OverlayVisibility = false;
+        }
 
         if (!Directory.Exists(Path.Combine(MainViewModel.DlOption.DownloadFilepath, "Products"))) return;
         var allFiles = DiskAccess.GetAllFilesOnDisk(MainViewModel.DlOption.DownloadFilepath);
@@ -148,6 +155,7 @@ public class InstallViewModel : ObservableObject
     private void RenderAllPrevDownloads()
     {
         AllDownloadsEnabled = false;
+        var builderList = new List<Cell>();
         foreach (var product in DownloadedProducts)
         {
             var cell = new Cell
@@ -156,12 +164,14 @@ public class InstallViewModel : ObservableObject
                 _previewImagesPath + "\\" + product.ImageName,
                 product.Name
             );
-            if (!ProductCells.Contains(cell))
-                ProductCells.Add(cell);
+            if (!builderList.Contains(cell))
+                builderList.Add(cell);
         }
 
-        if (ProductCells.Any())
-            SelectAllButtonEnabled = true;
+        builderList = builderList.OrderByDescending(cell => cell.ProductId).ToList();
+        foreach (var cell in builderList) ProductCells.Add(cell);
+
+        if (ProductCells.Any()) SelectAllButtonEnabled = true;
     }
 
     private static async Task<List<string>> GetDownloadList(ApDownloaderConfig config, DownloadManifest manifest)
