@@ -5,7 +5,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using ApDownloader.UI.Core;
@@ -17,10 +16,13 @@ public class MainWindowViewModel : ObservableObject
     private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "ApDownloader");
     private string _progressText = "";
     public readonly RelayCommand BeginInstall;
+    public readonly RelayCommand ExitIfDoneCommand;
+    private bool done;
 
     public MainWindowViewModel()
     {
         BeginInstall = new RelayCommand(_ => ReadFilesFromList());
+        ExitIfDoneCommand = new RelayCommand(_ => ExitIfDone());
     }
 
     public string ProgressText
@@ -47,8 +49,14 @@ public class MainWindowViewModel : ObservableObject
             var completedFileCount = 0;
             var progress = new Progress<int>(report => { ProgressText = $"Installing file {++completedFileCount} of {totalFileCount}"; });
             UnzipAndInstall(files, installPath, progress);
+            done = true;
         });
-        Application.Current.Shutdown();
+    }
+
+    public void ExitIfDone()
+    {
+        if (done)
+            Application.Current.Shutdown();
     }
 
     private void UnzipAndInstall(List<string> filenames, string installFolder, IProgress<int> progress)
@@ -61,8 +69,7 @@ public class MainWindowViewModel : ObservableObject
         UnzipAddons(filenames);
         InstallAddons(installFolder, progress);
 
-        ProgressText = "Running Install Scripts..";
-        Thread.Sleep(5000); // Make sure everything is wrapped up
+        ProgressText = "Running scripts; Press any key when finished";
     }
 
     private static void UnzipAddons(IEnumerable<string> filePaths)

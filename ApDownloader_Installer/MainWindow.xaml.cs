@@ -27,4 +27,10 @@ public partial class MainWindow
         var viewModel = (MainWindowViewModel) DataContext;
         viewModel.BeginInstall.Execute(null);
     }
+
+    private void ExitIfDone(object sender, KeyEventArgs e)
+    {
+        var viewModel = (MainWindowViewModel) DataContext;
+        viewModel.ExitIfDoneCommand.Execute(null);
+    }
 }
