@@ -1,6 +1,0 @@
-MainPackage=C:\Users\Paul Kirby\RiderProjects\ApDownloader\ApDownloaderInstaller\bin\AnyCPU\Debug\ApDownloaderInstaller_0.9.4.0_AnyCPU_Debug.msix
-SymbolPackage=C:\Users\Paul Kirby\RiderProjects\ApDownloader\ApDownloaderInstaller\obj\Debug\Symbols\ApDownloaderInstaller_0.9.4.0_AnyCPU_Debug.appxsym
-ResourcePack=C:\Users\Paul Kirby\RiderProjects\ApDownloader\ApDownloaderInstaller\bin\AnyCPU\Debug\ApDownloaderInstaller_0.9.4.0_scale-100.msix
-ResourcePack=C:\Users\Paul Kirby\RiderProjects\ApDownloader\ApDownloaderInstaller\bin\AnyCPU\Debug\ApDownloaderInstaller_0.9.4.0_scale-125.msix
-ResourcePack=C:\Users\Paul Kirby\RiderProjects\ApDownloader\ApDownloaderInstaller\bin\AnyCPU\Debug\ApDownloaderInstaller_0.9.4.0_scale-150.msix
-ResourcePack=C:\Users\Paul Kirby\RiderProjects\ApDownloader\ApDownloaderInstaller\bin\AnyCPU\Debug\ApDownloaderInstaller_0.9.4.0_scale-400.msix
