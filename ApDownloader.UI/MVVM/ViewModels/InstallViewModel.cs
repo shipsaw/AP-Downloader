@@ -135,13 +135,13 @@ public class InstallViewModel : ObservableObject
 
     private async Task PopulateAllPrevDownloads()
     {
-        var allApProducts = await _dataService.GetProductsOnly();
+        var allApProducts = await _dataService.GetProductsOnly().ConfigureAwait(false);
         if (!Directory.Exists(_previewImagesPath) || Directory.GetFiles(_previewImagesPath, "*.png").Length != allApProducts.Count())
         {
             MainViewModel.IsNotBusy = false;
             BusyText = "Loading Addons";
             OverlayVisibility = true;
-            await _access.DownloadPreviewImages(allApProducts.Select(p => p.ImageName), _previewImagesPath);
+            await _access.DownloadPreviewImages(allApProducts.Select(p => p.ImageName), _previewImagesPath).ConfigureAwait(false);
             MainViewModel.IsNotBusy = true;
             OverlayVisibility = false;
         }
@@ -152,26 +152,36 @@ public class InstallViewModel : ObservableObject
         DownloadedProducts = await _dataService.GetDownloadedProductsByName(allFilesList);
     }
 
-    private void RenderAllPrevDownloads()
+    private async void RenderAllPrevDownloads()
     {
-        AllDownloadsEnabled = false;
-        var builderList = new List<Cell>();
-        foreach (var product in DownloadedProducts)
-        {
-            var cell = new Cell
-            (
-                product.ProductID,
-                _previewImagesPath + "\\" + product.ImageName,
-                product.Name
-            );
-            if (!builderList.Contains(cell))
-                builderList.Add(cell);
-        }
+        MainViewModel.IsNotBusy = false;
+        BusyText = "Getting Previous Downloads";
+        OverlayVisibility = true;
 
-        builderList = builderList.OrderByDescending(cell => cell.ProductId).ToList();
+        var builderList = new List<Cell>();
+        await Task.Run(() =>
+        {
+            AllDownloadsEnabled = false;
+            foreach (var product in DownloadedProducts)
+            {
+                var cell = new Cell
+                (
+                    product.ProductID,
+                    _previewImagesPath + "\\" + product.ImageName,
+                    product.Name
+                );
+                if (!builderList.Contains(cell))
+                    builderList.Add(cell);
+            }
+
+            builderList = builderList.OrderByDescending(cell => cell.ProductId).ToList();
+        });
         foreach (var cell in builderList) ProductCells.Add(cell);
 
         if (ProductCells.Any()) SelectAllButtonEnabled = true;
+
+        MainViewModel.IsNotBusy = true;
+        OverlayVisibility = false;
     }
 
     private static async Task<List<string>> GetDownloadList(ApDownloaderConfig config, DownloadManifest manifest)
