@@ -27,7 +27,7 @@ public partial class LoginView : UserControl
 
     public static bool IsLoggedIn { get; private set; }
 
-    public static HttpClient? Client { get; private set; } = new(Handler);
+    public static HttpClient Client { get; private set; } = new(Handler);
 
     private void Login_Loaded(object sender, RoutedEventArgs e)
     {

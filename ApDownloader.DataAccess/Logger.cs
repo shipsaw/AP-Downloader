@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace ApDownloader.UI.Logging;
+namespace ApDownloader.DataAccess;
 
 public static class Logger
 {

@@ -4,6 +4,7 @@ using System.Linq;
 using ApDownloader.DataAccess;
 using ApDownloader.UI.Core;
 using ApDownloader.UI.Logging;
+using Logger = ApDownloader.UI.Logging.Logger;
 
 namespace ApDownloader.UI.MVVM.ViewModels;
 

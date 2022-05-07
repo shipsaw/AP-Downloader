@@ -14,16 +14,16 @@ public class HttpDataAccess
 {
     private readonly List<Task> _allTasks;
     private readonly SemaphoreSlim _throttler;
-    private readonly HttpClient? _client;
+    private readonly HttpClient _client;
 
-    private readonly string _brandingPatchPrefix = "https://www.armstrongpowerhouse.com/free_download/Patches/";
-    private readonly string _extraStockPrefix = "https://www.armstrongpowerhouse.com/free_download/";
-    private readonly string _liveryPrefix = "https://www.armstrongpowerhouse.com/free_download/";
-    private readonly string _previewImagePrefix = "https://www.armstrongpowerhouse.com/image/cache/catalog/";
-    private readonly string _productPrefix = "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=";
+    private const string BrandingPatchPrefix = "https://www.armstrongpowerhouse.com/free_download/Patches/";
+    private const string ExtraStockPrefix = "https://www.armstrongpowerhouse.com/free_download/";
+    private const string LiveryPrefix = "https://www.armstrongpowerhouse.com/free_download/";
+    private const string PreviewImagePrefix = "https://www.armstrongpowerhouse.com/image/cache/catalog/";
+    private const string ProductPrefix = "https://www.armstrongpowerhouse.com/index.php?route=account/download/download&download_id=";
 
 
-    public HttpDataAccess(HttpClient? client, int concurrentDownloads = 1)
+    public HttpDataAccess(HttpClient client, int concurrentDownloads = 1)
     {
         _client = client;
         _allTasks = new List<Task>();
@@ -31,37 +31,37 @@ public class HttpDataAccess
     }
 
     /// <summary>
-    ///     Checkes download headers for Product Information, gets content length
+    /// Checks download headers for Product Information, gets content length
     /// </summary>
     /// <param name="products"> List of all AP products we want to check for purchased and populate with content length info</param>
     /// <returns>Purchased products with website content length filled in</returns>
     /// <exception cref="ErrorCheckingPurchasesException"></exception>
     public async Task<IEnumerable<Product>> GetPurchasedProducts(IEnumerable<Product> products)
     {
-        var productsList = new List<Product>(products);
+        var productsList = products.ToList();
         var retProducts = new List<Product>();
         var tasks = new List<Task<HttpResponseMessage>>();
 
-        foreach (var product in products)
-        {
-            await Task.Delay(30);
-            tasks.Add(_client.SendAsync(new HttpRequestMessage(HttpMethod.Head,
-                _productPrefix +
-                product.ProductID)));
-        }
-
         try
         {
+            foreach (var product in productsList)
+            {
+                await Task.Delay(30);
+                tasks.Add(_client.SendAsync(new HttpRequestMessage(HttpMethod.Head,
+                    ProductPrefix +
+                    product.ProductID)));
+            }
+
             var httpResponses = await Task.WhenAll(tasks.ToList());
 
-            for (var i = 0; i < products.Count(); i++)
+            for (var i = 0; i < productsList.Count; i++)
                 if (httpResponses[i].Content.Headers.ContentDisposition != null)
                 {
                     productsList[i].CurrentContentLength = httpResponses[i].Content.Headers.ContentLength ?? 0;
                     retProducts.Add(productsList[i]);
                 }
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw new ErrorCheckingPurchasesException();
         }
@@ -70,7 +70,7 @@ public class HttpDataAccess
     }
 
     /// <summary>
-    ///     Calls all download methods for products, extrastock, brandingpatches, and liverypacks
+    /// Calls all download methods for products, extrastock, brandingpatches, and liverypacks
     /// </summary>
     /// <param name="downloadManifest">file ids to download</param>
     /// <param name="downloadOption"></param>
@@ -80,23 +80,31 @@ public class HttpDataAccess
     {
         // Get Extra Stock
         if (downloadOption.GetExtraStock)
-            await DownloadFile(downloadManifest.EsFilenames, _extraStockPrefix, progress, downloadOption, "ExtraStock");
+            await DownloadFile(downloadManifest.EsFilenames, ExtraStockPrefix, progress, downloadOption, "ExtraStock");
 
         // Get Branding Patch
         if (downloadOption.GetBrandingPatch)
-            await DownloadFile(downloadManifest.BpFilenames, _brandingPatchPrefix, progress, downloadOption,
+            await DownloadFile(downloadManifest.BpFilenames, BrandingPatchPrefix, progress, downloadOption,
                 "BrandingPatches");
 
         // Get Liveries
         if (downloadOption.GetLiveryPack)
-            await DownloadFile(downloadManifest.LpFilenames, _liveryPrefix, progress, downloadOption, "LiveryPacks");
+            await DownloadFile(downloadManifest.LpFilenames, LiveryPrefix, progress, downloadOption, "LiveryPacks");
 
         // Get Base Products
-        await DownloadFile(downloadManifest.ProductIds, _productPrefix, progress, downloadOption, "Products");
+        await DownloadFile(downloadManifest.ProductIds, ProductPrefix, progress, downloadOption, "Products");
 
         await Task.WhenAll(_allTasks);
     }
 
+    /// <summary>
+    /// Method that sets up and adds to throttler. Actual downloads done in SaveFile which is called by this method
+    /// </summary>
+    /// <param name="products"></param>
+    /// <param name="prefix"></param>
+    /// <param name="progress"></param>
+    /// <param name="downloadOption"></param>
+    /// <param name="saveLoc"></param>
     private async Task DownloadFile(IEnumerable<string> products, string prefix, IProgress<int> progress,
         ApDownloaderConfig downloadOption, string saveLoc)
     {
@@ -104,15 +112,17 @@ public class HttpDataAccess
         {
             var uri = new Uri(prefix + filename);
             await _throttler.WaitAsync();
-            await Task.Delay(100);
+            await Task.Delay(100); // Space between downloads to account for errors
             _allTasks.Add(
                 Task.Run(async () =>
                 {
                     try
                     {
                         progress.Report(1);
+                        // We don't have filenames for products, only the product ID.  So for product prefix we have
+                        // to get this info from the server in the SaveFile call
                         await SaveFile(downloadOption, uri, saveLoc,
-                            prefix == _productPrefix ? "" : filename);
+                            prefix == ProductPrefix ? "" : filename);
                     }
                     finally
                     {
@@ -127,7 +137,7 @@ public class HttpDataAccess
         Directory.CreateDirectory(imagesPath);
         foreach (var filename in productImageNames)
         {
-            var uri = new Uri(_previewImagePrefix + filename);
+            var uri = new Uri(PreviewImagePrefix + filename);
             await _throttler.WaitAsync();
             await Task.Delay(100);
             _allTasks.Add(
@@ -149,7 +159,12 @@ public class HttpDataAccess
     {
         using (var response = await _client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead))
         {
-            if (filename == "") filename = response.Content.Headers.ContentDisposition.FileName.Trim('"');
+            if (filename == "")
+            {
+                var responseFilename = response.Content.Headers.ContentDisposition?.FileName?.Trim('"');
+                if (responseFilename == null) Logger.Log("Unable to get filename for" + uri);
+                filename = responseFilename ?? "ERROR:";
+            }
             using (var streamToReadFrom = await response.Content.ReadAsStreamAsync())
             {
                 var fileToWriteTo = Path.Combine(downloadOption.DownloadFilepath, saveLoc, filename);
@@ -165,7 +180,12 @@ public class HttpDataAccess
     {
         using (var response = await _client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead))
         {
-            if (filename == "") filename = response.Content.Headers.ContentDisposition.FileName.Trim('"');
+            if (filename == "")
+            {
+                var responseFilename = response.Content.Headers.ContentDisposition?.FileName?.Trim('"');
+                if (responseFilename == null) Logger.Log("Unable to get filename for" + uri);
+                filename = responseFilename ?? "ERROR:";
+            }
             using (var streamToReadFrom = await response.Content.ReadAsStreamAsync())
             {
                 var fileToWriteTo = Path.Combine(saveLoc, filename);

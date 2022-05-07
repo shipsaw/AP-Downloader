@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using ApDownloader.DataAccess;
@@ -12,6 +13,7 @@ using ApDownloader.Model.Exceptions;
 using ApDownloader.UI.Core;
 using ApDownloader.UI.Logging;
 using ApDownloader.UI.MVVM.Views;
+using Logger = ApDownloader.UI.Logging.Logger;
 
 namespace ApDownloader.UI.MVVM.ViewModels;
 
@@ -108,7 +110,7 @@ public class DownloadViewModel : ObservableObject
             await LoadUserAddons();
             BusyText = "Download Complete";
         }
-        catch (ErrorCheckingPurchasesException e)
+        catch (ErrorCheckingPurchasesException)
         {
             BusyText = "Error checking purchased products";
         }
@@ -126,7 +128,7 @@ public class DownloadViewModel : ObservableObject
     private async Task<bool> LoadUserAddons()
     {
         var success = false;
-        AllApProducts = await _dataService.GetProductsOnly();
+        AllApProducts = (await _dataService.GetProductsOnly()).ToList();
         if (!Directory.Exists(_previewImagesPath) || Directory.GetFiles(_previewImagesPath, "*.png").Length != AllApProducts.Count())
             await _access.DownloadPreviewImages(AllApProducts.Select(p => p.ImageName), _previewImagesPath);
         if (!MainViewModel.Products.Any() || MainViewModel.IsDownloadDataDirty)
@@ -146,7 +148,7 @@ public class DownloadViewModel : ObservableObject
                 MainViewModel.IsDownloadDataDirty = false;
                 success = true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 BusyText = "Unable to connect to server";
             }

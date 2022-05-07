@@ -7,6 +7,11 @@ namespace ApDownloader.DataAccess;
 
 public static class DiskAccess
 {
+    /// <summary>
+    /// Gets all .zip files that are in the download folder specified.
+    /// </summary>
+    /// <param name="dlOptionDownloadFilepath"></param>
+    /// <returns>Dictionary of filename, file length</returns>
     public static Dictionary<string, long> GetAllFilesOnDisk(string dlOptionDownloadFilepath)
     {
         var addonFolders = new List<string> {"", "Products", "ExtraStock", "BrandingPatches", "LiveryPacks"};
