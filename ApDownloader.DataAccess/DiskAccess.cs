@@ -7,13 +7,13 @@ namespace ApDownloader.DataAccess;
 
 public static class DiskAccess
 {
-    public static HashSet<FileInfo> GetAllFilesOnDisk(string dlOptionDownloadFilepath)
+    public static Dictionary<string, long> GetAllFilesOnDisk(string dlOptionDownloadFilepath)
     {
         var addonFolders = new List<string> {"", "Products", "ExtraStock", "BrandingPatches", "LiveryPacks"};
-        var files = new HashSet<FileInfo>();
+        var files = new Dictionary<string, long>();
         foreach (var addonFile in addonFolders.SelectMany(folder => GetAddonFiles(dlOptionDownloadFilepath, folder)))
         {
-            files.Add(addonFile);
+            files.TryAdd(addonFile.Name, addonFile.Length);
         }
         return files;
     }
