@@ -79,7 +79,7 @@ public class InstallViewModel : ObservableObject
 
     private async Task Loaded()
     {
-        var products = _dataService.GetDownloadedProductsOnly(MainViewModel.DlManifest?.ProductIds).Result;
+        var products = _dataService.GetDownloadedProductsOnly(MainViewModel.DlManifest.ProductIds).Result;
         foreach (var product in products)
         {
             var cell = new Cell
@@ -135,8 +135,8 @@ public class InstallViewModel : ObservableObject
 
     private async Task PopulateAllPrevDownloads()
     {
-        var allApProducts = await _dataService.GetProductsOnly().ConfigureAwait(false);
-        if (!Directory.Exists(_previewImagesPath) || Directory.GetFiles(_previewImagesPath, "*.png").Length != allApProducts.Count())
+        var allApProducts = (await _dataService.GetProductsOnly().ConfigureAwait(false)).ToList();
+        if (!Directory.Exists(_previewImagesPath) || Directory.GetFiles(_previewImagesPath, "*.png").Length != allApProducts.Count)
         {
             MainViewModel.IsNotBusy = false;
             BusyText = "Loading Addons";
@@ -158,6 +158,7 @@ public class InstallViewModel : ObservableObject
         BusyText = "Getting Previous Downloads";
         OverlayVisibility = true;
 
+        var productList = ProductCells.ToList();
         var builderList = new List<Cell>();
         await Task.Run(() =>
         {
@@ -170,7 +171,7 @@ public class InstallViewModel : ObservableObject
                     _previewImagesPath + "\\" + product.ImageName,
                     product.Name
                 );
-                if (!builderList.Contains(cell))
+                if (!productList.Exists(listCell => listCell.ProductId == cell.ProductId))
                     builderList.Add(cell);
             }
 

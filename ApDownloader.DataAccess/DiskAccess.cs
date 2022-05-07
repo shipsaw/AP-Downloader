@@ -25,7 +25,7 @@ public static class DiskAccess
 
     private static IEnumerable<FileInfo> GetAddonFiles (string downloadFilepath, string folder)
     {
-        var fullFolderPath = Path.Combine(downloadFilepath + folder);
+        var fullFolderPath = Path.Combine(downloadFilepath, folder);
         return Directory.Exists(fullFolderPath) ?
             Directory.EnumerateFiles(fullFolderPath, "*.zip").Select(filename => new FileInfo(filename))
             : new List<FileInfo>();
