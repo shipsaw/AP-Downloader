@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -6,42 +7,22 @@ namespace ApDownloader.DataAccess;
 
 public static class DiskAccess
 {
-    public static Dictionary<string, long> GetAllFilesOnDisk(string dlOptionDownloadFilepath)
+    public static HashSet<FileInfo> GetAllFilesOnDisk(string dlOptionDownloadFilepath)
     {
-        Dictionary<string, long> allFiles = new();
-        IEnumerable<FileInfo>? rootFiles = null;
-        IEnumerable<FileInfo>? productFiles = null;
-        IEnumerable<FileInfo>? extraStockFiles = null;
-        IEnumerable<FileInfo>? brandingPatchFiles = null;
-        IEnumerable<FileInfo>? liveryPackFiles = null;
+        var addonFolders = new List<string> {"", "Products", "ExtraStock", "BrandingPatches", "LiveryPacks"};
+        var files = new HashSet<FileInfo>();
+        foreach (var addonFile in addonFolders.SelectMany(folder => GetAddonFiles(dlOptionDownloadFilepath, folder)))
+        {
+            files.Add(addonFile);
+        }
+        return files;
+    }
 
-        if (Directory.Exists(dlOptionDownloadFilepath))
-            rootFiles = Directory.EnumerateFiles(dlOptionDownloadFilepath, "*.zip", SearchOption.TopDirectoryOnly)
-                .Select(filename => new FileInfo(filename));
-        if (Directory.Exists(Path.Combine(dlOptionDownloadFilepath, "Products")))
-            productFiles = Directory.EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "Products"), "*.zip",
-                SearchOption.TopDirectoryOnly).Select(filename => new FileInfo(filename));
-        if (Directory.Exists(Path.Combine(dlOptionDownloadFilepath, "ExtraStock")))
-            extraStockFiles = Directory.EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "ExtraStock"), "*.zip",
-                SearchOption.TopDirectoryOnly).Select(filename => new FileInfo(filename));
-        if (Directory.Exists(Path.Combine(dlOptionDownloadFilepath, "BrandingPatches")))
-            brandingPatchFiles = Directory.EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "BrandingPatches"), "*.zip",
-                SearchOption.TopDirectoryOnly).Select(filename => new FileInfo(filename));
-        if (Directory.Exists(Path.Combine(dlOptionDownloadFilepath, "LiveryPacks")))
-            liveryPackFiles = Directory.EnumerateFiles(Path.Combine(dlOptionDownloadFilepath, "LiveryPacks"), "*.zip",
-                SearchOption.TopDirectoryOnly).Select(filename => new FileInfo(filename));
-
-        foreach (var file in rootFiles ?? new List<FileInfo>())
-            allFiles.TryAdd(file.Name, file.Length);
-        foreach (var file in productFiles ?? new List<FileInfo>())
-            allFiles.TryAdd(file.Name, file.Length);
-        foreach (var file in extraStockFiles ?? new List<FileInfo>())
-            allFiles.TryAdd(file.Name, file.Length);
-        foreach (var file in brandingPatchFiles ?? new List<FileInfo>())
-            allFiles.TryAdd(file.Name, file.Length);
-        foreach (var file in liveryPackFiles ?? new List<FileInfo>())
-            allFiles.TryAdd(file.Name, file.Length);
-
-        return allFiles;
+    private static IEnumerable<FileInfo> GetAddonFiles (string downloadFilepath, string folder)
+    {
+        var fullFolderPath = Path.Combine(downloadFilepath + folder);
+        return Directory.Exists(fullFolderPath) ?
+            Directory.EnumerateFiles(fullFolderPath, "*.zip").Select(filename => new FileInfo(filename))
+            : new List<FileInfo>();
     }
 }
