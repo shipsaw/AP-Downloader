@@ -132,13 +132,15 @@ public class MainWindowViewModel : ObservableObject
             else if (filepath.Trim('"').EndsWith(".rwp"))
             {
                 progress.Report(filepath);
-                var zPath = @"7zip\7za.exe"; //add to proj and set CopyToOuputDir
+                const string zPath = @"7zip\7za.exe"; //add to proj and set CopyToOuputDir
                 try
                 {
-                    var info = new ProcessStartInfo();
-                    info.WindowStyle = ProcessWindowStyle.Hidden;
-                    info.FileName = zPath;
-                    info.Arguments = string.Format("x \"{0}\" -aoa -y -o\"{1}\"", filepath, installFolder);
+                    var info = new ProcessStartInfo
+                    {
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        FileName = zPath,
+                        Arguments = $"x \"{filepath}\" -aoa -y -o\"{installFolder}\""
+                    };
                     var process = Process.Start(info);
                     process.WaitForExit();
                 }

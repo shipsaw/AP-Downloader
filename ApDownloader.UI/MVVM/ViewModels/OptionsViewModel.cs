@@ -215,7 +215,7 @@ public class OptionsViewModel : ObservableObject
 
     private void UpdateProductDb(string filename)
     {
-        UpdateDbNotificationText = "Database update failed";
+        UpdateDbNotificationText = "Database update failed, run as administrator";
         try
         {
             _dataAccess.ImportProductDb(filename);
