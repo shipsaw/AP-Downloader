@@ -110,7 +110,7 @@ func unzipFile(f *zip.File, destination string) error {
 }
 
 func installAddon(setupExe string) {
-	installCmd := `& '` + setupExe + `' /b"C:\temp" /s /v"/qn INSTALLDIR="C:\Railworks""`
+	installCmd := `& '` + setupExe + `' /b"C:\temp" /s /v"/qn INSTALLDIR="C:\Railworks" /L+i "C:\temp\install.log""`
 	fmt.Print("Installing " + filepath.Base(setupExe) + " ... ")
 	cmd := exec.Command("powershell", "-NoProfile", "-NonInteractive", installCmd)
 
