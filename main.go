@@ -4,32 +4,55 @@ import (
 	"bufio"
 	"fmt"
 	"golang.org/x/sys/windows"
-	"log"
 	"os"
+	"os/exec"
 )
 
 func main() {
-	// Check for correct permissions, un-comment this for release build
+	fmt.Println("Starting")
+	//Check for correct permissions, un-comment this for release build
 	//if !checkElevatedStatus() {
-	//	log.Fatal("Error getting correct user permissions")
+	//	fmt.Println("Error getting correct user permissions")
+	//	//fmt.Println("Error getting correct user permissions")
 	//}
+	fmt.Scanln()
 	manifest, err := os.Open(`C:\ProgramData\ApDownloader\Downloads.txt`)
 	if err != nil {
-		log.Fatal("Error reading install manifest")
+		fmt.Scanln()
+		//fmt.Println("Error reading install manifest")
+		fmt.Println("Error reading install manifest")
 	}
 	defer manifest.Close()
+	fmt.Println("Install manifest read successfully")
+	fmt.Scanln()
+	fmt.Println("Getting install folder")
+
 	scanner := bufio.NewScanner(manifest)
 	installLoc := getInstallLocation(scanner)
+	fmt.Println("Install folder retrieved")
 	for scanner.Scan() {
 		fmt.Println(scanner.Text())
 	}
-	fmt.Println("Railwords install folder: " + installLoc)
+	fmt.Println("Railworks install folder: " + installLoc)
+	fmt.Scanln()
+	//args := "/b\"C:\\temp\" /S /v\"/qn INSTALLDIR=\"C:\\Railworks\"\""
+	//program := `JTA-JUA-PTA Wagon Pack.exe`
+	//args := []string{`/s`, `/b"C:\temp"`, `/v"/qn"`} //" INSTALLDIR="C:\Railwords"`}
+	fmt.Println("Begin cmd")
+	fmt.Scanln()
+	exec.Command("powershell", "-NoProfile", `& 'C:\JTA-JUA-PTA Wagon Pack.exe' /b"C:\temp" /s /v"/qn INSTALLDIR="C:\Railwords""`).Run()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("Complete")
+	fmt.Scanln()
+
 }
 
 func getInstallLocation(scanner *bufio.Scanner) string {
 	scanner.Scan()
 	if err := scanner.Err(); err != nil {
-		log.Fatal("No Railworks folder path provided")
+		fmt.Println("No Railworks folder path provided")
 	}
 	return scanner.Text()
 
@@ -49,7 +72,8 @@ func checkElevatedStatus() bool {
 		0, 0, 0, 0, 0, 0,
 		&sid)
 	if err != nil {
-		log.Fatalf("SID Error: %s", err)
+		//fmt.Printlnf("SID Error: %s", err)
+		fmt.Println("SID Error: %s", err)
 		return false
 	}
 
@@ -60,7 +84,8 @@ func checkElevatedStatus() bool {
 
 	member, err := token.IsMember(sid)
 	if err != nil {
-		log.Fatalf("Token Membership Error: %s", err)
+		//fmt.Printlnf("Token Membership Error: %s", err)
+		fmt.Println("Token Membership Error: %s", err)
 		return false
 	}
 
@@ -68,7 +93,9 @@ func checkElevatedStatus() bool {
 	// elevated.
 	// For elevation see https://github.com/mozey/run-as-admin
 	if token.IsElevated() && member {
+		fmt.Println(token.IsElevated(), member)
 		return true
 	}
+	fmt.Println(token.IsElevated(), member)
 	return false
 }
