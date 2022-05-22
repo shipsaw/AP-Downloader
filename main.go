@@ -1,11 +1,16 @@
 package main
 
 import (
+	"archive/zip"
 	"bufio"
+	"bytes"
 	"fmt"
 	"golang.org/x/sys/windows"
+	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 )
 
 func main() {
@@ -15,38 +20,116 @@ func main() {
 	//	fmt.Println("Error getting correct user permissions")
 	//	//fmt.Println("Error getting correct user permissions")
 	//}
-	fmt.Scanln()
 	manifest, err := os.Open(`C:\ProgramData\ApDownloader\Downloads.txt`)
 	if err != nil {
-		fmt.Scanln()
 		//fmt.Println("Error reading install manifest")
 		fmt.Println("Error reading install manifest")
 	}
 	defer manifest.Close()
 	fmt.Println("Install manifest read successfully")
-	fmt.Scanln()
 	fmt.Println("Getting install folder")
 
 	scanner := bufio.NewScanner(manifest)
 	installLoc := getInstallLocation(scanner)
 	fmt.Println("Install folder retrieved")
+	fmt.Println("Railworks install folder: " + installLoc + "\n")
+
+	var setupExes []string
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
+		setupExes = append(setupExes, scanner.Text())
 	}
-	fmt.Println("Railworks install folder: " + installLoc)
-	fmt.Scanln()
-	//args := "/b\"C:\\temp\" /S /v\"/qn INSTALLDIR=\"C:\\Railworks\"\""
-	//program := `JTA-JUA-PTA Wagon Pack.exe`
-	//args := []string{`/s`, `/b"C:\temp"`, `/v"/qn"`} //" INSTALLDIR="C:\Railwords"`}
-	fmt.Println("Begin cmd")
-	fmt.Scanln()
-	exec.Command("powershell", "-NoProfile", `& 'C:\JTA-JUA-PTA Wagon Pack.exe' /b"C:\temp" /s /v"/qn INSTALLDIR="C:\Railwords""`).Run()
-	if err != nil {
-		fmt.Println(err)
+	fmt.Printf("There are %d addons to install\n", len(setupExes))
+
+	for _, f := range setupExes {
+		path := unzipAddon(f)
+		installAddon(path)
 	}
+
 	fmt.Println("Complete")
 	fmt.Scanln()
 
+}
+
+func unzipAddon(fileName string) string {
+	installerExe := ""
+	reader, err := zip.OpenReader(fileName)
+	if err != nil {
+		fmt.Println("Error unzipping files")
+	}
+	defer reader.Close()
+
+	for _, f := range reader.File {
+		if filepath.Ext(f.Name) == ".exe" {
+			installerExe = f.Name
+		}
+		err = unzipFile(f, `C:\temp`)
+		if err != nil {
+			fmt.Println("Error unzipping ", f)
+		}
+	}
+	return filepath.Join("C:\\temp\\" + installerExe)
+}
+
+func unzipFile(f *zip.File, destination string) error {
+	// 4. Check if file paths are not vulnerable to Zip Slip
+	filePath := filepath.Join(destination, f.Name)
+	if !strings.HasPrefix(filePath, filepath.Clean(destination)+string(os.PathSeparator)) {
+		return fmt.Errorf("invalid file path: %s", filePath)
+	}
+
+	// 5. Create directory tree
+	if f.FileInfo().IsDir() {
+		if err := os.MkdirAll(filePath, os.ModePerm); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	if err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {
+		return err
+	}
+
+	// 6. Create a destination file for unzipped content
+	destinationFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+	if err != nil {
+		return err
+	}
+	defer destinationFile.Close()
+
+	// 7. Unzip the content of a file and copy it to the destination file
+	zippedFile, err := f.Open()
+	if err != nil {
+		return err
+	}
+	defer zippedFile.Close()
+
+	if _, err := io.Copy(destinationFile, zippedFile); err != nil {
+		return err
+	}
+	return nil
+}
+
+func installAddon(setupExe string) {
+	installCmd := `& '` + setupExe + `' /b"C:\temp" /s /v"/qn INSTALLDIR="C:\Railworks""`
+	fmt.Print("Installing " + filepath.Base(setupExe) + " ... ")
+	cmd := exec.Command("powershell", "-NoProfile", "-NonInteractive", installCmd)
+
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println(err)
+	}
+	if stdout.Len() > 0 {
+		fmt.Println("\nStdOut: " + stdout.String())
+	} else if stderr.Len() > 0 {
+		fmt.Println("\nStdErr: " + stderr.String())
+	} else {
+		fmt.Println("Done")
+	}
 }
 
 func getInstallLocation(scanner *bufio.Scanner) string {
