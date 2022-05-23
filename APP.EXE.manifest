@@ -3,7 +3,7 @@
 <assemblyIdentity
     version="9.0.0.0"
     processorArchitecture="x86"
-    name="main.exe"
+    name="ApInstallManager.exe"
     type="win32"
 />
 <description>Golang example of using a manifest file to prompt "Run as administrator"</description>

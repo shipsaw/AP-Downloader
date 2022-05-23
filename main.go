@@ -225,34 +225,9 @@ func DecodeUTF16(b []byte) (string, error) {
 }
 
 func createLogFiles(successfulInstalls []string, failedInstalls []string, downloadDir string) error {
-	canCreateSuc := true
-	canCreateFail := true
-	if successfulInstalls != nil {
-		file, err := os.Create(filepath.Join(downloadDir, "logSuccess.log"))
-		if err != nil {
-			canCreateSuc = false
-		}
-		for _, line := range successfulInstalls {
-			frontRemoved := strings.Split(line, "Product: ")[1]
-			rearRemoved := strings.Split(frontRemoved, " --")[0]
-			_, err = file.WriteString(rearRemoved + "\n")
-			if err != nil {
-				canCreateSuc = false
-			}
-		}
-	}
-	if failedInstalls != nil {
-		file, err := os.Create(filepath.Join(downloadDir, "logFailed.log"))
-		canCreateFail = false
-		for _, line := range failedInstalls {
-			frontRemoved := strings.Split(line, "Product: ")[1]
-			rearRemoved := strings.Split(frontRemoved, " --")[0]
-			_, err = file.WriteString(rearRemoved + "\n")
-			if err != nil {
-				canCreateFail = false
-			}
-		}
-	}
+	canCreateSuc := createLogFile(successfulInstalls, downloadDir)
+	canCreateFail := createLogFile(failedInstalls, downloadDir)
+
 	if !canCreateFail || !canCreateSuc {
 		errMsg := ""
 		if !canCreateFail {
@@ -265,4 +240,23 @@ func createLogFiles(successfulInstalls []string, failedInstalls []string, downlo
 	} else {
 		return nil
 	}
+}
+
+func createLogFile(logLines []string, downloadDir string) bool {
+	canCreate := true
+	if logLines != nil {
+		file, err := os.Create(filepath.Join(downloadDir, "logSuccess.log"))
+		if err != nil {
+			canCreate = false
+		}
+		for _, line := range logLines {
+			frontRemoved := strings.Split(line, "Product: ")[1]
+			rearRemoved := strings.Split(frontRemoved, " --")[0]
+			_, err = file.WriteString(rearRemoved + "\n")
+			if err != nil {
+				canCreate = false
+			}
+		}
+	}
+	return canCreate
 }
