@@ -19,8 +19,10 @@ import (
 )
 
 type userDirectories struct {
-	installDir  string
-	downloadDir string
+	installDir     string
+	downloadDir    string
+	programDataDir string
+	tempDir        string
 }
 
 func main() {
@@ -45,8 +47,10 @@ func main() {
 	}
 	defer os.Remove(tempDir)
 	os.Remove(filepath.Join(tempDir, `install.log`))
+	os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logSuccess.log`))
+	os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logFailure.log`))
 
-	manifest, err := os.Open(filepath.Join(appManifestFile))
+	manifest, err := os.Open(appManifestFile)
 	if err != nil {
 		log.Fatal("Error reading install manifest")
 	}
@@ -54,6 +58,8 @@ func main() {
 
 	scanner := bufio.NewScanner(manifest)
 	userDirs := getUserDirs(scanner)
+	userDirs.tempDir = tempDir
+	userDirs.programDataDir = filepath.Dir(appManifestFile)
 	fmt.Println("Railworks install folder: " + userDirs.installDir + "\n")
 
 	var setupExes []string
@@ -88,7 +94,7 @@ func main() {
 		}
 	}
 
-	err = createUserLogFiles(successfulInstalls, failedInstalls, userDirs.downloadDir)
+	err = createUserLogFiles(successfulInstalls, failedInstalls, userDirs.programDataDir)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -232,8 +238,8 @@ func DecodeUTF16(b []byte) (string, error) {
 }
 
 func createUserLogFiles(successfulInstalls []string, failedInstalls []string, downloadDir string) error {
-	canCreateSuc := createUserLogFile(successfulInstalls, downloadDir)
-	canCreateFail := createUserLogFile(failedInstalls, downloadDir)
+	canCreateSuc := createUserLogFile(successfulInstalls, filepath.Join(downloadDir, "logSuccess.log"))
+	canCreateFail := createUserLogFile(failedInstalls, filepath.Join(downloadDir, "logFailure.log"))
 
 	if !canCreateFail || !canCreateSuc {
 		errMsg := ""
@@ -249,10 +255,10 @@ func createUserLogFiles(successfulInstalls []string, failedInstalls []string, do
 	}
 }
 
-func createUserLogFile(logLines []string, downloadDir string) bool {
+func createUserLogFile(logLines []string, logPath string) bool {
 	canCreate := true
 	if logLines != nil {
-		file, err := os.Create(filepath.Join(downloadDir, "logSuccess.log"))
+		file, err := os.Create(logPath)
 		if err != nil {
 			canCreate = false
 		}
