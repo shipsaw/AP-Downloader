@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/briandowns/spinner"
 	"io"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -16,6 +17,11 @@ import (
 	"unicode/utf16"
 	"unicode/utf8"
 )
+
+type userDirectories struct {
+	installDir  string
+	downloadDir string
+}
 
 func main() {
 	fmt.Println("Starting")
@@ -28,7 +34,12 @@ func main() {
 	defer os.Remove(tempDir)
 	os.Remove(filepath.Join(tempDir, `install.log`))
 
-	manifest, err := os.Open(`C:\ProgramData\ApDownloader\Downloads.txt`)
+	if len(os.Args) != 2 {
+		log.Fatal("Error: must provide argument with location of manifest file")
+	}
+	appManifestFile := string(os.Args[1])
+
+	manifest, err := os.Open(filepath.Join(appManifestFile))
 	if err != nil {
 		fmt.Println("Error reading install manifest")
 		fmt.Scanf("h")
@@ -37,9 +48,8 @@ func main() {
 	defer manifest.Close()
 
 	scanner := bufio.NewScanner(manifest)
-	installLoc := getInstallLocation(scanner)
-	fmt.Println("Railworks install folder: " + installLoc + "\n")
-	downloadLoc := `C:\ProgramData\ApDownloader`
+	userDirs := getUserDirs(scanner)
+	fmt.Println("Railworks install folder: " + userDirs.installDir + "\n")
 
 	var setupExes []string
 	for scanner.Scan() {
@@ -52,7 +62,7 @@ func main() {
 		if err != nil {
 			// TODO: Append failed file unzips
 		}
-		installAddon(path, i+1, totalFiles, tempDir, installLoc)
+		installAddon(path, i+1, totalFiles, tempDir, userDirs.installDir)
 	}
 
 	installLog, err := os.ReadFile(filepath.Join(tempDir, `install.log`))
@@ -73,7 +83,7 @@ func main() {
 		}
 	}
 
-	err = createLogFiles(successfulInstalls, failedInstalls, downloadLoc)
+	err = createLogFiles(successfulInstalls, failedInstalls, userDirs.downloadDir)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -171,13 +181,24 @@ func installAddon(setupExe string, progress int, totalFlies int, tempDir string,
 	}
 }
 
-func getInstallLocation(scanner *bufio.Scanner) string {
+// returns installation directory, download directory
+func getUserDirs(scanner *bufio.Scanner) userDirectories {
 	scanner.Scan()
 	if err := scanner.Err(); err != nil {
 		fmt.Println("No Railworks folder path provided")
 	}
-	return scanner.Text()
+	installDir := scanner.Text()
 
+	scanner.Scan()
+	if err := scanner.Err(); err != nil {
+		fmt.Println("No Railworks folder path provided")
+	}
+	downloadDir := scanner.Text()
+
+	return userDirectories{
+		installDir:  installDir,
+		downloadDir: downloadDir,
+	}
 }
 
 func DecodeUTF16(b []byte) (string, error) {
