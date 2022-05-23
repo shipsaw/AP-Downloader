@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/briandowns/spinner"
 	"golang.org/x/sys/windows"
@@ -63,8 +64,6 @@ func main() {
 	installLog, err := os.ReadFile(filepath.Join(tempDir, `install.log`))
 	if err != nil {
 		fmt.Println("Installation log not found, unable to generate reports")
-		fmt.Scanf("h")
-		os.Exit(1)
 	}
 
 	cleanLog, err := DecodeUTF16(installLog)
@@ -80,26 +79,13 @@ func main() {
 		}
 	}
 
-	if successfulInstalls != nil {
-		file, _ := os.Create(filepath.Join(downloadLoc, "logSuccess.log"))
-		for _, line := range successfulInstalls {
-			frontRemoved := strings.Split(line, "Product: ")[1]
-			rearRemoved := strings.Split(frontRemoved, " --")[0]
-			file.WriteString(rearRemoved + "\n")
-		}
-	}
-	if failedInstalls != nil {
-		file, _ := os.Create(filepath.Join(downloadLoc, "logFailed.log"))
-		for _, line := range failedInstalls {
-			frontRemoved := strings.Split(line, "Product: ")[1]
-			rearRemoved := strings.Split(frontRemoved, " --")[0]
-			file.WriteString(rearRemoved + "\n")
-		}
+	err = createLogFiles(successfulInstalls, failedInstalls, downloadLoc)
+	if err != nil {
+		fmt.Println(err)
 	}
 
 	fmt.Println("Complete")
-	fmt.Scanln()
-
+	fmt.Scanf("h")
 }
 
 // Returns path of unzipped file
@@ -263,4 +249,47 @@ func DecodeUTF16(b []byte) (string, error) {
 	}
 
 	return ret.String(), nil
+}
+
+func createLogFiles(successfulInstalls []string, failedInstalls []string, downloadDir string) error {
+	canCreateSuc := true
+	canCreateFail := true
+	if successfulInstalls != nil {
+		file, err := os.Create(filepath.Join(downloadDir, "logSuccess.log"))
+		if err != nil {
+			canCreateSuc = false
+		}
+		for _, line := range successfulInstalls {
+			frontRemoved := strings.Split(line, "Product: ")[1]
+			rearRemoved := strings.Split(frontRemoved, " --")[0]
+			_, err = file.WriteString(rearRemoved + "\n")
+			if err != nil {
+				canCreateSuc = false
+			}
+		}
+	}
+	if failedInstalls != nil {
+		file, err := os.Create(filepath.Join(downloadDir, "logFailed.log"))
+		canCreateFail = false
+		for _, line := range failedInstalls {
+			frontRemoved := strings.Split(line, "Product: ")[1]
+			rearRemoved := strings.Split(frontRemoved, " --")[0]
+			_, err = file.WriteString(rearRemoved + "\n")
+			if err != nil {
+				canCreateFail = false
+			}
+		}
+	}
+	if !canCreateFail || !canCreateSuc {
+		errMsg := ""
+		if !canCreateFail {
+			errMsg += "Unable to create log of failed installations\n"
+		}
+		if !canCreateSuc {
+			errMsg += "Unable to create log of successful installations\n"
+		}
+		return errors.New(errMsg)
+	} else {
+		return nil
+	}
 }
