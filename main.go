@@ -5,16 +5,21 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"github.com/briandowns/spinner"
 	"golang.org/x/sys/windows"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
+	"unicode/utf16"
+	"unicode/utf8"
 )
 
 func main() {
 	fmt.Println("Starting")
+	os.Remove(`C:\temp\install.log`)
 	//Check for correct permissions, un-comment this for release build
 	//if !checkElevatedStatus() {
 	//	fmt.Println("Error getting correct user permissions")
@@ -39,10 +44,31 @@ func main() {
 		setupExes = append(setupExes, scanner.Text())
 	}
 	fmt.Printf("There are %d addons to install\n", len(setupExes))
+	totalFiles := len(setupExes)
 
-	for _, f := range setupExes {
+	for i, f := range setupExes {
 		path := unzipAddon(f)
-		installAddon(path)
+		installAddon(path, i+1, totalFiles)
+	}
+
+	installLog, err := os.ReadFile(`C:\temp\install.log`)
+	if err != nil {
+		fmt.Println("Installation log not found")
+	}
+	fmt.Println("Install manifest read successfully")
+	fmt.Println("Getting install folder")
+
+	cleanLog, err := DecodeUTF16(installLog)
+	stringLines := strings.Split(cleanLog, "\n")
+
+	var successfulInstalls []string
+	var failedInstalls []string
+	for _, line := range stringLines {
+		if strings.Contains(line, "Product:") && strings.Contains(line, "successfully") {
+			successfulInstalls = append(successfulInstalls, line)
+		} else if strings.Contains(line, "Product:") && strings.Contains(line, "failed") {
+			failedInstalls = append(failedInstalls, line)
+		}
 	}
 
 	fmt.Println("Complete")
@@ -109,9 +135,12 @@ func unzipFile(f *zip.File, destination string) error {
 	return nil
 }
 
-func installAddon(setupExe string) {
+func installAddon(setupExe string, progress int, totalFlies int) {
 	installCmd := `& '` + setupExe + `' /b"C:\temp" /s /v"/qn INSTALLDIR="C:\Railworks" /L+i "C:\temp\install.log""`
-	fmt.Print("Installing " + filepath.Base(setupExe) + " ... ")
+	installingText := fmt.Sprintf("Installing %d/%d: %s", progress, totalFlies, filepath.Base(setupExe))
+	s := spinner.New(spinner.CharSets[26], 400*time.Millisecond) // Build our new spinner
+	s.Prefix = installingText
+	s.Start() // Start the spinner
 	cmd := exec.Command("powershell", "-NoProfile", "-NonInteractive", installCmd)
 
 	var stdout bytes.Buffer
@@ -123,12 +152,14 @@ func installAddon(setupExe string) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	s.Stop()
+
 	if stdout.Len() > 0 {
 		fmt.Println("\nStdOut: " + stdout.String())
 	} else if stderr.Len() > 0 {
 		fmt.Println("\nStdErr: " + stderr.String())
 	} else {
-		fmt.Println("Done")
+		fmt.Println(installingText + "... Done")
 	}
 }
 
@@ -181,4 +212,27 @@ func checkElevatedStatus() bool {
 	}
 	fmt.Println(token.IsElevated(), member)
 	return false
+}
+
+func DecodeUTF16(b []byte) (string, error) {
+
+	if len(b)%2 != 0 {
+		return "", fmt.Errorf("Must have even length byte slice")
+	}
+
+	u16s := make([]uint16, 1)
+
+	ret := &bytes.Buffer{}
+
+	b8buf := make([]byte, 4)
+
+	lb := len(b)
+	for i := 0; i < lb; i += 2 {
+		u16s[0] = uint16(b[i]) + (uint16(b[i+1]) << 8)
+		r := utf16.Decode(u16s)
+		n := utf8.EncodeRune(b8buf, r[0])
+		ret.Write(b8buf[:n])
+	}
+
+	return ret.String(), nil
 }
