@@ -19,44 +19,53 @@ import (
 
 func main() {
 	fmt.Println("Starting")
-	os.Remove(`C:\temp\install.log`)
+	tempDir, err := os.MkdirTemp("", "apDownloader")
+	if err != nil {
+		fmt.Println("Error, Unable to create temporary directory; exiting")
+		fmt.Scanf("h")
+		os.Exit(1)
+	}
+	os.Remove(filepath.Join(tempDir, `install.log`))
+
 	//Check for correct permissions, un-comment this for release build
 	//if !checkElevatedStatus() {
 	//	fmt.Println("Error getting correct user permissions")
 	//	//fmt.Println("Error getting correct user permissions")
 	//}
+
 	manifest, err := os.Open(`C:\ProgramData\ApDownloader\Downloads.txt`)
 	if err != nil {
-		//fmt.Println("Error reading install manifest")
 		fmt.Println("Error reading install manifest")
+		fmt.Scanf("h")
+		os.Exit(1)
 	}
 	defer manifest.Close()
-	fmt.Println("Install manifest read successfully")
-	fmt.Println("Getting install folder")
 
 	scanner := bufio.NewScanner(manifest)
 	installLoc := getInstallLocation(scanner)
-	fmt.Println("Install folder retrieved")
 	fmt.Println("Railworks install folder: " + installLoc + "\n")
+	downloadLoc := `C:\ProgramData\ApDownloader`
 
 	var setupExes []string
 	for scanner.Scan() {
 		setupExes = append(setupExes, scanner.Text())
 	}
-	fmt.Printf("There are %d addons to install\n", len(setupExes))
 	totalFiles := len(setupExes)
 
 	for i, f := range setupExes {
-		path := unzipAddon(f)
-		installAddon(path, i+1, totalFiles)
+		path, err := unzipAddon(f, tempDir)
+		if err != nil {
+			// TODO: Append failed file unzips
+		}
+		installAddon(path, i+1, totalFiles, tempDir, installLoc)
 	}
 
-	installLog, err := os.ReadFile(`C:\temp\install.log`)
+	installLog, err := os.ReadFile(filepath.Join(tempDir, `install.log`))
 	if err != nil {
-		fmt.Println("Installation log not found")
+		fmt.Println("Installation log not found, unable to generate reports")
+		fmt.Scanf("h")
+		os.Exit(1)
 	}
-	fmt.Println("Install manifest read successfully")
-	fmt.Println("Getting install folder")
 
 	cleanLog, err := DecodeUTF16(installLog)
 	stringLines := strings.Split(cleanLog, "\n")
@@ -71,16 +80,34 @@ func main() {
 		}
 	}
 
+	if successfulInstalls != nil {
+		file, _ := os.Create(filepath.Join(downloadLoc, "logSuccess.log"))
+		for _, line := range successfulInstalls {
+			frontRemoved := strings.Split(line, "Product: ")[1]
+			rearRemoved := strings.Split(frontRemoved, " --")[0]
+			file.WriteString(rearRemoved + "\n")
+		}
+	}
+	if failedInstalls != nil {
+		file, _ := os.Create(filepath.Join(downloadLoc, "logFailed.log"))
+		for _, line := range failedInstalls {
+			frontRemoved := strings.Split(line, "Product: ")[1]
+			rearRemoved := strings.Split(frontRemoved, " --")[0]
+			file.WriteString(rearRemoved + "\n")
+		}
+	}
+
 	fmt.Println("Complete")
 	fmt.Scanln()
 
 }
 
-func unzipAddon(fileName string) string {
+// Returns path of unzipped file
+func unzipAddon(fileName string, tempDir string) (string, error) {
 	installerExe := ""
 	reader, err := zip.OpenReader(fileName)
 	if err != nil {
-		fmt.Println("Error unzipping files")
+		return "", fmt.Errorf("Unable to unzip %s", fileName)
 	}
 	defer reader.Close()
 
@@ -88,12 +115,12 @@ func unzipAddon(fileName string) string {
 		if filepath.Ext(f.Name) == ".exe" {
 			installerExe = f.Name
 		}
-		err = unzipFile(f, `C:\temp`)
+		err = unzipFile(f, tempDir)
 		if err != nil {
-			fmt.Println("Error unzipping ", f)
+			return "", fmt.Errorf("Unable to unzip %s", f.Name)
 		}
 	}
-	return filepath.Join("C:\\temp\\" + installerExe)
+	return filepath.Join(tempDir, installerExe), nil
 }
 
 func unzipFile(f *zip.File, destination string) error {
@@ -135,8 +162,9 @@ func unzipFile(f *zip.File, destination string) error {
 	return nil
 }
 
-func installAddon(setupExe string, progress int, totalFlies int) {
-	installCmd := `& '` + setupExe + `' /b"C:\temp" /s /v"/qn INSTALLDIR="C:\Railworks" /L+i "C:\temp\install.log""`
+func installAddon(setupExe string, progress int, totalFlies int, tempDir string, installDir string) {
+	installCmd := fmt.Sprintf("& '%s' /b\"%s\" /s /v\"/qn INSTALLDIR=\"%s\" /L+i \"%s\"\"",
+		setupExe, tempDir, installDir, filepath.Join(tempDir, `install.log`))
 	installingText := fmt.Sprintf("Installing %d/%d: %s", progress, totalFlies, filepath.Base(setupExe))
 	s := spinner.New(spinner.CharSets[26], 400*time.Millisecond) // Build our new spinner
 	s.Prefix = installingText
