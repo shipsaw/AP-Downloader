@@ -129,6 +129,16 @@ public class InstallViewModel : ObservableObject
             process.Start();
             await process.WaitForExitAsync();
             BusyText = process.ExitCode != 0 ? "Installation failed" : "Installation Complete";
+            var logFailurePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                "ApDownloader\\logFailure.log");
+            if (File.Exists(logFailurePath))
+            {
+                BusyText += "\nSome installations have\nfailed, check logs in\n" + Path.GetDirectoryName(logFailurePath);
+            }
+            else
+            {
+                BusyText += "\nAll addons installed\ncorrectly";
+            }
         }
 
         MainViewModel.IsNotBusy = true;
