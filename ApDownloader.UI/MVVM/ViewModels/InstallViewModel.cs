@@ -98,6 +98,7 @@ public class InstallViewModel : ObservableObject
 
     private async Task Install(IList selectedCells)
     {
+        var manifestPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"ApDownloader\Downloads.txt");
         MainViewModel.IsNotBusy = false;
         BusyText = "Installing Addons";
         OverlayVisibility = true;
@@ -106,18 +107,18 @@ public class InstallViewModel : ObservableObject
 
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
         var downloadList = await GetDownloadList(MainViewModel.DlOption, MainViewModel.DlManifest);
+        downloadList = downloadList.Prepend(MainViewModel.DlOption.DownloadFilepath).ToList();
         downloadList = downloadList.Prepend(MainViewModel.DlOption.InstallFilePath).ToList();
-        await File.WriteAllLinesAsync(
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ApDownloader") + @"\Downloads.txt",
-            downloadList);
+        await File.WriteAllLinesAsync(manifestPath, downloadList);
         var fullName = Directory.GetParent(Assembly.GetExecutingAssembly().Location)?.FullName;
         if (fullName != null)
         {
             var path = Path.Combine(fullName, "InstallerExe") +
-                       @"\ApDownloader_Installer.exe";
+                       @"\ApInstallManager.exe";
             var info = new ProcessStartInfo(
                 path)
             {
+                Arguments = manifestPath,
                 UseShellExecute = true,
                 Verb = "runas"
             };
