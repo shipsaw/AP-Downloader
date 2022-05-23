@@ -24,26 +24,31 @@ type userDirectories struct {
 }
 
 func main() {
-	fmt.Println("Starting")
-	tempDir, err := os.MkdirTemp("", "apDownloader")
-	if err != nil {
-		fmt.Println("Error, Unable to create temporary directory; exiting")
-		fmt.Scanf("h")
-		os.Exit(1)
-	}
-	defer os.Remove(tempDir)
-	os.Remove(filepath.Join(tempDir, `install.log`))
+	fmt.Println("AP Install Manager\n******************\n")
 
 	if len(os.Args) != 2 {
 		log.Fatal("Error: must provide argument with location of manifest file")
 	}
 	appManifestFile := string(os.Args[1])
 
+	file, err := openProgramLogFile(filepath.Join(filepath.Dir(appManifestFile), "programLog.log"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.SetOutput(file)
+	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
+	log.Println("Beginning Execution")
+
+	tempDir, err := os.MkdirTemp("", "apDownloader")
+	if err != nil {
+		log.Fatal("Error, Unable to create temporary directory; exiting")
+	}
+	defer os.Remove(tempDir)
+	os.Remove(filepath.Join(tempDir, `install.log`))
+
 	manifest, err := os.Open(filepath.Join(appManifestFile))
 	if err != nil {
-		fmt.Println("Error reading install manifest")
-		fmt.Scanf("h")
-		os.Exit(1)
+		log.Fatal("Error reading install manifest")
 	}
 	defer manifest.Close()
 
@@ -67,7 +72,7 @@ func main() {
 
 	installLog, err := os.ReadFile(filepath.Join(tempDir, `install.log`))
 	if err != nil {
-		fmt.Println("Installation log not found, unable to generate reports")
+		log.Println("Installation log not found, unable to generate reports")
 	}
 
 	cleanLog, err := DecodeUTF16(installLog)
@@ -83,13 +88,14 @@ func main() {
 		}
 	}
 
-	err = createLogFiles(successfulInstalls, failedInstalls, userDirs.downloadDir)
+	err = createUserLogFiles(successfulInstalls, failedInstalls, userDirs.downloadDir)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
-	fmt.Println("Complete")
-	fmt.Scanf("h")
+	fmt.Println("Complete...")
+	time.Sleep(2 * time.Second)
+	log.Println("Execution complete")
 }
 
 // Returns path of unzipped file
@@ -173,11 +179,12 @@ func installAddon(setupExe string, progress int, totalFlies int, tempDir string,
 	s.Stop()
 
 	if stdout.Len() > 0 {
-		fmt.Println("\nStdOut: " + stdout.String())
+		log.Println("\nStdOut: " + stdout.String())
 	} else if stderr.Len() > 0 {
-		fmt.Println("\nStdErr: " + stderr.String())
+		log.Println("\nStdErr: " + stderr.String())
 	} else {
 		fmt.Println(installingText + "... Done")
+		log.Println(installingText + "... Done")
 	}
 }
 
@@ -185,13 +192,13 @@ func installAddon(setupExe string, progress int, totalFlies int, tempDir string,
 func getUserDirs(scanner *bufio.Scanner) userDirectories {
 	scanner.Scan()
 	if err := scanner.Err(); err != nil {
-		fmt.Println("No Railworks folder path provided")
+		log.Fatal("No Railworks folder path provided")
 	}
 	installDir := scanner.Text()
 
 	scanner.Scan()
 	if err := scanner.Err(); err != nil {
-		fmt.Println("No Railworks folder path provided")
+		log.Fatal("No Railworks folder path provided")
 	}
 	downloadDir := scanner.Text()
 
@@ -224,9 +231,9 @@ func DecodeUTF16(b []byte) (string, error) {
 	return ret.String(), nil
 }
 
-func createLogFiles(successfulInstalls []string, failedInstalls []string, downloadDir string) error {
-	canCreateSuc := createLogFile(successfulInstalls, downloadDir)
-	canCreateFail := createLogFile(failedInstalls, downloadDir)
+func createUserLogFiles(successfulInstalls []string, failedInstalls []string, downloadDir string) error {
+	canCreateSuc := createUserLogFile(successfulInstalls, downloadDir)
+	canCreateFail := createUserLogFile(failedInstalls, downloadDir)
 
 	if !canCreateFail || !canCreateSuc {
 		errMsg := ""
@@ -242,7 +249,7 @@ func createLogFiles(successfulInstalls []string, failedInstalls []string, downlo
 	}
 }
 
-func createLogFile(logLines []string, downloadDir string) bool {
+func createUserLogFile(logLines []string, downloadDir string) bool {
 	canCreate := true
 	if logLines != nil {
 		file, err := os.Create(filepath.Join(downloadDir, "logSuccess.log"))
@@ -259,4 +266,12 @@ func createLogFile(logLines []string, downloadDir string) bool {
 		}
 	}
 	return canCreate
+}
+
+func openProgramLogFile(path string) (*os.File, error) {
+	logFile, err := os.OpenFile(path, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+	if err != nil {
+		return nil, err
+	}
+	return logFile, nil
 }
