@@ -39,7 +39,7 @@ func main() {
 	}
 	log.SetOutput(file)
 	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
-	log.Println("Beginning Execution")
+	//log.Println("Beginning Execution")
 
 	tempDir, err := os.MkdirTemp("", "apDownloader")
 	if err != nil {
@@ -73,12 +73,19 @@ func main() {
 		if err != nil {
 			// TODO: Append failed file unzips
 		}
-		installAddon(path, i+1, totalFiles, tempDir, userDirs.installDir)
+		if filepath.Ext(path) == ".exe" {
+			installAddon(path, i+1, totalFiles, tempDir, userDirs.installDir)
+		} else if filepath.Ext(path) == ".rwp" {
+			err = unzipRWP(path, i+1, totalFiles, userDirs)
+			if err != nil {
+				//log.Println("Unable to extract RWP file: " + path + " to " + userDirs.installDir)
+			}
+		}
 	}
 
 	installLog, err := os.ReadFile(filepath.Join(tempDir, `install.log`))
 	if err != nil {
-		log.Println("Installation log not found, unable to generate reports")
+		//log.Println("Installation log not found, unable to generate reports")
 	}
 
 	cleanLog, err := DecodeUTF16(installLog)
@@ -101,7 +108,7 @@ func main() {
 
 	fmt.Println("Complete...")
 	time.Sleep(2 * time.Second)
-	log.Println("Execution complete")
+	//log.Println("Execution complete")
 }
 
 // Returns path of unzipped file
@@ -114,12 +121,12 @@ func unzipAddon(fileName string, tempDir string) (string, error) {
 	defer reader.Close()
 
 	for _, f := range reader.File {
-		if filepath.Ext(f.Name) == ".exe" {
+		if filepath.Ext(f.Name) == ".exe" || filepath.Ext(f.Name) == ".rwp" {
 			installerExe = f.Name
-		}
-		err = unzipFile(f, tempDir)
-		if err != nil {
-			return "", fmt.Errorf("Unable to unzip %s", f.Name)
+			err = unzipFile(f, tempDir)
+			if err != nil {
+				return "", fmt.Errorf("Unable to unzip %s", f.Name)
+			}
 		}
 	}
 	return filepath.Join(tempDir, installerExe), nil
@@ -164,6 +171,33 @@ func unzipFile(f *zip.File, destination string) error {
 	return nil
 }
 
+func unzipRWP(fileName string, progress int, totalFiles int, userDirs userDirectories) error {
+	installingText := fmt.Sprintf("Installing %d/%d: %s", progress, totalFiles, filepath.Base(fileName))
+	s := spinner.New(spinner.CharSets[26], 400*time.Millisecond) // Build our new spinner
+	s.Prefix = installingText
+	s.Start() // Start the spinner
+
+	fileNameWithZipExt := fileName[:len(fileName)-len(filepath.Ext(fileName))] + ".zip"
+	err := os.Rename(fileName, fileNameWithZipExt)
+	if err != nil {
+		fmt.Errorf("Unable to unzip %s", fileName)
+	}
+	reader, err := zip.OpenReader(fileNameWithZipExt)
+	if err != nil {
+		return fmt.Errorf("Unable to unzip %s", fileNameWithZipExt)
+	}
+	defer reader.Close()
+	err = unzipFile(reader.File[0], userDirs.installDir)
+	if err != nil {
+		return fmt.Errorf("Unable to unzip %s", fileNameWithZipExt)
+	}
+
+	s.Stop()
+	fmt.Println(installingText + "... Done")
+	//log.Println(installingText + "... Done")
+	return nil
+}
+
 func installAddon(setupExe string, progress int, totalFlies int, tempDir string, installDir string) {
 	installCmd := fmt.Sprintf("& '%s' /b\"%s\" /s /v\"/qn INSTALLDIR=\"%s\" /L+i \"%s\"\"",
 		setupExe, tempDir, installDir, filepath.Join(tempDir, `install.log`))
@@ -185,12 +219,12 @@ func installAddon(setupExe string, progress int, totalFlies int, tempDir string,
 	s.Stop()
 
 	if stdout.Len() > 0 {
-		log.Println("\nStdOut: " + stdout.String())
+		//log.Println("\nStdOut: " + stdout.String())
 	} else if stderr.Len() > 0 {
-		log.Println("\nStdErr: " + stderr.String())
+		//log.Println("\nStdErr: " + stderr.String())
 	} else {
 		fmt.Println(installingText + "... Done")
-		log.Println(installingText + "... Done")
+		//log.Println(installingText + "... Done")
 	}
 }
 
