@@ -38,10 +38,12 @@ public class DownloadViewModel : ObservableObject
         _dataService = new SQLiteDataAccess(MainViewModel.AppFolder);
         _access = new HttpDataAccess(LoginView.Client, 3);
         LoadUserAddonsCommand = new AsyncRelayCommand.AsyncCommand(LoadUserAddons);
+        UpdateProductsDbCommand = new AsyncRelayCommand.AsyncCommand(UpdateProductsDb);
         RenderUserAddonsCommand = new AsyncRelayCommand.AsyncCommand(RenderUserAddons);
     }
 
     public AsyncRelayCommand.AsyncCommand LoadUserAddonsCommand { get; set; }
+    public AsyncRelayCommand.AsyncCommand UpdateProductsDbCommand { get; set; }
     public AsyncRelayCommand.AsyncCommand RenderUserAddonsCommand { get; set; }
     public RelayCommand DownloadCommand { get; set; }
     public ObservableCollection<Cell> ProductCells { get; set; } = new();
@@ -154,6 +156,11 @@ public class DownloadViewModel : ObservableObject
             }
 
         return success;
+    }
+
+    private async Task<bool> UpdateProductsDb()
+    {
+        return await _access.UpdateProductsDb();
     }
 
     private async Task RenderUserAddons()
