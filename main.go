@@ -25,6 +25,7 @@ type userDirectories struct {
 	tempDir        string
 }
 
+//goland:noinspection ALL
 func main() {
 	fmt.Println("AP Install Manager\n******************\n")
 
@@ -38,10 +39,10 @@ func main() {
 }
 
 func readArguments(args []string) string {
-	if len(os.Args) != 2 {
+	if len(args) != 2 {
 		log.Fatal("Error: must provide argument with location of manifest file")
 	}
-	appManifestFile := string(os.Args[1])
+	appManifestFile := string(args[1])
 	file, err := openProgramLogFile(filepath.Join(filepath.Dir(appManifestFile), "programLog.log"))
 	if err != nil {
 		log.Fatal(err)
@@ -59,9 +60,9 @@ func readManifest(appManifestFile string) (userDirectories, []string) {
 	}
 
 	// Remove previous run user logs
-	os.Remove(filepath.Join(tempDir, `install.log`))
-	os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logSuccess.log`))
-	os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logFailure.log`))
+	_ = os.Remove(filepath.Join(tempDir, `install.log`))
+	_ = os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logSuccess.log`))
+	_ = os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logFailure.log`))
 
 	manifest, err := os.Open(appManifestFile)
 	if err != nil {
@@ -105,7 +106,7 @@ func unzipAddon(fileName string, tempDir string) (string, error) {
 	installerExe := ""
 	reader, err := zip.OpenReader(fileName)
 	if err != nil {
-		return "", fmt.Errorf("Unable to unzip %s", fileName)
+		return "", fmt.Errorf("unable to unzip %s", fileName)
 	}
 	defer reader.Close()
 
@@ -114,7 +115,7 @@ func unzipAddon(fileName string, tempDir string) (string, error) {
 			installerExe = f.Name
 			err = unzipFile(f, tempDir)
 			if err != nil {
-				return "", fmt.Errorf("Unable to unzip %s", f.Name)
+				return "", fmt.Errorf("unable to unzip %s", f.Name)
 			}
 		}
 	}
@@ -232,7 +233,7 @@ func getUserDirs(scanner *bufio.Scanner) userDirectories {
 func DecodeUTF16(b []byte) (string, error) {
 
 	if len(b)%2 != 0 {
-		return "", fmt.Errorf("Must have even length byte slice")
+		return "", fmt.Errorf("must have even length byte slice")
 	}
 
 	u16s := make([]uint16, 1)
