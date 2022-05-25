@@ -127,8 +127,6 @@ public class HttpDataAccess
         foreach (var filename in products)
         {
             var uri = new Uri(prefix + filename);
-            await _throttler.WaitAsync();
-            await Task.Delay(100); // Space between downloads to account for errors
             _allTasks.Add(
                 Task.Run(async () =>
                 {
@@ -145,6 +143,11 @@ public class HttpDataAccess
                         _throttler.Release();
                     }
                 }));
+            if (_allTasks.Count == 1)
+            {
+                var completed = await Task.WhenAny(_allTasks);
+                _allTasks.Remove(completed);
+            }
         }
     }
 
