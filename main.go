@@ -115,11 +115,21 @@ func unzipAddon(fileName string, tempDir string) (string, error) {
 			installerExe = f.Name
 			err = unzipFile(f, tempDir)
 			if err != nil {
-				return "", fmt.Errorf("unable to unzip %s", f.Name)
+				err = unzipBackupMethod(fileName, tempDir)
+				if err != nil {
+					return "", fmt.Errorf("unable to unzip %s", f.Name)
+				}
 			}
 		}
 	}
 	return filepath.Join(tempDir, installerExe), nil
+}
+
+// Attempt unzip with 7zip directly
+func unzipBackupMethod(fileName string, tempDir string) error {
+	unzipCommand := fmt.Sprintf("& ./7z.exe x \"%s\" -aoa -y -o\"%s\"", fileName, tempDir)
+	cmd := exec.Command("powershell", "-NoProfile", "-NonInteractive", unzipCommand)
+	return cmd.Run()
 }
 
 func unzipFile(f *zip.File, destination string) error {
@@ -337,7 +347,7 @@ func cleanupTempFolders(userDirs userDirectories) {
 		if err != nil {
 			log.Println("Unable to inspect file " + f + " for deletion")
 		}
-		if time.Now().Sub(fileInfo.ModTime()) < 30*time.Second {
+		if time.Now().Sub(fileInfo.ModTime()) < 2*time.Minute {
 			os.RemoveAll(f)
 		}
 	}
