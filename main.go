@@ -30,14 +30,14 @@ func main() {
 	fmt.Println("AP Install Manager\n******************\n")
 
 	appManifestFile := readArguments(os.Args)
-	userDirs, setupZips := readManifest(appManifestFile)
+	userDirs, setupZips, manifestErr := readManifest(appManifestFile)
 	defer os.RemoveAll(userDirs.tempDir)
 	installsFailed, installsSucceeded := installAddons(setupZips, userDirs)
 	userLogErrors := generateUserLogs(userDirs, installsFailed, installsSucceeded)
 	cleanupErrors := cleanupTempFolders(userDirs)
 	// If there are non-fatal errors, exit with exit code, but have the calling application check to see if some
 	// Installations succeeded
-	if userLogErrors != nil || cleanupErrors != nil {
+	if userLogErrors != nil || cleanupErrors != nil || manifestErr != nil {
 		os.Exit(1)
 	}
 }
@@ -61,7 +61,8 @@ func readArguments(args []string) string {
 
 // Looks through the manifest to get install zips and folder locations
 // As with the previous function a failure at this point is unrecoverable
-func readManifest(appManifestFile string) (userDirectories, []string) {
+func readManifest(appManifestFile string) (userDirectories, []string, error) {
+	nonFatalError := false
 	tempDir, err := os.MkdirTemp("", "apDownloader")
 	if err != nil {
 		log.Fatal("Error, Unable to create temporary directory; exiting")
@@ -71,11 +72,13 @@ func readManifest(appManifestFile string) (userDirectories, []string) {
 	err = os.Remove(filepath.Join(tempDir, `install.log`))
 	if err != nil {
 		log.Println("Unable to clear install log")
+		nonFatalError = true
 	}
 	errSuccLog := os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logSuccess.log`))
 	errFailLog := os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logFailure.log`))
 	if errSuccLog != nil || errFailLog != nil {
 		log.Println("Unable to clear success and failure reporting logs")
+		nonFatalError = true
 	}
 
 	manifest, err := os.Open(appManifestFile)
@@ -97,7 +100,10 @@ func readManifest(appManifestFile string) (userDirectories, []string) {
 	for scanner.Scan() {
 		setupZips = append(setupZips, scanner.Text())
 	}
-	return userDirs, setupZips
+	if nonFatalError {
+		return userDirs, setupZips, errors.New("There were problems in cleaning up the old logs")
+	}
+	return userDirs, setupZips, nil
 }
 
 // Installs exe and rwp addons, any failures will be added to the failed addon log
