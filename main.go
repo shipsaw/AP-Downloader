@@ -28,11 +28,20 @@ type userDirectories struct {
 func main() {
 	fmt.Println("AP Install Manager\n******************\n")
 
+	appManifestFile := readArguments(os.Args)
+	userDirs, setupExes := readManifest(appManifestFile)
+	defer os.RemoveAll(userDirs.tempDir)
+	installAddons(setupExes, userDirs)
+	generateUserLogs(userDirs)
+	cleanupTempFolders(userDirs)
+
+}
+
+func readArguments(args []string) string {
 	if len(os.Args) != 2 {
 		log.Fatal("Error: must provide argument with location of manifest file")
 	}
 	appManifestFile := string(os.Args[1])
-
 	file, err := openProgramLogFile(filepath.Join(filepath.Dir(appManifestFile), "programLog.log"))
 	if err != nil {
 		log.Fatal(err)
@@ -40,12 +49,16 @@ func main() {
 	log.SetOutput(file)
 	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
 	log.Println("Beginning Execution")
+	return appManifestFile
+}
 
+func readManifest(appManifestFile string) (userDirectories, []string) {
 	tempDir, err := os.MkdirTemp("", "apDownloader")
 	if err != nil {
 		log.Fatal("Error, Unable to create temporary directory; exiting")
 	}
-	defer os.Remove(tempDir)
+
+	// Remove previous run user logs
 	os.Remove(filepath.Join(tempDir, `install.log`))
 	os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logSuccess.log`))
 	os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logFailure.log`))
@@ -60,21 +73,24 @@ func main() {
 	userDirs := getUserDirs(scanner)
 	userDirs.tempDir = tempDir
 	userDirs.programDataDir = filepath.Dir(appManifestFile)
-	fmt.Println("Railworks install folder: " + userDirs.installDir + "\n")
+	log.Println("Railworks install folder: " + userDirs.installDir + "\n")
 
 	var setupExes []string
 	for scanner.Scan() {
 		setupExes = append(setupExes, scanner.Text())
 	}
-	totalFiles := len(setupExes)
+	return userDirs, setupExes
+}
 
+func installAddons(setupExes []string, userDirs userDirectories) {
+	totalFiles := len(setupExes)
 	for i, f := range setupExes {
-		path, err := unzipAddon(f, tempDir)
+		path, err := unzipAddon(f, userDirs.tempDir)
 		if err != nil {
-			// TODO: Append failed file unzips
+			log.Println("Unable to extract " + path)
 		}
 		if filepath.Ext(path) == ".exe" {
-			installAddon(path, i+1, totalFiles, tempDir, userDirs.installDir)
+			installAddon(path, i+1, totalFiles, userDirs.tempDir, userDirs.installDir)
 		} else if filepath.Ext(path) == ".rwp" {
 			err = unzipRWP(path, i+1, totalFiles, userDirs)
 			if err != nil {
@@ -82,33 +98,6 @@ func main() {
 			}
 		}
 	}
-
-	installLog, err := os.ReadFile(filepath.Join(tempDir, `install.log`))
-	if err != nil {
-		log.Println("Installation log not found, unable to generate reports")
-	}
-
-	cleanLog, err := DecodeUTF16(installLog)
-	stringLines := strings.Split(cleanLog, "\n")
-
-	var successfulInstalls []string
-	var failedInstalls []string
-	for _, line := range stringLines {
-		if strings.Contains(line, "Product:") && strings.Contains(line, "successfully") {
-			successfulInstalls = append(successfulInstalls, line)
-		} else if strings.Contains(line, "Product:") && strings.Contains(line, "failed") {
-			failedInstalls = append(failedInstalls, line)
-		}
-	}
-
-	err = createUserLogFiles(successfulInstalls, failedInstalls, userDirs.programDataDir)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Complete...")
-	time.Sleep(2 * time.Second)
-	log.Println("Execution complete")
 }
 
 // Returns path of unzipped file
@@ -191,7 +180,7 @@ func unzipRWP(fileName string, progress int, totalFiles int, userDirs userDirect
 }
 
 func installAddon(setupExe string, progress int, totalFlies int, tempDir string, installDir string) {
-	installCmd := fmt.Sprintf("& '%s' /b\"%s\" /s /v\"/qn INSTALLDIR=\"%s\" /L+i \"%s\"\"",
+	installCmd := fmt.Sprintf("& '%s' /b\"%s\" /s /v\"/qn INSTALLDIR=\"%s\" /L*v \"%s\"\"",
 		setupExe, tempDir, installDir, filepath.Join(tempDir, `install.log`))
 	installingText := fmt.Sprintf("Installing %d/%d: %s", progress, totalFlies, filepath.Base(setupExe))
 	s := spinner.New(spinner.CharSets[26], 400*time.Millisecond) // Build our new spinner
@@ -306,4 +295,51 @@ func openProgramLogFile(path string) (*os.File, error) {
 		return nil, err
 	}
 	return logFile, nil
+}
+
+func generateUserLogs(userDirs userDirectories) {
+	installLog, err := os.ReadFile(filepath.Join(userDirs.tempDir, `install.log`))
+	if err != nil {
+		log.Println("Installation log not found, unable to generate reports")
+	}
+
+	cleanLog, err := DecodeUTF16(installLog)
+	if err != nil {
+		log.Println(err)
+	}
+	stringLines := strings.Split(cleanLog, "\n")
+
+	var successfulInstalls []string
+	var failedInstalls []string
+	for _, line := range stringLines {
+		if strings.Contains(line, "Product:") && strings.Contains(line, "successfully") {
+			successfulInstalls = append(successfulInstalls, line)
+		} else if strings.Contains(line, "Product:") && strings.Contains(line, "failed") {
+			failedInstalls = append(failedInstalls, line)
+		}
+	}
+
+	err = createUserLogFiles(successfulInstalls, failedInstalls, userDirs.programDataDir)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func cleanupTempFolders(userDirs userDirectories) {
+	appDataTemp := filepath.Join(filepath.Dir(userDirs.tempDir), "{*}")
+	tempGuids, err := filepath.Glob(appDataTemp)
+	if err != nil {
+		log.Println("Unable to clean up temp GUID-named files")
+	}
+	for _, f := range tempGuids {
+		fileInfo, err := os.Stat(f)
+		if err != nil {
+			log.Println("Unable to inspect file " + f + " for deletion")
+		}
+		if time.Now().Sub(fileInfo.ModTime()) < 30*time.Second {
+			os.RemoveAll(f)
+		}
+	}
+	fmt.Println("Complete...")
+	time.Sleep(2 * time.Second)
 }
