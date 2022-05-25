@@ -181,7 +181,7 @@ func unzipRWP(fileName string, progress int, totalFiles int, userDirs userDirect
 }
 
 func installAddon(setupExe string, progress int, totalFlies int, tempDir string, installDir string) {
-	installCmd := fmt.Sprintf("& '%s' /b\"%s\" /s /v\"/qn INSTALLDIR=\"%s\" /L*v \"%s\"\"",
+	installCmd := fmt.Sprintf("& '%s' /b\"%s\" /s /v\"/qn INSTALLDIR=\"%s\" /L+i \"%s\"\"",
 		setupExe, tempDir, installDir, filepath.Join(tempDir, `install.log`))
 	installingText := fmt.Sprintf("Installing %d/%d: %s", progress, totalFlies, filepath.Base(setupExe))
 	s := spinner.New(spinner.CharSets[26], 400*time.Millisecond) // Build our new spinner
