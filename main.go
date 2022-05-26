@@ -80,15 +80,15 @@ func readManifest(appManifestFile string) (userDirectories, []string, error) {
 		err = os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logSuccess.log`))
 		if err != nil {
 			log.Println("Unable to remove old success log")
+			manifestNonFatalErrors = true
 		}
-		manifestNonFatalErrors = true
 	}
 	if failureLogExists {
 		err = os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logFailure.log`))
 		if err != nil {
 			log.Println("Unable to remove old failure log")
+			manifestNonFatalErrors = true
 		}
-		manifestNonFatalErrors = true
 	}
 
 	manifest, err := os.Open(appManifestFile)
@@ -235,7 +235,7 @@ func unzipRWP(fileName string, progress int, totalFiles int, userDirs userDirect
 	cmd := exec.Command("powershell", "-NoProfile", "-NonInteractive", unzipCommand)
 	err := cmd.Run()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	s.Stop()
