@@ -1,0 +1,10 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+.pfx
+/ApDownloaderInstaller
+*.v2
+*.v1
+*.suo
