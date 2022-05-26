@@ -98,6 +98,10 @@ public class InstallViewModel : ObservableObject
 
     private async Task Install(IList selectedCells)
     {
+        var logFailurePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            "ApDownloader\\logFailure.log");
+        var logSuccessPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            "ApDownloader\\logSuccess.log");
         var manifestPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"ApDownloader\Downloads.txt");
         MainViewModel.IsNotBusy = false;
         BusyText = "Installing Addons";
@@ -107,9 +111,9 @@ public class InstallViewModel : ObservableObject
 
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
         var downloadList = await GetDownloadList(MainViewModel.DlOption, MainViewModel.DlManifest);
-        downloadList = downloadList.Prepend(MainViewModel.DlOption.DownloadFilepath).ToList();
-        downloadList = downloadList.Prepend(MainViewModel.DlOption.InstallFilePath).ToList();
-        await File.WriteAllLinesAsync(manifestPath, downloadList);
+        var downloadListWithData = downloadList.Prepend(MainViewModel.DlOption.DownloadFilepath).ToList();
+        downloadListWithData = downloadListWithData.Prepend(MainViewModel.DlOption.InstallFilePath).ToList();
+        await File.WriteAllLinesAsync(manifestPath, downloadListWithData);
         var fullName = Directory.GetParent(Assembly.GetExecutingAssembly().Location)?.FullName;
         if (fullName != null)
         {
@@ -128,17 +132,19 @@ public class InstallViewModel : ObservableObject
             };
             process.Start();
             await process.WaitForExitAsync();
-            BusyText = process.ExitCode != 0 ? "Installation failed" : "Installation Complete";
-            var logFailurePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                "ApDownloader\\logFailure.log");
-            if (File.Exists(logFailurePath))
-            {
-                BusyText += "\nSome installations have\nfailed, check logs in\n" + Path.GetDirectoryName(logFailurePath);
-            }
+
+            var someSuccess = File.Exists(logSuccessPath);
+            var someFailed = File.Exists(logFailurePath);
+            var allSuccess = someSuccess && !someFailed;
+
+            if (process.ExitCode != 0 && !someSuccess)
+                BusyText = "Installation Failed.\n\nCheck logs for details";
+            else if (process.ExitCode != 0 && allSuccess)
+                BusyText = "Installation Completed.\n\nAll addons installed but\nsome errors occured.\nCheck logs for details";
+            else if (allSuccess)
+                BusyText = "Installation Completed.\n\nAll addons installed";
             else
-            {
-                BusyText += "\nAll addons installed\ncorrectly";
-            }
+                BusyText = "Installation Completed.\n\nSome addons have not installed\nCheck logs for details";
         }
 
         MainViewModel.IsNotBusy = true;
