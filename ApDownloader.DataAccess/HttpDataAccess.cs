@@ -70,22 +70,6 @@ public class HttpDataAccess
     }
 
     /// <summary>
-    /// Checks if the ProductsDb is up to date with the latest version
-    /// </summary>
-    /// <param name="products"></param>
-    /// <returns>The product Db is Up to date/has been updated</returns>
-    public async Task<bool> UpdateProductsDb()
-    {
-        var tempClient = new HttpClient();
-        var response = await tempClient.SendAsync(new HttpRequestMessage(HttpMethod.Head,
-            "https://github.com/shipsaw/AP-Downloader/releases/download/ProductsDb/ProductsDb.db"));
-        var code = response.StatusCode;
-        var downloadLink = response.Content.Headers.ContentLocation;
-        response = await tempClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, downloadLink));
-        var serverMd5 = response.Content.Headers.ContentMD5;
-        return true;
-    }
-    /// <summary>
     /// Calls all download methods for products, extrastock, brandingpatches, and liverypacks
     /// </summary>
     /// <param name="downloadManifest">file ids to download</param>
@@ -208,6 +192,22 @@ public class HttpDataAccess
             using (var streamToReadFrom = await response.Content.ReadAsStreamAsync())
             {
                 var fileToWriteTo = Path.Combine(saveLoc, filename);
+                using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
+                {
+                    await streamToReadFrom.CopyToAsync(streamToWriteTo);
+                }
+            }
+        }
+    }
+    
+    public async Task UpdateProductsDb(string dbUri)
+    {
+        var fileToWriteTo = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            "ApDownloader\\ProductsDb.db");
+        using (var response = await _client.GetAsync(dbUri))
+        {
+            using (var streamToReadFrom = await response.Content.ReadAsStreamAsync())
+            {
                 using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
                 {
                     await streamToReadFrom.CopyToAsync(streamToWriteTo);

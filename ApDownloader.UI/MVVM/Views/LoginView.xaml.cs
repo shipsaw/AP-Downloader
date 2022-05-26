@@ -10,8 +10,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using ApDownloader.UI.Logging;
+using ApDownloader.DataAccess;
 using ApDownloader.UI.MVVM.ViewModels;
+using Logger = ApDownloader.UI.Logging.Logger;
 
 namespace ApDownloader.UI.MVVM.Views;
 
@@ -98,32 +99,39 @@ public partial class LoginView : UserControl
         if (e.Key == Key.Return)
             Login(sender, e);
     }
-    private void CheckForProductDbUpdates()
+    private async void CheckForProductDbUpdates()
     {
+        var dbUri = "https://github.com/shipsaw/AP-Downloader/releases/download/ProductsDb/ProductsDb.db";
         try
         {
             var tempClient = new HttpClient();
             var response = tempClient.Send(new HttpRequestMessage(HttpMethod.Head,
-                "https://github.com/shipsaw/AP-Downloader/releases/download/ProductsDb/ProductsDb.db"));
+                dbUri));
             byte[] serverMd5 = response?.Content?.Headers?.ContentMD5 ?? new byte[0];
             var serverMd5String = Convert.ToBase64String(serverMd5);
             using var md5 = MD5.Create();
-            using var stream =
-                File.OpenRead(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                    "ApDownloader\\ProductsDb.db"));
-            var localMd5String = Convert.ToBase64String(md5.ComputeHash(stream));
+            var localMd5String = "";
+            using (var stream = File.OpenRead(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                    "ApDownloader\\ProductsDb.db")))
+            {
+                localMd5String = Convert.ToBase64String(md5.ComputeHash(stream));
+            }
+
             if (serverMd5String != localMd5String)
             {
+                var httpDataAccess = new HttpDataAccess(tempClient);
+                await httpDataAccess.UpdateProductsDb(dbUri);
+                
                 LoginResult.FontStyle = FontStyles.Italic;
                 LoginResult.Foreground = new SolidColorBrush(Colors.Goldenrod);
-                LoginResult.Text = "Product Database out-of-date";
+                LoginResult.Text += "Product database updated";
             }
         }
         catch
         {
                 LoginResult.FontStyle = FontStyles.Italic;
                 LoginResult.Foreground = new SolidColorBrush(Colors.Goldenrod);
-                LoginResult.Text = "Unable to check for Product\nDatabase updates";
+                LoginResult.Text += "Unable to check for Product\nDatabase updates";
         }
     }
 }
