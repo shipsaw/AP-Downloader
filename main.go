@@ -30,14 +30,15 @@ func main() {
 	fmt.Println("AP Install Manager\n******************\n")
 
 	appManifestFile := readArguments(os.Args)
-	userDirs, setupZips, manifestErr := readManifest(appManifestFile)
+	userDirs, setupZips, manifestErrors := readManifest(appManifestFile)
 	defer os.RemoveAll(userDirs.tempDir)
 	installsFailed, installsSucceeded := installAddons(setupZips, userDirs)
 	userLogErrors := generateUserLogs(userDirs, installsFailed, installsSucceeded)
 	cleanupErrors := cleanupTempFolders(userDirs)
 	// If there are non-fatal errors, exit with exit code, but have the calling application check to see if some
 	// Installations succeeded
-	if userLogErrors != nil || cleanupErrors != nil || manifestErr != nil {
+	log.Printf("\n\nFinished Execution\n******************\n\n")
+	if userLogErrors != nil || cleanupErrors != nil || manifestErrors != nil {
 		os.Exit(1)
 	}
 }
@@ -55,30 +56,39 @@ func readArguments(args []string) string {
 	}
 	log.SetOutput(file)
 	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
-	log.Println("Beginning Execution")
+	log.Printf("\n\n*******************\nBeginning Execution\n\n")
 	return appManifestFile
 }
 
 // Looks through the manifest to get install zips and folder locations
 // As with the previous function a failure at this point is unrecoverable
 func readManifest(appManifestFile string) (userDirectories, []string, error) {
-	nonFatalError := false
+	manifestNonFatalErrors := false
 	tempDir, err := os.MkdirTemp("", "apDownloader")
 	if err != nil {
 		log.Fatal("Error, Unable to create temporary directory; exiting")
 	}
 
-	// Remove previous run user logs
-	err = os.Remove(filepath.Join(tempDir, `install.log`))
-	if err != nil {
-		log.Println("Unable to clear install log")
-		nonFatalError = true
+	successLogPath := filepath.Join(filepath.Dir(appManifestFile), `logSuccess.log`)
+	failureLogPath := filepath.Join(filepath.Dir(appManifestFile), `logFailure.log`)
+	successLogExists, ExistsErr1 := exists(successLogPath)
+	failureLogExists, ExistsErr2 := exists(failureLogPath)
+	if ExistsErr1 != nil || ExistsErr2 != nil {
+		log.Fatal("Unexpected Error attempting to clean up logs")
 	}
-	errSuccLog := os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logSuccess.log`))
-	errFailLog := os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logFailure.log`))
-	if errSuccLog != nil || errFailLog != nil {
-		log.Println("Unable to clear success and failure reporting logs")
-		nonFatalError = true
+	if successLogExists {
+		err = os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logSuccess.log`))
+		if err != nil {
+			log.Println("Unable to remove old success log")
+		}
+		manifestNonFatalErrors = true
+	}
+	if failureLogExists {
+		err = os.Remove(filepath.Join(filepath.Dir(appManifestFile), `logFailure.log`))
+		if err != nil {
+			log.Println("Unable to remove old failure log")
+		}
+		manifestNonFatalErrors = true
 	}
 
 	manifest, err := os.Open(appManifestFile)
@@ -91,17 +101,17 @@ func readManifest(appManifestFile string) (userDirectories, []string, error) {
 	userDirs := getUserDirs(scanner)
 	userDirs.tempDir = tempDir
 	userDirs.programDataDir = filepath.Dir(appManifestFile)
-	log.Println("Railworks install folder: " + userDirs.installDir + "\n")
+	log.Println("Railworks install folder: " + userDirs.installDir)
 	log.Println("Temp dir: " + userDirs.tempDir)
 	log.Println("ProgramDataDir dir: " + userDirs.programDataDir)
-	log.Println("Download Dir" + userDirs.downloadDir)
+	log.Println("Download Dir: " + userDirs.downloadDir + "\n")
 
 	var setupZips []string
 	for scanner.Scan() {
 		setupZips = append(setupZips, scanner.Text())
 	}
-	if nonFatalError {
-		return userDirs, setupZips, errors.New("There were problems in cleaning up the old logs")
+	if manifestNonFatalErrors {
+		return userDirs, setupZips, errors.New("error removing old log files")
 	}
 	return userDirs, setupZips, nil
 }
@@ -117,25 +127,25 @@ func installAddons(setupZips []string, userDirs userDirectories) ([]string, []st
 		path, err := unzipAddon(f, userDirs.tempDir)
 		if err != nil {
 			log.Println("Unable to extract " + path)
-			installsFailed = append(installsFailed, path)
+			installsFailed = append(installsFailed, trimPath(path))
 			continue
 		}
 		if filepath.Ext(path) == ".exe" {
 			path, err := installExeAddon(path, i+1, totalFiles, userDirs)
 			if err != nil {
 				log.Printf("%s failed to execute in powershell with error: %", path, err)
-				installsFailed = append(installsFailed, path)
+				installsFailed = append(installsFailed, trimPath(path))
 				continue
 			}
 		} else if filepath.Ext(path) == ".rwp" {
 			err = unzipRWP(path, i+1, totalFiles, userDirs)
 			if err != nil {
 				log.Println("Unable to extract RWP file: " + path + " to " + userDirs.installDir)
-				installsFailed = append(installsFailed, path)
+				installsFailed = append(installsFailed, trimPath(path))
 				continue
 			}
 			// Unzipping success won't be seen in the powershell logs, so we add it here
-			installsSucceeded = append(installsSucceeded, path)
+			installsSucceeded = append(installsSucceeded, trimPath(path))
 		}
 	}
 	return installsFailed, installsSucceeded
@@ -161,6 +171,10 @@ func unzipAddon(fileName string, tempDir string) (string, error) {
 				}
 			}
 		}
+	}
+	if installerExe == "" {
+		log.Println("No valid install files in zip: " + fileName)
+		return fileName, fmt.Errorf("no valid install files in zip")
 	}
 	return filepath.Join(tempDir, installerExe), nil
 }
@@ -412,4 +426,20 @@ func cleanupTempFolders(userDirs userDirectories) error {
 		return errors.New("there was a problem cleaning up the temporary folders")
 	}
 	return nil
+}
+
+// exists returns whether the given file or directory exists
+func exists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
+
+func trimPath(path string) string {
+	return strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
 }
