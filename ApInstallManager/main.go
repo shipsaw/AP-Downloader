@@ -311,7 +311,9 @@ func installExeAddon(setupExe string, progress int, totalFlies int, userDirs use
 	s := spinner.New(spinner.CharSets[26], 400*time.Millisecond) // Build our new spinner
 	s.Prefix = installingText
 	s.Start() // Start the spinner
-	installDir := fmt.Sprintf("/qn INSTALLDIR=%s", userDirs.installDir)
+
+	logFile := filepath.Join(userDirs.tempDir, "install.log")
+	installDir := fmt.Sprintf("/qn INSTALLDIR=%s /L+I %s", userDirs.installDir, logFile)
 	cmd := exec.Command(setupExe, "/b"+userDirs.tempDir, "/s", "/v"+installDir)
 
 	var stdout bytes.Buffer
