@@ -33,7 +33,7 @@ func main() {
 	appManifestFile := readArguments(os.Args)
 	userDirs, setupZips, manifestErrors := readManifest(appManifestFile)
 	defer os.RemoveAll(userDirs.tempDir)
-	installsFailed, installsSucceeded := installAddons(setupZips, userDirs)
+	installsFailed, installsSucceeded := installAddons(setupZips, &userDirs)
 	userLogErrors := generateUserLogs(userDirs, installsFailed, installsSucceeded)
 	// If there are non-fatal errors, exit with exit code, but have the calling application check to see if some
 	// Installations succeeded
@@ -121,26 +121,35 @@ func readManifest(appManifestFile string) (userDirectories, []string, error) {
 // Installs exe and rwp addons, any failures will be added to the failed addon log
 // but the installation should continue if possible
 // returns list of failed and successful installs/unzips
-func installAddons(setupZips []string, userDirs userDirectories) ([]string, []string) {
+func installAddons(setupZips []string, userDirs *userDirectories) ([]string, []string) {
 	var installsFailed []string
 	var installsSucceeded []string
+
+	move7zip := fmt.Sprintf("& cp \"%s\" \"%s\"", userDirs.zipLoc, userDirs.programDataDir)
+	cmd := exec.Command("powershell", "-NoProfile", "-NonInteractive", move7zip)
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal("Unable to move 7z to executable location")
+	}
+	userDirs.zipLoc = filepath.Join(userDirs.programDataDir, "7z.exe")
+
 	totalFiles := len(setupZips)
 	for i, f := range setupZips {
-		path, err := unzipAddon(f, userDirs)
+		path, err := unzipAddon(f, *userDirs)
 		if err != nil {
 			log.Println("Unable to extract " + path)
 			installsFailed = append(installsFailed, trimPath(path))
 			continue
 		}
 		if filepath.Ext(path) == ".exe" {
-			path, err := installExeAddon(path, i+1, totalFiles, userDirs)
+			path, err := installExeAddon(path, i+1, totalFiles, *userDirs)
 			if err != nil {
 				log.Printf("%s failed to execute in powershell with error: %", path, err)
 				installsFailed = append(installsFailed, trimPath(path))
 				continue
 			}
 		} else if filepath.Ext(path) == ".rwp" {
-			err = unzipRWP(path, i+1, totalFiles, userDirs)
+			err = unzipRWP(path, i+1, totalFiles, *userDirs)
 			if err != nil {
 				log.Println("Unable to extract RWP file: " + path + " to " + userDirs.installDir)
 				installsFailed = append(installsFailed, trimPath(path))
