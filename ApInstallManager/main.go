@@ -32,7 +32,9 @@ func main() {
 
 	appManifestFile := readArguments(os.Args)
 	userDirs, setupZips, manifestErrors := readManifest(appManifestFile)
+	userDirs = copy7zToExecLoc(userDirs)
 	defer os.RemoveAll(userDirs.tempDir)
+	defer os.RemoveAll(userDirs.zipLoc)
 	installsFailed, installsSucceeded := installAddons(setupZips, userDirs)
 	userLogErrors := generateUserLogs(userDirs, installsFailed, installsSucceeded)
 	// If there are non-fatal errors, exit with exit code, but have the calling application check to see if some
@@ -43,6 +45,32 @@ func main() {
 	if userLogErrors != nil || manifestErrors != nil {
 		os.Exit(1)
 	}
+}
+
+func copy7zToExecLoc(userDirs userDirectories) userDirectories {
+	temp7zDir, err := os.MkdirTemp("", "temp7zDir")
+	new7zFile := filepath.Join(temp7zDir, "7z.exe")
+
+	existing7z, err := os.Open(userDirs.zipLoc)
+	if err != nil {
+		log.Fatal("Unable to copy 7z: " + err.Error())
+	}
+	defer existing7z.Close()
+
+	new7z, err := os.Create(new7zFile)
+	if err != nil {
+		log.Fatal("Unable to copy 7z: " + err.Error())
+	}
+	defer new7z.Close()
+
+	_, err = io.Copy(new7z, existing7z)
+	if err != nil {
+		log.Fatal("Unable to copy 7z: " + err.Error())
+	}
+
+	retUserDirs := userDirs
+	retUserDirs.zipLoc = new7zFile
+	return retUserDirs
 }
 
 // Gets the file that contains files to install and folder locations
