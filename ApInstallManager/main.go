@@ -23,22 +23,24 @@ type userDirectories struct {
 	downloadDir    string
 	programDataDir string
 	tempDir        string
+	zipLoc         string
 }
 
 //goland:noinspection ALL
 func main() {
-	fmt.Println("AP Install Manager\n******************\n")
+	fmt.Println("AP Install Manager v1.0\n******************\n")
 
 	appManifestFile := readArguments(os.Args)
 	userDirs, setupZips, manifestErrors := readManifest(appManifestFile)
 	defer os.RemoveAll(userDirs.tempDir)
 	installsFailed, installsSucceeded := installAddons(setupZips, userDirs)
 	userLogErrors := generateUserLogs(userDirs, installsFailed, installsSucceeded)
-	cleanupErrors := cleanupTempFolders(userDirs)
 	// If there are non-fatal errors, exit with exit code, but have the calling application check to see if some
 	// Installations succeeded
 	log.Printf("\n\nFinished Execution\n******************\n\n")
-	if userLogErrors != nil || cleanupErrors != nil || manifestErrors != nil {
+	fmt.Println("Complete...")
+	time.Sleep(2 * time.Second)
+	if userLogErrors != nil || manifestErrors != nil {
 		os.Exit(1)
 	}
 }
@@ -124,7 +126,7 @@ func installAddons(setupZips []string, userDirs userDirectories) ([]string, []st
 	var installsSucceeded []string
 	totalFiles := len(setupZips)
 	for i, f := range setupZips {
-		path, err := unzipAddon(f, userDirs.tempDir)
+		path, err := unzipAddon(f, userDirs)
 		if err != nil {
 			log.Println("Unable to extract " + path)
 			installsFailed = append(installsFailed, trimPath(path))
@@ -152,23 +154,24 @@ func installAddons(setupZips []string, userDirs userDirectories) ([]string, []st
 }
 
 // Returns path of unzipped file
-func unzipAddon(fileName string, tempDir string) (string, error) {
+func unzipAddon(fileName string, userDirs userDirectories) (string, error) {
 	installerExe := ""
 	reader, err := zip.OpenReader(fileName)
 	if err != nil {
-		return "", fmt.Errorf("unable to unzip %s", fileName)
+		return "", fmt.Errorf("unable to unzip %s, error: %s", fileName, err.Error())
 	}
 	defer reader.Close()
 
 	for _, f := range reader.File {
 		if filepath.Ext(f.Name) == ".exe" || filepath.Ext(f.Name) == ".rwp" {
 			installerExe = f.Name
-			err = unzipFile(f, tempDir)
+			err = unzipFile(f, userDirs.tempDir)
 			if err != nil {
-				err = unzipBackupMethod(fileName, tempDir)
+				backupSetupExe, err := unzipBackupMethod(fileName, userDirs)
 				if err != nil {
 					return "", fmt.Errorf("unable to unzip %s", f.Name)
 				}
+				return backupSetupExe, nil
 			}
 		}
 	}
@@ -176,14 +179,35 @@ func unzipAddon(fileName string, tempDir string) (string, error) {
 		log.Println("No valid install files in zip: " + fileName)
 		return fileName, fmt.Errorf("no valid install files in zip")
 	}
-	return filepath.Join(tempDir, installerExe), nil
+	return filepath.Join(userDirs.tempDir, installerExe), nil
 }
 
 // Attempt unzip with 7zip directly
-func unzipBackupMethod(fileName string, tempDir string) error {
-	unzipCommand := fmt.Sprintf("& ./7z.exe x \"%s\" -aoa -y -o\"%s\"", fileName, tempDir)
+func unzipBackupMethod(fileName string, userDirs userDirectories) (string, error) {
+	log.Println("Attempting backup unzip method for " + fileName)
+	sevenZipExists, err := exists(filepath.Join(userDirs.zipLoc))
+	if err != nil {
+		log.Println("error attempting to locate 7zip: " + err.Error())
+		return "", errors.New("7z executable not found")
+	} else if !sevenZipExists {
+		log.Println("Error: 7-zip does not exist in " + userDirs.zipLoc)
+		return "", errors.New("7z executable not found")
+	}
+
+	unzipCommand := fmt.Sprintf("& \"%s\" x \"%s\" -aoa -y -o\"%s\"", userDirs.zipLoc, fileName, userDirs.tempDir)
 	cmd := exec.Command("powershell", "-NoProfile", "-NonInteractive", unzipCommand)
-	return cmd.Run()
+	err = cmd.Run()
+	if err != nil {
+		return "", err
+	}
+	setupExe, err := filepath.Glob(filepath.Join(userDirs.tempDir, "*.exe"))
+	if err != nil {
+		return "", err
+	}
+	if len(setupExe) == 1 {
+		return setupExe[0], nil
+	}
+	return "", errors.New("Unable to extract using backup method: " + fileName)
 }
 
 func unzipFile(f *zip.File, destination string) error {
@@ -266,6 +290,13 @@ func installExeAddon(setupExe string, progress int, totalFlies int, userDirs use
 	}
 	s.Stop()
 
+	err = cleanupTempFolders(setupExe, userDirs)
+	if err != nil {
+		log.Println("... Errors cleaning up GUID temp folders")
+		fmt.Println(installingText + "... Errors")
+		return setupExe, err
+	}
+
 	fmt.Println(installingText + "... Done")
 	log.Println(installingText + "... Done")
 	return "", nil
@@ -274,6 +305,12 @@ func installExeAddon(setupExe string, progress int, totalFlies int, userDirs use
 // returns installation directory, download directory
 // Fatal fail as error is unrecoverable
 func getUserDirs(scanner *bufio.Scanner) userDirectories {
+	scanner.Scan()
+	if err := scanner.Err(); err != nil {
+		log.Fatal("No 7zip folder path provided")
+	}
+	zipLoc := scanner.Text()
+
 	scanner.Scan()
 	if err := scanner.Err(); err != nil {
 		log.Fatal("No Railworks folder path provided")
@@ -289,6 +326,7 @@ func getUserDirs(scanner *bufio.Scanner) userDirectories {
 	return userDirectories{
 		installDir:  installDir,
 		downloadDir: downloadDir,
+		zipLoc:      zipLoc,
 	}
 }
 
@@ -398,8 +436,15 @@ func generateUserLogs(userDirs userDirectories, installsFailed []string, install
 	return nil
 }
 
-func cleanupTempFolders(userDirs userDirectories) error {
+func cleanupTempFolders(setupExe string, userDirs userDirectories) error {
 	errorsInCleanup := false
+
+	err := os.Remove(setupExe)
+	if err != nil {
+		log.Println("Unable to clean up setup EXE file: " + setupExe)
+		errorsInCleanup = true
+	}
+
 	appDataTemp := filepath.Join(filepath.Dir(userDirs.tempDir), "{*}")
 	tempGuids, err := filepath.Glob(appDataTemp)
 	if err != nil {
@@ -412,7 +457,7 @@ func cleanupTempFolders(userDirs userDirectories) error {
 			log.Println("Unable to inspect file " + f + " for deletion")
 			errorsInCleanup = true
 		}
-		if time.Now().Sub(fileInfo.ModTime()) < 2*time.Minute {
+		if time.Now().Sub(fileInfo.ModTime()) < 3*time.Minute {
 			err = os.RemoveAll(f)
 			if err != nil {
 				log.Println("Error in removing the TempGUID")
@@ -420,8 +465,6 @@ func cleanupTempFolders(userDirs userDirectories) error {
 			}
 		}
 	}
-	fmt.Println("Complete...")
-	time.Sleep(2 * time.Second)
 	if errorsInCleanup {
 		return errors.New("there was a problem cleaning up the temporary folders")
 	}

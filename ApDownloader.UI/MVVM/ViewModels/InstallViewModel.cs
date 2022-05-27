@@ -109,12 +109,13 @@ public class InstallViewModel : ObservableObject
 
         var productIds = (from Cell cell in selectedCells select cell.ProductId).ToList();
 
+        var fullName = Directory.GetParent(Assembly.GetExecutingAssembly().Location)?.FullName ?? "";
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
         var downloadList = await GetDownloadList(MainViewModel.DlOption, MainViewModel.DlManifest);
         var downloadListWithData = downloadList.Prepend(MainViewModel.DlOption.DownloadFilepath).ToList();
         downloadListWithData = downloadListWithData.Prepend(MainViewModel.DlOption.InstallFilePath).ToList();
+        downloadListWithData = downloadListWithData.Prepend(Path.Combine(fullName, "InstallerExe\\7z.exe" )).ToList();
         await File.WriteAllLinesAsync(manifestPath, downloadListWithData);
-        var fullName = Directory.GetParent(Assembly.GetExecutingAssembly().Location)?.FullName;
         if (fullName != null)
         {
             var path = Path.Combine(fullName, "InstallerExe") +
@@ -122,7 +123,7 @@ public class InstallViewModel : ObservableObject
             var info = new ProcessStartInfo(
                 path)
             {
-                Arguments = manifestPath,
+                Arguments = manifestPath, 
                 UseShellExecute = true,
                 Verb = "runas"
             };

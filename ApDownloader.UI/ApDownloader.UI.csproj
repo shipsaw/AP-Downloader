@@ -86,14 +86,6 @@
       <None Remove="Images\APWAG4SP_Cover-238x294.png" />
       <None Remove="Images\APWAGFSP_Cover-238x294.png" />
       <None Remove="Images\APWL_Cover-238x294.png" />
-      <None Remove="InstallerExe\ApDownloader.Model.dll" />
-      <None Remove="InstallerExe\ApDownloader.Model.pdb" />
-      <None Remove="InstallerExe\ApDownloader_Installer.deps.json" />
-      <None Remove="InstallerExe\ApDownloader_Installer.dll" />
-      <None Remove="InstallerExe\ApDownloader_Installer.exe" />
-      <None Remove="InstallerExe\ApDownloader_Installer.pdb" />
-      <None Remove="InstallerExe\ApDownloader_Installer.runtimeconfig.json" />
-      <None Remove="InstallerExe\Autofac.dll" />
       <COMReference Include="{215d64d2-031c-33c7-96e3-61794cd1ee61}">
         <WrapperTool>tlbimp</WrapperTool>
         <VersionMinor>4</VersionMinor>
@@ -109,7 +101,10 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Resource>
       <Content Include="InstallerExe\ApInstallManager.exe">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="InstallerExe\7z.exe">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Images\APC411_Cover-238x294.png" />
       <None Remove="Images\APC455EPV1_Cover-238x294.png" />
