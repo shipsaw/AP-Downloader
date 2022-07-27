@@ -1,4 +1,4 @@
-package main
+package installManager
 
 import (
 	"archive/zip"
@@ -24,12 +24,13 @@ type userDirectories struct {
 	programDataDir string
 	tempDir        string
 	zipLoc         string
+	tempDirPath    string
 }
 
 //goland:noinspection ALL
 func main() {
-	fmt.Println("AP Install Manager v1.0\n******************\n")
-
+	//fmt.Println("AP Install Manager v1.0\n******************\n")
+	//
 	appManifestFile := readArguments(os.Args)
 	userDirs, setupZips, manifestErrors := readManifest(appManifestFile)
 	userDirs = copy7zToExecLoc(userDirs)
@@ -37,8 +38,8 @@ func main() {
 	defer os.RemoveAll(userDirs.zipLoc)
 	installsFailed, installsSucceeded := installAddons(setupZips, userDirs)
 	userLogErrors := generateUserLogs(userDirs, installsFailed, installsSucceeded)
-	// If there are non-fatal errors, exit with exit code, but have the calling application check to see if some
-	// Installations succeeded
+	//If there are non-fatal errors, exit with exit code, but have the calling application check to see if some
+	//Installations succeeded
 	log.Printf("\n\nFinished Execution\n******************\n\n")
 	fmt.Println("Complete...")
 	time.Sleep(2 * time.Second)
@@ -48,7 +49,10 @@ func main() {
 }
 
 func copy7zToExecLoc(userDirs userDirectories) userDirectories {
-	temp7zDir, err := os.MkdirTemp("", "temp7zDir")
+	temp7zDir, err := os.MkdirTemp(userDirs.tempDirPath, "temp7zDir")
+	if err != nil {
+		log.Fatal("Unable to Create temporary diretory: " + err.Error())
+	}
 	new7zFile := filepath.Join(temp7zDir, "7z.exe")
 
 	existing7z, err := os.Open(userDirs.zipLoc)
@@ -130,6 +134,7 @@ func readManifest(appManifestFile string) (userDirectories, []string, error) {
 	scanner := bufio.NewScanner(manifest)
 	userDirs := getUserDirs(scanner)
 	userDirs.tempDir = tempDir
+	userDirs.tempDirPath = ""
 	userDirs.programDataDir = filepath.Dir(appManifestFile)
 	log.Println("Railworks install folder: " + userDirs.installDir)
 	log.Println("Temp dir: " + userDirs.tempDir)
@@ -164,7 +169,7 @@ func installAddons(setupZips []string, userDirs userDirectories) ([]string, []st
 		if filepath.Ext(path) == ".exe" {
 			path, err := installExeAddon(path, i+1, totalFiles, userDirs)
 			if err != nil {
-				log.Printf("%s failed to execute in powershell with error: %", path, err)
+				log.Printf("%s failed to execute in powershell with error: %s", path, err)
 				installsFailed = append(installsFailed, trimPath(path))
 				continue
 			}
