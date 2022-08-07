@@ -76,23 +76,23 @@ public class HttpDataAccess
     /// <param name="downloadOption"></param>
     /// <param name="progress"></param>
     public async Task Download(DownloadManifest downloadManifest, ApDownloaderConfig downloadOption,
-        IProgress<int> progress)
+        IProgress<int> progress, IProgress<float> downloadProgress)
     {
         // Get Extra Stock
         if (downloadOption.GetExtraStock)
-            await DownloadFile(downloadManifest.EsFilenames, ExtraStockPrefix, progress, downloadOption, "ExtraStock");
+            await DownloadFile(downloadManifest.EsFilenames, ExtraStockPrefix, progress, downloadProgress, downloadOption, "ExtraStock");
 
         // Get Branding Patch
         if (downloadOption.GetBrandingPatch)
-            await DownloadFile(downloadManifest.BpFilenames, BrandingPatchPrefix, progress, downloadOption,
+            await DownloadFile(downloadManifest.BpFilenames, BrandingPatchPrefix, progress, downloadProgress, downloadOption,
                 "BrandingPatches");
 
         // Get Liveries
         if (downloadOption.GetLiveryPack)
-            await DownloadFile(downloadManifest.LpFilenames, LiveryPrefix, progress, downloadOption, "LiveryPacks");
+            await DownloadFile(downloadManifest.LpFilenames, LiveryPrefix, progress, downloadProgress, downloadOption, "LiveryPacks");
 
         // Get Base Products
-        await DownloadFile(downloadManifest.ProductIds, ProductPrefix, progress, downloadOption, "Products");
+        await DownloadFile(downloadManifest.ProductIds, ProductPrefix, progress, downloadProgress, downloadOption, "Products");
 
         await Task.WhenAll(_allTasks);
     }
@@ -105,7 +105,7 @@ public class HttpDataAccess
     /// <param name="progress"></param>
     /// <param name="downloadOption"></param>
     /// <param name="saveLoc"></param>
-    private async Task DownloadFile(IEnumerable<string> products, string prefix, IProgress<int> progress,
+    private async Task DownloadFile(IEnumerable<string> products, string prefix, IProgress<int> progress, IProgress<float> downloadProgress,
         ApDownloaderConfig downloadOption, string saveLoc)
     {
         foreach (var filename in products)
@@ -120,7 +120,7 @@ public class HttpDataAccess
                         // We don't have filenames for products, only the product ID.  So for product prefix we have
                         // to get this info from the server in the SaveFile call
                         await SaveFile(downloadOption, uri, saveLoc,
-                            prefix == ProductPrefix ? "" : filename);
+                            prefix == ProductPrefix ? "" : filename, downloadProgress);
                     }
                     finally
                     {
@@ -158,10 +158,11 @@ public class HttpDataAccess
         }
     }
 
-    private async Task SaveFile(ApDownloaderConfig downloadOption, Uri uri, string saveLoc, string filename)
+    private async Task SaveFile(ApDownloaderConfig downloadOption, Uri uri, string saveLoc, string filename, IProgress<float> progress = null)
     {
         using (var response = await _client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead))
         {
+            var contentLength = response.Content.Headers.ContentLength;
             if (filename == "")
             {
                 var responseFilename = response.Content.Headers.ContentDisposition?.FileName?.Trim('"');
@@ -171,9 +172,17 @@ public class HttpDataAccess
             using (var streamToReadFrom = await response.Content.ReadAsStreamAsync())
             {
                 var fileToWriteTo = Path.Combine(downloadOption.DownloadFilepath, saveLoc, filename);
+                
                 using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
                 {
-                    await streamToReadFrom.CopyToAsync(streamToWriteTo);
+                    if (contentLength == null)
+                    {
+                        await streamToReadFrom.CopyToAsync(streamToWriteTo, 81920);
+                    }
+
+                    var relativeProgress = new Progress<long>(totalBytes => progress.Report((float)totalBytes / contentLength.Value));
+                    await streamToReadFrom.CopyToAsync(streamToWriteTo, 81920, relativeProgress);
+                    progress.Report(1);
                 }
             }
         }

@@ -97,15 +97,19 @@ public class DownloadViewModel : ObservableObject
         Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\BrandingPatches");
         Directory.CreateDirectory(MainViewModel.DlOption.DownloadFilepath + @"\LiveryPacks");
         var productIds = (from Cell cell in selectedCells select cell.ProductId).ToList();
-        var completedFileCount = 0;
         var totalFileCount =
             await _dataService.GetTotalFileCount(MainViewModel.DlOption, productIds);
+        
+        var completedFileCount = 0;
+        var progressText = $"Downloading file {++completedFileCount} of {totalFileCount}";
         var progress =
-            new Progress<int>(_ => { BusyText = $"Downloading file {++completedFileCount} of {totalFileCount}"; });
+            new Progress<int>(_ => { BusyText = progressText; });
+        var downloadProgress =
+            new Progress<float>(p => { BusyText = $"{progressText}\n               {(p*100):0}%"; });
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
         try
         {
-            await _access.Download(MainViewModel.DlManifest, MainViewModel.DlOption, progress);
+            await _access.Download(MainViewModel.DlManifest, MainViewModel.DlOption, progress, downloadProgress);
             MainViewModel.IsDownloadDataDirty = true;
             await LoadUserAddons();
             BusyText = "Download Complete";
