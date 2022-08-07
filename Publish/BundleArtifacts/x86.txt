@@ -1,0 +1,6 @@
+MainPackage=C:\Users\Paul Kirby\source\repos\ApDownloaderBackup\Publish\bin\x86\Release\Publish_1.1.2.0_x86.msix
+SymbolPackage=C:\Users\Paul Kirby\source\repos\ApDownloaderBackup\Publish\obj\x86\Release\Symbols\Publish_1.1.2.0_x86.appxsym
+ResourcePack=C:\Users\Paul Kirby\source\repos\ApDownloaderBackup\Publish\bin\x86\Release\Publish_1.1.2.0_scale-100.msix
+ResourcePack=C:\Users\Paul Kirby\source\repos\ApDownloaderBackup\Publish\bin\x86\Release\Publish_1.1.2.0_scale-125.msix
+ResourcePack=C:\Users\Paul Kirby\source\repos\ApDownloaderBackup\Publish\bin\x86\Release\Publish_1.1.2.0_scale-150.msix
+ResourcePack=C:\Users\Paul Kirby\source\repos\ApDownloaderBackup\Publish\bin\x86\Release\Publish_1.1.2.0_scale-400.msix
