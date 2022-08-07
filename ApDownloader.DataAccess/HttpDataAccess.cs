@@ -116,9 +116,9 @@ public class HttpDataAccess
                 {
                     try
                     {
-                        progress.Report(1);
                         // We don't have filenames for products, only the product ID.  So for product prefix we have
                         // to get this info from the server in the SaveFile call
+                        progress.Report(1);
                         await SaveFile(downloadOption, uri, saveLoc,
                             prefix == ProductPrefix ? "" : filename, downloadProgress);
                     }
@@ -158,7 +158,7 @@ public class HttpDataAccess
         }
     }
 
-    private async Task SaveFile(ApDownloaderConfig downloadOption, Uri uri, string saveLoc, string filename, IProgress<float> progress = null)
+    private async Task SaveFile(ApDownloaderConfig downloadOption, Uri uri, string saveLoc, string filename, IProgress<float> downloadProgress = null)
     {
         using (var response = await _client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead))
         {
@@ -180,9 +180,9 @@ public class HttpDataAccess
                         await streamToReadFrom.CopyToAsync(streamToWriteTo, 81920);
                     }
 
-                    var relativeProgress = new Progress<long>(totalBytes => progress.Report((float)totalBytes / contentLength.Value));
+                    var relativeProgress = new Progress<long>(totalBytes => downloadProgress.Report((float)totalBytes / contentLength.Value));
                     await streamToReadFrom.CopyToAsync(streamToWriteTo, 81920, relativeProgress);
-                    progress.Report(1);
+                    downloadProgress.Report(1);
                 }
             }
         }

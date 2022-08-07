@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ApDownloader.DataAccess;
@@ -101,11 +102,12 @@ public class DownloadViewModel : ObservableObject
             await _dataService.GetTotalFileCount(MainViewModel.DlOption, productIds);
         
         var completedFileCount = 0;
-        var progressText = $"Downloading file {++completedFileCount} of {totalFileCount}";
+        var progressText = "Downloading file {0} of {1}";
         var progress =
-            new Progress<int>(_ => { BusyText = progressText; });
+            new Progress<int>(_ => completedFileCount++);
         var downloadProgress =
-            new Progress<float>(p => { BusyText = $"{progressText}\n               {(p*100):0}%"; });
+            new Progress<float>(p => { BusyText = String.Format(progressText, completedFileCount, totalFileCount) +
+                                                  $"\n               {(p*100):0}%"; });
         MainViewModel.DlManifest = await _dataService.GetDownloadManifest(MainViewModel.DlOption, productIds);
         try
         {
