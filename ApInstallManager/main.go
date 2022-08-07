@@ -28,7 +28,7 @@ type userDirectories struct {
 
 //goland:noinspection ALL
 func main() {
-	fmt.Println("AP Install Manager v1.2\n******************\n")
+	fmt.Println("AP Install Manager v1.3\n******************\n")
 
 	appManifestFile := readArguments(os.Args)
 	userDirs, setupZips, manifestErrors := readManifest(appManifestFile)
@@ -49,7 +49,7 @@ func main() {
 
 func copy7zToExecLoc(userDirs userDirectories) userDirectories {
 	temp7zDir, err := os.MkdirTemp("", "temp7zDir")
-	new7zFile := filepath.Join(temp7zDir, "7z.exe")
+	new7zFile := filepath.Join(temp7zDir, "7za.exe")
 
 	existing7z, err := os.Open(userDirs.zipLoc)
 	if err != nil {
@@ -157,8 +157,8 @@ func installAddons(setupZips []string, userDirs userDirectories) ([]string, []st
 	for i, f := range setupZips {
 		path, err := unzipAddon(f, userDirs)
 		if err != nil {
-			log.Println("Unable to extract " + path)
-			installsFailed = append(installsFailed, trimPath(path))
+			log.Println("Unable to extract " + path + ": " + err.Error())
+			installsFailed = append(installsFailed, path)
 			continue
 		}
 		if filepath.Ext(path) == ".exe" {
@@ -198,7 +198,7 @@ func unzipAddon(fileName string, userDirs userDirectories) (string, error) {
 			if err != nil {
 				backupSetupExe, err := unzipBackupMethod(fileName, userDirs)
 				if err != nil {
-					return "", fmt.Errorf("unable to unzip %s", f.Name)
+					return "", fmt.Errorf("unable to unzip %s: %s", f.Name, err.Error())
 				}
 				return backupSetupExe, nil
 			}
@@ -235,7 +235,7 @@ func unzipBackupMethod(fileName string, userDirs userDirectories) (string, error
 	if len(setupExe) == 1 {
 		return setupExe[0], nil
 	}
-	return "", errors.New("Unable to extract using backup method: " + fileName)
+	return "", errors.New("Unable to extract using backup method: " + fileName + ": " + err.Error())
 }
 
 func unzipFile(f *zip.File, destination string) error {

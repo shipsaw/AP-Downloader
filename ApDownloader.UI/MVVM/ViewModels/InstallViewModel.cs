@@ -114,7 +114,7 @@ public class InstallViewModel : ObservableObject
         var downloadList = await GetDownloadList(MainViewModel.DlOption, MainViewModel.DlManifest);
         var downloadListWithData = downloadList.Prepend(MainViewModel.DlOption.DownloadFilepath).ToList();
         downloadListWithData = downloadListWithData.Prepend(MainViewModel.DlOption.InstallFilePath).ToList();
-        downloadListWithData = downloadListWithData.Prepend(Path.Combine(fullName, "InstallerExe\\7z.exe" )).ToList();
+        downloadListWithData = downloadListWithData.Prepend(Path.Combine(fullName, "InstallerExe\\7za.exe" )).ToList();
         await File.WriteAllLinesAsync(manifestPath, downloadListWithData);
         if (fullName != null)
         {

@@ -103,7 +103,7 @@
       <Content Include="InstallerExe\ApInstallManager.exe">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
-      <Content Include="InstallerExe\7z.exe">
+      <Content Include="InstallerExe\7za.exe">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Images\APC411_Cover-238x294.png" />
