@@ -28,7 +28,7 @@ type userDirectories struct {
 
 //goland:noinspection ALL
 func main() {
-	fmt.Println("AP Install Manager v1.0\n******************\n")
+	fmt.Println("AP Install Manager v1.2\n******************\n")
 
 	appManifestFile := readArguments(os.Args)
 	userDirs, setupZips, manifestErrors := readManifest(appManifestFile)
@@ -313,7 +313,7 @@ func installExeAddon(setupExe string, progress int, totalFlies int, userDirs use
 	s.Start() // Start the spinner
 
 	logFile := filepath.Join(userDirs.tempDir, "install.log")
-	installDir := fmt.Sprintf("/qn INSTALLDIR=%s /L+I %s", userDirs.installDir, logFile)
+	installDir := fmt.Sprintf("/qn INSTALLDIR=\"%s\" /L+I %s", userDirs.installDir, logFile)
 	cmd := exec.Command(setupExe, "/b"+userDirs.tempDir, "/s", "/v"+installDir)
 
 	var stdout bytes.Buffer
