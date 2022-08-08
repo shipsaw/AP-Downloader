@@ -158,7 +158,7 @@ func installAddons(setupZips []string, userDirs userDirectories) ([]string, []st
 		path, err := unzipAddon(f, userDirs)
 		if err != nil {
 			log.Println("Unable to extract " + path + ": " + err.Error())
-			installsFailed = append(installsFailed, path)
+			installsFailed = append(installsFailed, trimPath(f))
 			continue
 		}
 		if filepath.Ext(path) == ".exe" {
@@ -212,7 +212,14 @@ func unzipAddon(fileName string, userDirs userDirectories) (string, error) {
 }
 
 // Attempt unzip with 7zip directly
-func unzipBackupMethod(fileName string, userDirs userDirectories) (string, error) {
+func unzipBackupMethod(fileName string, userDirs userDirectories) (exe string, retErr error) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println("Panic occured:", err)
+			exe = ""
+			retErr = errors.New(fmt.Sprintf("Unable to Extract %s: %s", fileName, err))
+		}
+	}()
 	log.Println("Attempting backup unzip method for " + fileName)
 	sevenZipExists, err := exists(filepath.Join(userDirs.zipLoc))
 	if err != nil {
@@ -497,7 +504,7 @@ func cleanupTempFolders(setupExe string, userDirs userDirectories) error {
 		if time.Now().Sub(fileInfo.ModTime()) < 3*time.Minute {
 			err = os.RemoveAll(f)
 			if err != nil {
-				log.Println("Error in removing the TempGUID")
+				log.Println("Error in removing the TempGUID" + err.Error())
 				errorsInCleanup = true
 			}
 		}

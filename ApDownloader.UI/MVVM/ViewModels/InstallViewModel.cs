@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows.Forms.VisualStyles;
 using ApDownloader.DataAccess;
 using ApDownloader.Model;
 using ApDownloader.UI.Core;
@@ -102,6 +103,8 @@ public class InstallViewModel : ObservableObject
             "ApDownloader\\logFailure.log");
         var logSuccessPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
             "ApDownloader\\logSuccess.log");
+        var logLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            "\nApDownloader\\programLog.log");
         var manifestPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"ApDownloader\Downloads.txt");
         MainViewModel.IsNotBusy = false;
         BusyText = "Installing Addons";
@@ -131,21 +134,31 @@ public class InstallViewModel : ObservableObject
             {
                 StartInfo = info
             };
-            process.Start();
-            await process.WaitForExitAsync();
+            var exitedAbnormally = false;
+            try
+            {
+                process.Start();
+                await process.WaitForExitAsync();
+            }
+            catch
+            {
+                exitedAbnormally = true;
+            }
 
             var someSuccess = File.Exists(logSuccessPath);
             var someFailed = File.Exists(logFailurePath);
             var allSuccess = someSuccess && !someFailed;
 
-            if (process.ExitCode != 0 && !someSuccess)
-                BusyText = "Installation Failed.\n\nCheck logs for details";
+            if (exitedAbnormally)
+                BusyText = "Installation Failed.\n\nInstaller Exited Abnormally";
+            else if (process.ExitCode != 0 && !someSuccess)
+                BusyText = $"Installation Failed.\n\nCheck log for details\n{logLogPath}";
             else if (process.ExitCode != 0 && allSuccess)
-                BusyText = "Installation Completed.\n\nAll addons installed but\nsome errors occured.\nCheck logs for details";
+                BusyText = $"Installation Completed.\n\nAll addons installed but\nsome errors occured.\nCheck log for details\n{logLogPath}";
             else if (allSuccess)
                 BusyText = "Installation Completed.\n\nAll addons installed";
             else
-                BusyText = "Installation Completed.\n\nSome addons have not installed\nCheck logs for details";
+                BusyText = $"Installation Completed.\n\nSome addons have not installed\nCheck log for details\n{logLogPath}";
         }
 
         MainViewModel.IsNotBusy = true;
@@ -172,6 +185,8 @@ public class InstallViewModel : ObservableObject
 
     private async void RenderAllPrevDownloads()
     {
+        if (DownloadedProducts == null)
+            return;
         MainViewModel.IsNotBusy = false;
         BusyText = "Getting Previous Downloads";
         OverlayVisibility = true;
