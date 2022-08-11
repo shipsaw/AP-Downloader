@@ -215,7 +215,7 @@ func unzipAddon(fileName string, userDirs userDirectories) (string, error) {
 func unzipBackupMethod(fileName string, userDirs userDirectories) (exe string, retErr error) {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Println("Panic occured:", err)
+			log.Println("Panic occurred:", err)
 			exe = ""
 			retErr = errors.New(fmt.Sprintf("Unable to Extract %s: %s", fileName, err))
 		}
@@ -230,11 +230,15 @@ func unzipBackupMethod(fileName string, userDirs userDirectories) (exe string, r
 		return "", errors.New("7z executable not found")
 	}
 
+	log.Printf("Generating command: %s %s -aoa -y -o %s\n", userDirs.zipLoc, fileName, userDirs.tempDir)
 	cmd := exec.Command(userDirs.zipLoc, "x", fileName, "-aoa", "-y", "-o"+userDirs.tempDir)
+	log.Println("Generated, running command ", cmd.String())
 	err = cmd.Run()
+	log.Println("Complete...")
 	if err != nil {
 		return "", err
 	}
+	log.Println("Locating exe file in " + userDirs.tempDir)
 	setupExe, err := filepath.Glob(filepath.Join(userDirs.tempDir, "*.exe"))
 	if err != nil {
 		return "", err
