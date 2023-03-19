@@ -1,6 +1,6 @@
 param (
-    $dbPath = "$PSScriptRoot\ProductsDb.db",
-    $exportPath = "$PSScriptRoot\productsCSV.csv"
+    $dbPath = "$PSScriptRoot\ApDownloader.DataAccess\ProductsDb.db",
+    $exportPath = "$PSScriptRoot\ApProducts.csv"
 )
 $db = New-SqliteConnection $dbPath
 Invoke-SqliteQuery -DataSource $dbPath -Query "select P.ProductID, P.Name, P.Filename, P.ImageName as 'Preview Image', BP.Filename as 'Branding Patch', ES.Filename as 'Extra Stock', LP.Filename as 'Livery Pack' from Product AS P

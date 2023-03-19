@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "# Update DB CSV..."
 touch .commit
-exec powershell.exe -NoProfile -ExecutionPolicy Bypass -file "ApDownloader.DataAccess/dbToCsv.ps1"
+exec powershell.exe -NoProfile -ExecutionPolicy Bypass -file "dbToCsv.ps1"
 echo "# Finished"
 exit
 
