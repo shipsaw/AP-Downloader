@@ -1,0 +1,10 @@
+#!/bin/sh
+echo "# Adding updated CSV to commit..."
+if [ -e .commit ]
+    then
+    rm .commit
+    git add ApDownloader.DataAccess/productsCSV.csv
+    git commit --amend -C HEAD --no-verify
+fi
+echo "finished"
+exit
