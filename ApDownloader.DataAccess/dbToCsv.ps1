@@ -7,4 +7,4 @@ Invoke-SqliteQuery -DataSource $dbPath -Query "select P.ProductID, P.Name, P.Fil
 left outer join BrandingPatch BP on P.ProductID = BP.ProductID
 left outer join ExtraStock ES on P.ProductID = ES.ProductID
 left outer join LiveryPack LP on P.ProductID = LP.ProductID" |
-export-csv $exportPath
+export-csv $exportPath -NoTypeInformation
