@@ -1,3 +1,4 @@
+#TYPE System.Management.Automation.PSCustomObject
 "ProductID","Name","Filename","Preview Image","Branding Patch","Extra Stock","Livery Pack"
 "2","Lighting Effects Enhancement Pack","AP_Lighting_Effects_Enhancement_Pack.zip","APLEE_Cover-238x294.png",,,
 "3","BAA/BZA Wagon Pack","AP_BAA-BZA_Wagon_Pack.zip","APBAA-BZA_Cover-238x294.png",,"BAA-BZA_Wagon_Pack_Extra_Stock.zip",
