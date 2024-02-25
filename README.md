@@ -12,3 +12,4 @@
  * Ability to select scope of downloads, from just base product to additional stock, branding patches, and liveries.
  * Uses seperate folders to ease management, and can sort existing download folders into this structure
  * Uses small local product database that can be easy updated as additional AP addons are created
+ * **Note: The installer does not work for the "General" AP enhancements (Track, cloud, etc) due to multiple options that are not present in rolling-stock addons**
